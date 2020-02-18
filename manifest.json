@@ -1,0 +1,124 @@
+{
+  "manifest_version": 2,
+
+  "name": "MrkS",
+  "description": "MrkS 4ever!",
+  "version": "1.0",
+  "icons": {
+    "128": "resources/icon128.png",
+    "48": "resources/icon48.png",
+    "16": "resources/icon16.png"
+  },
+  "sidebar_action": {
+    "default_icon": "resources/icon48.png",
+    "default_title": "Mrk Main",
+    "default_panel": "main.html"
+  },
+
+  "background": {
+    "scripts": [
+      "modulok/jquery-3.1.0.min.js",
+      "modulok/pouchdb.js",
+      "modulok/pouchdb.find.js",
+      "background.js"
+    ],
+    "persistent": false
+  },
+  "content_scripts": [{
+      "js": [
+        "modulok/jquery-3.1.0.min.js",
+        "modulok/datatables.min.js",
+        "contentscripts/contentgoogle.js"
+      ],
+      "matches": [
+        "https://www.google.hu/search?*",
+        "https://www.google.com/search?*",
+        "https://www.google.de/search?*"
+      ],
+      "exclude_matches": ["*://*/*tbm=isch*"],
+      "css": ["modulok/datatables.min.css"],
+      "all_frames": true,
+      "run_at": "document_idle"
+    },
+
+    {
+      "js": [
+        "modulok/jquery-3.1.0.min.js",
+        "modulok/datatables.min.js",
+        "contentscripts/contentgooglecustom.js"
+      ],
+      "matches": [
+        "https://cse.google.com/cse?cx=013230777177701492605:mypu_iijphw"
+      ],
+      "css": ["modulok/datatables.min.css"],
+      "all_frames": true
+    },
+    {
+      "js": ["modulok/jquery-3.1.0.min.js", "contentscripts/contentall.js"],
+      "matches": ["<all_urls>"],
+      "css": []
+    },
+    {
+      "js": ["modulok/jquery-3.1.0.min.js", "contentscripts/reddit.js"],
+      "matches": [
+        "https://i.reddit.com/*",
+        "https://www.reddit.com/*",
+        "https://old.reddit.com/*"
+      ],
+      "css": [],
+      "all_frames": true
+    },
+    {
+      "js": ["contentscripts/youtube.js"],
+      "matches": ["https://www.youtube.com/*"],
+      "css": [],
+      "all_frames": true
+    }
+  ],
+  "commands": {
+    "spotifypause": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Spotify pause"
+    },
+    "spotifynext": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+D",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Spotify next"
+    },
+    "spotifyactivate": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Spotify activate"
+    },
+    "previoustab": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+W",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "previoustab"
+    }
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "https://www.google.hu/search?*",
+    "https://www.google.com/search?*",
+    "https://i.reddit.com/*",
+    "http://*/*",
+    "https://*/*",
+    "unlimitedStorage",
+    "<all_urls>",
+    "cookies",
+    "history",
+    "https://www.reddit.com/*",
+    "webNavigation"
+  ]
+}

@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <title>LayerProject</title>
+</head>
+
+<body>
+  <style>
+    body {
+      min-width: 385px;
+      min-height: 150px;
+      margin: 0;
+      width: 100%;
+      overflow: auto;
+      background-color: #a0bdd8;
+    }
+
+    a:link {
+      text-decoration: none;
+      color: black;
+    }
+
+    a:visited {
+      text-decoration: none;
+      color: black;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: black;
+    }
+
+    a:active {
+      text-decoration: underline;
+      color: black;
+    }
+
+
+    #hide input[type=file] {
+      display: none;
+      margin: 10px;
+    }
+
+    #hide input[type=file]+label {
+      display: inline-block;
+      margin: 20px;
+      padding: 4px 32px;
+      background-color: #FFFFFF;
+      border: solid 1px #666F77;
+      border-radius: 6px;
+      color: #666F77;
+    }
+
+    #hide input[type=file]:active+label {
+      background-image: none;
+      background-color: #2D6C7A;
+      color: #FFFFFF;
+    }
+
+    #ranghost,
+    #rang,
+    #kategoria,
+    #alkategoria,
+    #alalkategoria,
+    #tipus,
+    #megjegyzesmezo,
+    #parent,
+    #allapot,
+    #alkotasallapot,
+    #datum,
+    #sessionselect,
+    [type="search"] {
+      background-color: rgba(255, 255, 255, 0.719);
+      border: 0cm;
+      outline: 0px
+    }
+  </style>
+  <div class="wrap" style="min-width: 385px;overflow: hidden;height:100vh">
+
+
+
+
+    <div id="programbox" style="min-width: 385px;overflow:hidden;width:100vw">
+
+      <div class="tabs" style="height:100%;width:100vw;min-height:500px">
+
+
+        <ul class="tab-links" style=" float:left; border-top: 0px solid grey; padding: 0px;">
+
+          <div class="dropdown">
+            <button id="dropdownbutton" class="dropbtn">+</button>
+            <div id="myDropdown" class="dropdown-content">
+              <div style="min-width: 150px;">
+                <a id="tabsanddatastartbutton">Session&Files</a>
+              </div>
+              <div style="min-width: 150px;">
+                <a id="conceptmapstartbutton">ConceptMap</a>
+              </div>
+              <div style="min-width: 150px;">
+                <a id="naptarstartbutton">Naptár</a>
+              </div>
+            </div>
+          </div>
+
+        </ul>
+
+        <div class="menudropdown" style="float:right;">
+          <div id="sidebarmenu" class="menubtn"></div>
+          <div id="menumyDropdown" class="menudropdown-content">
+            <div style="min-width: 150px;">
+              <a id="opentab">Open Tab</a>
+            </div>
+            <div style="min-width: 150px;">
+              <a id="feltoltesgomb">Load Database</a>
+            </div>
+            <div style="min-width: 150px;">
+              <a id="naptarstartbutton2">Nap2tár</a>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+        <div class="tab-content" style="background-color: rgba(255, 255, 255, 0)">
+
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+
+
+  <input id="feltoltesrejtett" type="file" value="UL" accept=".json" style="display:none">
+
+
+  <style>
+    .menubtn:after {
+      content: '\2807';
+      font-size: 20px;
+      float: right;
+      overflow: hidden;
+    }
+
+
+    .menubtn {
+      height: 20px;
+      width: 26p;
+      background-color: rgba(255, 255, 255, 0.5);
+      border: none;
+      color: black;
+      font-weight: bold;
+      font-size: 20px;
+      text-align: center
+    }
+
+    /* Dropdown button on hover & focus */
+    .menubtn:hover,
+    .menubtn:focus {
+      background-color: #2980B9;
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    .menudropdown {
+      position: relative;
+      display: inline-block;
+
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .menudropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 150px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      right: 0px;
+    }
+
+    /* Links inside the dropdown */
+    .menudropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .menudropdown-content a:hover {
+      background-color: #ddd
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .dropbtn {
+      height: 20px;
+      width: 26p;
+      background-color: rgba(255, 255, 255, 0.5);
+      border: none;
+      color: black;
+      font-weight: bold;
+      font-size: 20px;
+      text-align: center
+    }
+
+    /* Dropdown button on hover & focus */
+    .dropbtn:hover,
+    .dropbtn:focus {
+      background-color: #2980B9;
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 150px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {
+      background-color: #ddd
+    }
+
+    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the
+     dropdown button) */
+    .show {
+      display: block;
+    }
+
+
+
+
+
+
+    .tabs {
+      width: 100%;
+      display: inline-block;
+    }
+
+    /*----- Tab Links -----*/
+    /* Clearfix */
+    .tab-links:after {
+      display: block;
+      clear: both;
+      content: '';
+    }
+
+    .tab-links li {
+      margin: 0px 5px;
+      float: left;
+      list-style: none;
+    }
+
+    .tab-links {
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+
+    .tab-links a {
+      padding: 0px 0px;
+      display: inline-block;
+      border-radius: 0px 0px 0px 0px;
+      background: rgba(255, 255, 255, 0.719);
+      font-size: 16px;
+      font-weight: 600;
+      color: #4c4c4c;
+      transition: all linear 0.15s;
+    }
+
+    .tab-links a:hover {
+      background: #e7e7e7;
+      text-decoration: none;
+    }
+
+    li.active a,
+    li.active a:hover {
+      background: #fff;
+      color: #4c4c4c;
+    }
+
+    /*----- Content of Tabs -----*/
+    .tab-content {
+      padding: 0px;
+      border-radius: 0px;
+      box-shadow: -1px 1px 1px rgba(0, 0, 0, 0.15);
+      background: #fff;
+    }
+
+    .tab {
+      display: none;
+    }
+
+    .tab.active {
+      display: block;
+    }
+  </style>
+  <style>
+    #cy {
+      width: 300px;
+      height: 300px;
+      display: block;
+    }
+
+    #linkkartyatabla td {
+      border: 0px solid rgb(83, 116, 165);
+      border-spacing: 0;
+      margin: 0;
+      padding: 0;
+      border-collapse: collapse;
+      word-wrap: break-word
+    }
+
+    #linkkartyatabla {
+      border: 4px solid rgb(0, 0, 0);
+      border-spacing: 0;
+      margin: 0;
+      padding: 0;
+      border-collapse: collapse;
+      word-wrap: break-word
+    }
+
+    p {
+      margin: 0
+    }
+
+    h1 {
+      margin: 0
+    }
+
+    h2 {
+      margin: 0
+    }
+
+    h3 {
+      margin: 0
+    }
+
+    h4 {
+      margin: 0
+    }
+
+    h5 {
+      margin: 0
+    }
+  </style>
+  <p id="urlteljes" hidden></p>
+  <link rel="stylesheet" href="modulok/datatables.min.css">
+  <link rel="stylesheet" href="modulok/scroller.dataTables.min.css">
+  <script src="modulok/jquery-3.1.0.min.js"></script>
+  <link rel="stylesheet" href="modulok/jquery.contextMenu.min.css">
+  <script src="modulok/jquery.contextMenu.min.js"></script>
+  <script src="modulok/jquery.ui.position.js"></script>
+  <script src="modulok/datatables.min.js"></script>
+  <script src="modulok/DatatablesEllipsisPlugin.js"></script>
+  <script src="modulok/DatatablesFixedheader.js"></script>
+  <script src="modulok/dataTables.scroller.min.js"></script>
+  <script src="modulok/pouchdb.js"></script>
+  <script src="modulok/pouchdb.find.js"></script>
+  <script src="main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+body {
+    min-width: 385px;
+    min-height: 150px;
+    margin: 0;
+    width: 100%;
+    overflow: auto
+}
+
+a:link {
+    text-decoration: none;
+    color: black;
+}
+
+a:visited {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: black;
+}
+
+a:active {
+    text-decoration: underline;
+    color: black;
+}
+
+#felsotabla {
+    max-width: 800px;
+    border-collapse: collapse;
+    padding: 0;
+    margin: 0;
+}
+
+#felsotabla th {
+    max-width: 150px;
+    min-width: 25px;
+    word-wrap: break-word;
+}
+
+#felsotabla td {
+    border: 0px solid rgb(83, 116, 165);
+    border-spacing: 0;
+}
+
+#example tr {
+    border-collapse: collapse;
+    padding: 0;
+    margin: 0;
+    max-width: 150px;
+    min-width: 5px;
+    word-wrap: break-word;
+}
+
+#example td {
+    border-collapse: collapse;
+    padding: 0;
+    margin: 0;
+    max-width: 150px;
+    min-width: 5px;
+    word-wrap: break-word;
+    overflow: hidden;
+    white-space: nowrap
+}
+
+#tabstable thead th,
+#tabstable thead td {
+    padding: 0px 0px 4px 4px !important
+}
+
+table.dataTable.compact thead th,
+table.dataTable.compact thead td {
+    padding: 0px 0px 4px 4px !important
+}
+
+#hide input[type=file] {
+    display: none;
+    margin: 10px;
+}
+
+#hide input[type=file]+label {
+    display: inline-block;
+    margin: 20px;
+    padding: 4px 32px;
+    background-color: #FFFFFF;
+    border: solid 1px #666F77;
+    border-radius: 6px;
+    color: #666F77;
+}
+
+#hide input[type=file]:active+label {
+    background-image: none;
+    background-color: #2D6C7A;
+    color: #FFFFFF;
+}
+
+#ranghost,
+#rang,
+#kategoria,
+#alkategoria,
+#alalkategoria,
+#tipus,
+#megjegyzesmezo,
+#parent,
+#allapot,
+#alkotasallapot,
+#datum,
+#sessionselect,
+[type="search"] {
+    background-color: rgba(255, 255, 255, 0.719);
+    border: 0cm;
+    outline: 0px
+}
+
+p {
+    margin: 0
+}
+
+h1 {
+    margin: 0
+}
+
+h2 {
+    margin: 0
+}
+
+h3 {
+    margin: 0
+}
+
+h4 {
+    margin: 0
+}
+
+h5 {
+    margin: 0
+}
