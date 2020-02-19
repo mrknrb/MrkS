@@ -1,5 +1,6 @@
 class Sessions extends MrkLibrary {
   constructor(sessionciminputtextselector) {
+    super();
     this.sessionaktualis = sessioncimkiiras;
     this.sessionciminputtextselector = document.querySelector(
       sessionciminputtextselector
@@ -957,7 +958,6 @@ let adatfrissito2 = function(row, element) {
       col[10].innerHTML = befejezdatum;
       col[11].innerHTML = datum2;
     }
-
     row.setAttribute(
       "style",
       "background-color:" + kartyahattergenerator(element.rang)
