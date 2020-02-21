@@ -1,14 +1,14 @@
-class MrkLibrary {
-  filebetolto(fileid, filetipus) {
-    let sidebarid = window.frameElement.getAttribute("sidebarid");
+
+function filebetolto(fileid, filetipus) {
+    let sessionid = window.frameElement.getAttribute("sessionid");
 
     if (filetipus == "conceptmap") {
       chrome.runtime.sendMessage(
         {
-          kerestipus: "ujsidebartab",
+          kerestipus: "ujprogram",
           tipus: filetipus,
           fileid: fileid,
-          sidebarid: sidebarid
+          sessionid: sessionid
         },
         function(response) {}
       );
@@ -17,7 +17,7 @@ class MrkLibrary {
     }
   }
 
-  eszkozdetektalo() {
+  function eszkozdetektalo() {
     window.mobilecheck = function() {
       var check = false;
       (function(a) {
@@ -43,7 +43,7 @@ class MrkLibrary {
     }
   }
 
-  scrollbareltunteto() {
+  function scrollbareltunteto() {
     let basicstyle = `
         body::-webkit-scrollbar {
             display: none;
@@ -59,7 +59,7 @@ class MrkLibrary {
     document.head.appendChild(styleSheet);
   }
 
-  datumkora(date1, interval) {
+  function datumkora(date1, interval) {
     var second = 1000,
       minute = second * 60,
       hour = minute * 60,
@@ -89,7 +89,7 @@ class MrkLibrary {
     }
   }
 
-  getHostName(url) {
+  function getHostName(url) {
     var match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
     if (match != null && match.length > 2 && typeof match[2] === "string" && match[2].length > 0) {
       return match[2];
@@ -97,7 +97,7 @@ class MrkLibrary {
       return null;
     }
   }
-  osszesadatlementese(db, db7) {
+  function osszesadatlementese(db, db7) {
     db.allDocs({
       include_docs: true,
       attachments: true
@@ -143,13 +143,57 @@ class MrkLibrary {
         });
     });
   }
-   guidGenerator() {
+  function guidGenerator() {
     var S4 = function() {
       return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
     }
     return "j" + S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4()
   }
-}
+  function getActualSession(callback){
+    if("sidebar"==eszkozdetektalo()){
+      chrome.windows.getCurrent(
+          {
+            populate: true
+          },
+          function (win) {
+            db7
+                .find({
+                  selector: {
+                    windowid: win.id
+                  }
+                })
+                .then(function (session) {
+
+                    callback(session.docs[0])
+
+
+                  //a window cím mező, ha megváltozik, akkor azt mentse a megfelelő winidre pipa
+                });
+          }
+      );
+
+
+
+
+    }else{
+      chrome.tabs.query(
+          {
+            active: true,
+            currentWindow: true
+          },
+          function (tabs) {
+
+            let sessionid=tabs[0].url
+            let sessionid2=  sessionid.split('#')[1]
+            db7.get(sessionid2).then(function (doc) {
+              callback(doc)
+            });
+
+          }
+      );
+  }
+  }
+
 
 const isValidUrl = string => {
   try {
@@ -159,7 +203,6 @@ const isValidUrl = string => {
     return false;
   }
 };
-
 String.prototype.trunc =
   String.prototype.trunc ||
   function(n) {

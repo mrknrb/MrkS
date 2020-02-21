@@ -11,8 +11,8 @@
   },
   "sidebar_action": {
     "default_icon": "resources/icon48.png",
-    "default_title": "Mrk Main",
-    "default_panel": "main.html"
+    "default_title": "MrkS",
+    "default_panel": "MainMrkS.html"
   },
 
   "background": {
@@ -20,7 +20,7 @@
       "modulok/jquery-3.1.0.min.js",
       "modulok/pouchdb.js",
       "modulok/pouchdb.find.js",
-      "programelemek/LibraryMain.js",
+      "programelemek/MrkSLibrary.js",
       "background.js"
     ],
     "persistent": false

@@ -292,7 +292,7 @@ class ModulFiles {
                 columnDefs: columndefs,
                 createdRow: function (row, data, dataIndex) {
                     //row.querySelectorAll("td")[1].innerText = "000";
-                    adatfrissito2(row, data);
+                    this.adatfrissito2(row, data);
                 }
             });
         });

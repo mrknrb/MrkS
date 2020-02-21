@@ -12,7 +12,7 @@ class Sessions {
         this.initfirstwindow()
 
         this.eszkoz = MrkLibrary.eszkozdetektalo();
-        if (this.eszkoz != "Android") {
+        if (this.eszkoz == "sidebar") {
             this.tabeventsinit()
         }
         this.tabstablelathato = true;
@@ -456,7 +456,7 @@ class Sessions {
                                                         "background-color:black;font-style:bold"
                                                     );
                                                 doc.tabs.push({
-                                                    id: MrkLibrary.guidGenerator(),
+                                                    id: guidGenerator(),
                                                     tabid: -1,
                                                     url: taburl,
                                                     cim: tabtitle,

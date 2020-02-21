@@ -504,7 +504,7 @@ this.dombetolto()
                         console.log("result:", result)
 
                         let jegyzetadatok = {}
-                        jegyzetadatok._id = MrkLibrary.guidGenerator()
+                        jegyzetadatok._id = guidGenerator()
                         if (result.docs[0] != undefined) {
                             if (doc.kategoria != undefined) {
                                 jegyzetadatok.kategoria = doc.kategoria
