@@ -8,14 +8,9 @@ if (window.innerWidth < 860) {
 */
 let jelenlegitab = ""
 
-function jegyzetguidGenerator() {
-  var S4 = function() {
-    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
-  }
-  return "j" + S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4()
-}
 
-let sidebarid = jegyzetguidGenerator()
+
+let sidebarid = MrkLibrary.guidGenerator()
 
 function programstarter(htmlpath, cim, fileid) {
   let iframehtml = `<iframe src="${htmlpath}" sandbox="allow-scripts allow-modals" sidebarid="${sidebarid}" fileid="${fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`

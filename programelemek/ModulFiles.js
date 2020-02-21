@@ -1,0 +1,562 @@
+class ModulFiles {
+
+    constructor() {
+        this.examplebetoltve = false
+
+
+        this.kategoriaszuro = undefined;
+        this.alkategoriaszuro = undefined;
+        this.alalkategoriaszuro = undefined;
+    }
+
+    adattablafrissitobetolto = function () {
+        let selector = {};
+        selector.datum = {};
+        let fields = [];
+        fields.push("datum");
+        selector.datum.$gte = null;
+        if (kategoriaszuro != undefined && kategoriaszuro != "") {
+            selector.kategoria = kategoriaszuro;
+            fields.push("kategoria");
+        }
+        if (alkategoriaszuro != undefined && alkategoriaszuro != "") {
+            selector.alkategoria = alkategoriaszuro;
+            fields.push("alkategoria");
+        }
+        if (alalkategoriaszuro != undefined && alalkategoriaszuro != "") {
+            selector.alalkategoria = alalkategoriaszuro;
+            fields.push("alalkategoria");
+        }
+
+        db.createIndex({
+            index: {
+                fields: fields
+            }
+        })
+            .then(function () {
+                return db.find({
+                    selector: selector,
+                    sort: [{datum: "desc"}]
+                });
+            })
+            .then(function (result) {
+                if (examplebetoltve == false) {
+                    examplebetolto(result);
+                } else {
+                    console.log(result);
+                    $("#example")
+                        .dataTable()
+                        .fnClearTable();
+                    $("#example")
+                        .dataTable()
+                        .fnAddData(result.docs);
+                }
+            });
+    };
+
+    examplebetolto(result) {
+        self = this
+        let columns = [];
+        let columndefs = [];
+        let szuro = [];
+        let order = [];
+        if (eszkoz != "tab") {
+            //oldalsáv mód
+            columns = [
+                {
+                    title: "I",
+                    defaultContent: ""
+                },
+                {
+                    title: "Cim",
+                    defaultContent: ""
+                },
+                {
+                    title: "R",
+                    defaultContent: ""
+                },
+                {
+                    title: "Megjegyzes",
+                    defaultContent: ""
+                },
+                {
+                    title: "Kategoria",
+                    defaultContent: ""
+                },
+                {
+                    title: "AlKat",
+                    defaultContent: ""
+                },
+                {
+                    title: "AlalKat",
+                    defaultContent: ""
+                },
+                {
+                    title: "Tip",
+                    defaultContent: ""
+                },
+                {
+                    title: "Datumok",
+                    defaultContent: ""
+                }
+            ];
+            columndefs = [
+                {
+                    width: 20,
+                    targets: 0
+                },
+                {
+                    width: "50%",
+                    targets: [1]
+                },
+                {
+                    width: "50%",
+                    targets: [3],
+                    render: $.fn.dataTable.render.ellipsis(50)
+                }
+            ];
+            szuro = [4, 5, 6, 7];
+            order = [[8, "desc"]];
+        } else {
+            //tab mód
+            /*
+                [icon, cim3, rang2,
+                          element.doc.megjegyzes, element.doc.kategoria, element.doc.alkategoria, element.doc.stilus,
+                          element.doc.tipus, element.doc.allapot, element.doc.alkotasallapot,
+                          befejezdatum,datum2,  torlesgomb2])
+                */
+            columns = [
+                {
+                    title: "I",
+                    defaultContent: ""
+                },
+                {
+                    title: "Cim",
+                    defaultContent: ""
+                },
+                {
+                    title: "R",
+                    defaultContent: ""
+                },
+                {
+                    title: "Megjegyzes",
+                    defaultContent: ""
+                },
+                {
+                    title: "Kategoria",
+                    defaultContent: ""
+                },
+                {
+                    title: "AlKategoria",
+                    defaultContent: ""
+                },
+                {
+                    title: "AlalKat",
+                    defaultContent: ""
+                },
+                {
+                    title: "Tip",
+                    defaultContent: ""
+                },
+                {
+                    title: "Allapot",
+                    defaultContent: ""
+                },
+                {
+                    title: "Alk Áll",
+                    defaultContent: ""
+                },
+                {
+                    title: "BefDatum",
+                    defaultContent: ""
+                },
+                {
+                    title: "Datumok",
+                    defaultContent: ""
+                }
+            ];
+            columndefs = [
+                {
+                    width: 20,
+                    targets: 0
+                },
+                {
+                    width: "40%",
+                    targets: [1]
+                },
+                {
+                    width: "40%",
+                    targets: [3],
+                    render: $.fn.dataTable.render.ellipsis(60)
+                }
+            ];
+            szuro = [4, 5, 6, 7, 8, 9];
+            order = [[11, "desc"]];
+        }
+
+        examplebetoltve = true;
+        // Setup - add a text input to each footer cell
+        $(document).ready(function () {
+            $("#example").DataTable({
+                initComplete: function () {
+                    this.api()
+                        .columns([4, 5, 6])
+                        .every(function (e) {
+                            let column2 = this;
+
+                            //szuro variablebe mentés
+                            var column = this;
+                            var select = $(
+                                `<select id="select${e}" class="adattablaselect" style="width: 35px"><option value=""></option></select>`
+                            )
+                                .appendTo($(column.header()))
+                                .on("change", function () {
+                                    //Cannot read property 'replace' of null
+                                    var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                                    console.log("val:", val);
+                                    if (e == 4) {
+                                        if (val != undefined) {
+                                            kategoriaszuro = val;
+                                            alkategoriaszuro = "";
+                                            alalkategoriaszuro = "";
+                                        }
+                                    } else if (e == 5) {
+                                        if (val != undefined) {
+                                            alkategoriaszuro = val;
+                                            alalkategoriaszuro = "";
+                                        }
+                                    } else if (e == 6) {
+                                        if (val != undefined) {
+                                            alalkategoriaszuro = val;
+                                        }
+                                    }
+                                    adattablafrissitobetolto();
+                                });
+
+                            select.on("mouseover", function () {
+                                if (e == 4) {
+                                    kategoriadropdownfrissito();
+                                } else if (e == 5) {
+                                    alkategoriadropdownfrissito();
+                                } else if (e == 6) {
+                                    alalkategoriadropdownfrissito();
+                                }
+                            });
+                        });
+                    let szuromentesebutton = document.createElement("button");
+                    szuromentesebutton.type = "button";
+                    szuromentesebutton.innerText = "Szuro mentese";
+                    szuromentesebutton.onclick = function (params) {
+                        var column = this;
+
+                        ModulSessions.sessionkategoriamento(self.kategoriaszuro, self.alkategoriaszuro, self.alalkategoriaszuro)
+                    };
+                    szuromentesebutton.id = "szuromentesebutton";
+                    document
+                        .querySelector("#exampletablediv")
+                        .insertAdjacentElement("afterbegin", szuromentesebutton);
+
+                    let tabstablelathatosagbutton = document.createElement("button");
+                    tabstablelathatosagbutton.type = "button";
+                    tabstablelathatosagbutton.innerText = "TabsTable Hide";
+                    tabstablelathatosagbutton.onclick = function (params) {
+                        if (tabstablelathato == true) {
+                            document.querySelector("#tabstablediv").style.display = "none";
+                            tabstablelathato = false;
+                        } else {
+                            document.querySelector("#tabstablediv").style.display = "block";
+                            tabstablelathato = true;
+                        }
+                    };
+                    tabstablelathatosagbutton.id = "tabstablelathatosagbutton";
+                    document
+                        .querySelector("#exampletablediv")
+                        .insertAdjacentElement("afterbegin", tabstablelathatosagbutton);
+                },
+                deferRender: true,
+                scroller: {
+                    displayBuffer: 1.6,
+                    loadingIndicator: true,
+                    boundaryScale: 0.5
+                },
+                scrollY: databasemagassag,
+                searching: false,
+                ordering: false,
+                paging: true, //kell a scrollerhez
+                // "pageLength": 50,
+                info: false,
+                retrieve: true, //az elején előjövő bug ellen lehet, hogy jó most tesztelem  https://datatables.net/manual/tech-notes/3
+
+                data: result.docs,
+                columns: columns,
+                columnDefs: columndefs,
+                createdRow: function (row, data, dataIndex) {
+                    //row.querySelectorAll("td")[1].innerText = "000";
+                    adatfrissito2(row, data);
+                }
+            });
+        });
+
+    }
+
+    kategoriadropdownfrissito() {
+        //  console.log("ff")
+        //todo folytasd a kategoriaszurot(lehet, hogy az alldocsszal kéne megoldani ezt is és talán a tábla betöltőt is)
+
+        let kategoriaosszes = [];
+        db.find({
+            selector: {
+                kategoria: {
+                    $exists: true
+                }
+            },
+            fields: ["kategoria"]
+        })
+            .then(function (result) {
+                console.log("result:", result);
+                result.docs.forEach(element => {
+                    kategoriaosszes.push(element.kategoria);
+                });
+                let kategoriaarray = kategoriaosszes.filter(function (item, pos) {
+                    return kategoriaosszes.indexOf(item) == pos;
+                });
+
+                $(`#select4`)
+                    .find("option")
+                    .remove()
+                    .end();
+
+                kategoriaarray.forEach(function (eg, i) {
+                    var el = document.createElement("option");
+                    el.textContent = eg;
+                    el.value = eg;
+                    document.querySelector(`#select4`).appendChild(el);
+                });
+            })
+            .catch(function (err) {
+                //console.log(err);
+            });
+    }
+
+    alkategoriadropdownfrissito() {
+        //  console.log("ff")
+        //todo folytasd a kategoriaszurot(lehet, hogy az alldocsszal kéne megoldani ezt is és talán a tábla betöltőt is)
+
+        let alkategoriaosszes = [];
+        db.find({
+            selector: {
+                alkategoria: {
+                    $exists: true
+                }
+            },
+            fields: ["kategoria", "alkategoria"]
+        })
+            .then(function (result) {
+                // console.log(result)
+                // console.log(result.docs[0])
+                result.docs.forEach(element => {
+                    if (element.kategoria === kategoriaszuro) {
+                        alkategoriaosszes.push(element.alkategoria);
+                    }
+                });
+                let alkategoriaarray = alkategoriaosszes.filter(function (item, pos) {
+                    return alkategoriaosszes.indexOf(item) == pos;
+                });
+
+                $(`#select5`)
+                    .find("option")
+                    .remove()
+                    .end();
+                alkategoriaarray.forEach(function (eg, i) {
+                    var el = document.createElement("option");
+                    console.log("eg:", eg);
+                    el.textContent = eg;
+                    el.value = eg;
+                    document.querySelector(`#select5`).appendChild(el);
+                });
+            })
+            .catch(function (err) {
+                //console.log(err);
+            });
+    }
+
+//default szuro visszaálítása és jelenlegi szuro mentese berak
+    alalkategoriadropdownfrissito() {
+        //  console.log("ff")
+        let alalkategoriaosszes = [];
+        db.find({
+            selector: {
+                alalkategoria: {
+                    $exists: true
+                }
+            },
+            fields: ["kategoria", "alkategoria", "alalkategoria"]
+        })
+            .then(function (result) {
+                // console.log(result)
+                // console.log(result.docs[0])
+                result.docs.forEach(element => {
+                    if (
+                        kategoriaszuro === element.kategoria &&
+                        alkategoriaszuro === element.alkategoria
+                    ) {
+                        alalkategoriaosszes.push(element.alalkategoria);
+                    }
+                });
+                let alalkategoriaarray = alalkategoriaosszes.filter(function (item, pos) {
+                    return alalkategoriaosszes.indexOf(item) == pos;
+                });
+
+                $(`#select6`)
+                    .find("option")
+                    .remove()
+                    .end();
+                alalkategoriaarray.forEach(function (eg, i) {
+                    var el = document.createElement("option");
+                    console.log("eg:", eg);
+                    el.textContent = eg;
+                    el.value = eg;
+                    document.querySelector(`#select6`).appendChild(el);
+                });
+            })
+            .catch(function (err) {
+                //console.log(err);
+            });
+    }
+
+    adatfrissito2(row, element) {
+        if (element != undefined) {
+            let icon = `<img src="https://www.google.com/s2/favicons?domain=${element._id}" width="20" height="20" class="datafavicon">`;
+
+            let cim = "";
+            if (element.cim !== undefined) {
+                cim = `<b style="font-weight:bold;line-height: 1" >${element.cim.trunc(
+                    50
+                )}</b>`;
+                // console.log(cim2)
+            }
+
+            let rang = document.createElement("b");
+            if (element.rang !== undefined) {
+                rang.innerText = element.rang;
+                rang.setAttribute("style", "font-size: 15px");
+                rang.setAttribute("class", "rangtablazat");
+            }
+            let rang2 = rang.outerHTML;
+
+            let megjegyzes = "";
+            if (element.megjegyzes !== undefined) {
+                megjegyzes = element.megjegyzes;
+            }
+            let kategoria = "";
+            if (element.kategoria !== undefined) {
+                kategoria = element.kategoria;
+            }
+            let alkategoria = "";
+            if (element.alkategoria !== undefined) {
+                alkategoria = element.alkategoria;
+            }
+            let alalkategoria = "";
+            if (element.alalkategoria !== undefined) {
+                alalkategoria = element.alalkategoria;
+            }
+
+            let datum2 = "";
+            if (element.datum !== undefined) {
+                //datum2 = new Intl.DateTimeFormat().format(element.datum)
+                let datumseg = new Intl.DateTimeFormat("default", {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric"
+                }).format(element.datum);
+
+                datum2 = `<a style="font-size: 0">${element.datum}</a>` + datumseg;
+            }
+
+            let tipusnev = "";
+            if (element.tipus != undefined) {
+                tipusnev = element.tipus;
+            }
+            let tipus = `<b style="font-weight:bold;line-height: 1" >${tipusnev}</b>`;
+
+            let allapot = "";
+            if (element.allapot !== undefined) {
+                allapot = element.allapot;
+            }
+
+            let alkotasallapot = "";
+            if (element.alkotasallapot !== undefined) {
+                alkotasallapot = element.alkotasallapot;
+            }
+
+            if (eszkoz != "tab") {
+                //oldalsáv mód
+                let col = row.querySelectorAll("td");
+                col[0].innerHTML = icon;
+                col[1].innerHTML = cim;
+                col[2].innerHTML = rang2;
+                col[3].innerHTML = megjegyzes;
+                col[4].innerHTML = kategoria;
+                col[5].innerHTML = alkategoria;
+                col[6].innerHTML = alalkategoria;
+                col[7].innerHTML = tipus;
+                col[8].innerHTML = datum2;
+            } else {
+                //tab mód
+                let befejezdatum = "";
+                if (element.befejezdatum === undefined) {
+                    befejezdatum = "";
+                } else {
+                    //datum2 = new Intl.DateTimeFormat().format(element.datum)
+                    befejezdatum = new Intl.DateTimeFormat("default", {
+                        year: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "numeric"
+                    }).format(element.befejezdatum);
+                }
+
+                let col = row.querySelectorAll("td");
+                col[0].innerHTML = icon;
+                col[1].innerHTML = cim;
+                col[2].innerHTML = rang2;
+                col[3].innerHTML = megjegyzes;
+                col[4].innerHTML = kategoria;
+                col[5].innerHTML = alkategoria;
+                col[6].innerHTML = alalkategoria;
+                col[7].innerHTML = tipus;
+                col[8].innerHTML = allapot;
+                col[9].innerHTML = alkotasallapot;
+                col[10].innerHTML = befejezdatum;
+                col[11].innerHTML = datum2;
+            }
+            row.setAttribute(
+                "style",
+                "background-color:" + kartyahattergenerator(element.rang)
+            );
+
+            row.addEventListener("click", function () {
+                adatbazisboladatfrissito(db, element._id);
+            });
+
+            row.querySelectorAll("td")[1].addEventListener("click", function () {
+                console.log("element.tipus:", element.tipus);
+                filebetolto(element._id, element.tipus);
+            });
+
+            row.querySelectorAll("td")[0].addEventListener("click", function () {
+                let biztosan = confirm("Biztosan Torlod?");
+                if (biztosan) {
+                    db.get(element._id).then(function (doc) {
+                        //  console.log(e.id)
+                        return db.remove(doc);
+                    });
+                    row.remove();
+                }
+            });
+        }
+    };
+}

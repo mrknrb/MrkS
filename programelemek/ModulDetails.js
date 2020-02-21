@@ -1,4 +1,4 @@
-class Details extends MrkLibrary {
+class Details  {
     constructor(selectors, beallitasok) {
         /*
         id
@@ -14,7 +14,6 @@ class Details extends MrkLibrary {
         datum
         */
 
-        super();
         this.data.id = ""
         this.data.cim = ""
         this.data.megjegyzes = ""
@@ -505,7 +504,7 @@ this.dombetolto()
                         console.log("result:", result)
 
                         let jegyzetadatok = {}
-                        jegyzetadatok._id = jegyzetguidGenerator()
+                        jegyzetadatok._id = MrkLibrary.guidGenerator()
                         if (result.docs[0] != undefined) {
                             if (doc.kategoria != undefined) {
                                 jegyzetadatok.kategoria = doc.kategoria

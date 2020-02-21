@@ -20,6 +20,7 @@
       "modulok/jquery-3.1.0.min.js",
       "modulok/pouchdb.js",
       "modulok/pouchdb.find.js",
+      "programelemek/LibraryMain.js",
       "background.js"
     ],
     "persistent": false
