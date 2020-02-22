@@ -2,11 +2,19 @@
 <html>
 
 <head>
-  <title>LayerProject</title>
+  <title>MrkS</title>
 </head>
 
 <body>
   <style>
+
+    @font-face {
+      font-family: myFirstFont;
+      src:  url("resources/Roboto-Medium.ttf");
+    }
+    * {
+      font-family: myFirstFont;
+    }
     body {
       min-width: 385px;
       min-height: 150px;
@@ -88,15 +96,6 @@
           <div class="dropdown">
             <button id="dropdownbutton" class="dropbtn">+</button>
             <div id="myDropdown" class="dropdown-content">
-              <div style="min-width: 150px;">
-                <a id="tabsanddatastartbutton">Session&Files</a>
-              </div>
-              <div style="min-width: 150px;">
-                <a id="conceptmapstartbutton">ConceptMap</a>
-              </div>
-              <div style="min-width: 150px;">
-                <a id="naptarstartbutton">Naptár</a>
-              </div>
             </div>
           </div>
         </ul>
@@ -115,10 +114,13 @@
               <a id="feltoltesgomb">Load Database</a>
             </div>
             <div style="min-width: 150px;">
-              <a id="SessionDelete">Delete Session</a>
+              <a id="letoltesgomb">Save Database</a>
             </div>
             <div style="min-width: 150px;">
-            <a id="SessionColor">SessionColor</a>
+              <a id="sessiondelete">Delete Session</a>
+            </div>
+            <div style="min-width: 150px;">
+            <a id="SessionColorButton" >Color</a>
           </div>
           </div>
         </div>
@@ -129,9 +131,9 @@
   </div>
 
 
+  <input type="file" id="feltoltesrejtett" accept=".json" style="display: none">
 
-
-  <input id="feltoltesrejtett" type="file" value="UL" accept=".json" style="display:none">
+  <input type="color" id="sessioncolor"  style="display:none ">
 
 
   <style>
@@ -370,7 +372,7 @@
   <script src="modulok/dataTables.scroller.min.js"></script>
   <script src="modulok/pouchdb.js"></script>
   <script src="modulok/pouchdb.find.js"></script>
-  <script src="programelemek/MrkLibrary.js"></script>
+  <script src="programelemek/MrkSLibrary.js"></script>
   <script src="MainMrkS.js"></script>
 </body>
 

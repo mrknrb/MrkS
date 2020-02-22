@@ -1,162 +1,216 @@
 ﻿let tabcount = 0
 let jelenlegitab = ""
 let sessionid = ""
-let ProgramsData = {
-    ConceptMap: {
-        logo: "",
-        htmlpath: "./ProgramConceptMap.html"
+let eszkoz = eszkozdetektalo()
+let ProgramsData = [
+    {
+        tipus: "ConceptMap",
+        logo: "C",
+        htmlpath: "./ProgramConceptMap.html",
+        buttonid: "ConceptMapButton"
     },
-    Explorer: {
-        logo: "",
-        htmlpath: "./ProgramExplorer.html"
+    {
+        tipus: "Explorer",
+        logo: "E",
+        htmlpath: "./ProgramExplorer.html",
+        buttonid: "ExplorerButton"
     },
-    Naptar: {
-        logo: "",
-        htmlpath: "./ProgramNaptar.html"
+    {
+        tipus: "Naptar",
+        logo: "N",
+        htmlpath: "./ProgramNaptar.html",
+        buttonid: "NaptarButton"
     }
-}
-
-getActualSession(function (session) {
-    sessionid = session._id
-
+]
+var db = new PouchDB("NodesNet", {
+    auto_compaction: true
+})
+var db7 = new PouchDB("SessionsNet", {
+    auto_compaction: true
 })
 
-/**  OK   */
-function programstarter(fileid_false_ha_nincs_file, tipus_ha_uj_fajl) {
-    function programmento() {
-        db7
-            .get(sessionid)
-            .then(function (doc) {
-                doc.programs.push({fileid_false_ha_nincs_file, tipus_ha_uj_fajl})
-                return db7.put(doc);
-            })
+
+//OK---------------------------------------------------------------------------------------------------------
+function programstarter(adatok) {
+    /**adatok:{fileid,tipus,programtabid}*/
+
+//OK-----------------------------------------------------------------------------------------
+    let programtabid2 = adatok.programtabid
+    if (adatok.programtabid == undefined) {
+        programtabid2 = guidGenerator()
     }
-    if (fileid != false) {
-        db.get(fileid).then(function (doc) {
-            if (doc.tipus == "ConceptMap") {
+
+    function programmento(tipus) {
+
+        getActualSession(function (session) {
+            db7
+                .get(session._id)
+                .then(function (doc) {
+                    let adatok2 = {}
+                    adatok2.tipus = tipus
+                    adatok2.fileid = adatok.fileid
+                    adatok2.programtabid = programtabid2
+                    if (doc.programs == undefined) {
+                        doc.programs = []
+                    }
+                    doc.programs.push(adatok2)
+                    return db7.put(doc);
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+        })
 
 
-            }else if(doc.tipus == "Explorer"){
+    }
 
 
-            }else if(doc.tipus == "Naptar"){
+//OK----------------------------------------------------------------------------------------
+    if (adatok.fileid != undefined) {
+        db.get(adatok.fileid).then(function (doc) {
+            ProgramsData.forEach(function (program) {
+                if (program.tipus === doc.tipus) {
+                    if (adatok.programtabid == undefined) {
+                        programmento(program.tipus)
+                    }
+                    programbetolto(program)
+                }
+            })
 
 
+        })
+    } else if (adatok.tipus != undefined) {
+        //a tipussal nyit egy új programot
+        ProgramsData.forEach(function (program) {
+            if (program.tipus === adatok.tipus) {
+                if (adatok.programtabid == undefined) {
+                    programmento(adatok.tipus)
+                }
+                programbetolto(program)
             }
         })
-    } else if (tipus_ha_uj_fajl != undefined) {
-        //a tipussal nyit egy új programot
 
+    } else {
+        alert("Load Failed!")
     }
 
+//OK-----------------------------------------------------------------------------------------
+    function programbetolto(program) {
+        let iframehtml = `<iframe src="${program.htmlpath}" sandbox="allow-scripts allow-modals" sessionid="${sessionid}" fileid="${adatok.fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
 
-    let iframehtml = `<iframe src="${htmlpath}" sandbox="allow-scripts allow-modals" sessionid="${sessionid}" fileid="${fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
+        tabcount++
+        let tabnumber = tabcount
+        let tab = document.createElement("li")
+        tab.innerHTML = `<a class="tabbuttons" id="tabbutton${tabnumber}" href="#tab${tabnumber}" fileid="${adatok.fileid}" style="width:50px">${program.logo}</a><a id="tabbezarobutton${tabnumber}" programtabid="${programtabid2}"class="tabbezarobuttons" href="#tab${tabnumber}" style="width:20px; text-align: center;font-weight:900">×</a>`
+        document.querySelector(".tab-links").appendChild(tab)
+        let page = document.createElement("div")
+        page.id = `tab${tabnumber}`
+        page.class = "tab"
+        page.style = "display: block;"
 
-    tabcount++
-    let tabnumber = tabcount
-    getActualSession(function (session) {
+        document.querySelector(".tab-content").appendChild(page)
 
+        document.querySelector(`#tab${tabnumber}`).innerHTML = iframehtml
 
-    })
-    let tab = document.createElement("li")
-    tab.innerHTML = `<a class="tabbuttons" id="tabbutton${tabnumber}" href="#tab${tabnumber}" fileid="${fileid}">${cim}</a><a id="tabbezarobutton${tabnumber}" class="tabbezarobuttons" href="#tab${tabnumber}" style="width:20px; text-align: center;font-weight:900">×</a>`
-    document.querySelector(".tab-links").appendChild(tab)
-
-    let page = document.createElement("div")
-    page.id = `tab${tabnumber}`
-    page.class = "tab"
-    page.style = "display: block;"
-
-    document.querySelector(".tab-content").appendChild(page)
-
-    document.querySelector(`#tab${tabnumber}`).innerHTML = iframehtml
-
-    jQuery(".tabs " + `#tab${tabnumber}`)
-        .show()
-        .siblings()
-        .hide()
-    jQuery(`.tabs .tab-links [href="#tab${tabnumber}"]`)
-        .parent("li")
-        .addClass("active")
-        .siblings()
-        .removeClass("active")
-
-    jelenlegitab = jQuery(`.tabs .tab-links [href="#tab${tabnumber}"]`).attr("href")
-
-    jQuery(".tabs .tab-links .tabbuttons").on("click", function (e) {
-        jelenlegitab = jQuery(this).attr("href")
-        var currentAttrValue = jQuery(this).attr("href")
-        // Show/Hide Tabs
-        jQuery(".tabs " + currentAttrValue)
+        jQuery(".tabs " + `#tab${tabnumber}`)
             .show()
             .siblings()
             .hide()
-        // Change/remove current tab to active
-        jQuery(this)
+        jQuery(`.tabs .tab-links [href="#tab${tabnumber}"]`)
             .parent("li")
             .addClass("active")
             .siblings()
             .removeClass("active")
-        e.preventDefault()
-    })
 
-    jQuery(".tabs .tab-links .tabbezarobuttons").on("click", function (e) {
+        jelenlegitab = jQuery(`.tabs .tab-links [href="#tab${tabnumber}"]`).attr("href")
 
-        db7
-            .get(sessionid)
-            .then(function (doc) {
-
-                doc.programs.forEach(function (program) {
-
-                })
-
-                push({fileid})
-
-                return db7.put(doc);
-
-            })
-
-
-        var currentAttrValue = jQuery(this).attr("href")
-        // Show/Hide Tabs
-        jQuery(".tabs " + currentAttrValue).remove()
-        // Change/remove current tab to active
-        jQuery(this)
-            .parent()
-            .remove()
-        e.preventDefault()
-
-        if (jelenlegitab == currentAttrValue) {
-            jQuery(".tab-content")
-                .children()
-                .first()
+        jQuery(".tabs .tab-links .tabbuttons").on("click", function (e) {
+            jelenlegitab = jQuery(this).attr("href")
+            var currentAttrValue = jQuery(this).attr("href")
+            // Show/Hide Tabs
+            jQuery(".tabs " + currentAttrValue)
                 .show()
                 .siblings()
                 .hide()
-            let a = jQuery(".tab-content")
-                .children()
-                .first()
-                .attr("id")
-            jQuery(`.tabs .tab-links [href="#${a}"]`)
+            // Change/remove current tab to active
+            jQuery(this)
                 .parent("li")
                 .addClass("active")
                 .siblings()
                 .removeClass("active")
-            jelenlegitab = jQuery(`.tabs .tab-links [href="#${a}"]`).attr("href")
-        }
+            e.preventDefault()
+        })
+
+//OK^--------------------------------------------------------------------------------------------------------A torlo meg van csinálva elvileg
+        jQuery(".tabs .tab-links .tabbezarobuttons").on("click", function (e) {
+            let xx=this
+getActualSession(function(session){
+
+    db7
+        .get(session._id)
+        .then(function (doc) {
+            console.log(doc)
+            let programtabid3 = jQuery(xx).attr("programtabid")
+            doc.programs.forEach(function (program, index) {
+                console.log(programtabid3,program.programtabid)
+                if (programtabid3 == program.programtabid) {
+                    doc.programs.splice(index, 1);
+                }
+            })
+
+
+            return db7.put(doc);
+
+        }).catch(function (error) {
+        console.log(error)
     })
+
+})
+
+
+
+            var currentAttrValue = jQuery(this).attr("href")
+            // Show/Hide Tabs
+            jQuery(".tabs " + currentAttrValue).remove()
+            // Change/remove current tab to active
+            jQuery(this)
+                .parent()
+                .remove()
+            e.preventDefault()
+
+            if (jelenlegitab == currentAttrValue) {
+                jQuery(".tab-content")
+                    .children()
+                    .first()
+                    .show()
+                    .siblings()
+                    .hide()
+                let a = jQuery(".tab-content")
+                    .children()
+                    .first()
+                    .attr("id")
+                jQuery(`.tabs .tab-links [href="#${a}"]`)
+                    .parent("li")
+                    .addClass("active")
+                    .siblings()
+                    .removeClass("active")
+                jelenlegitab = jQuery(`.tabs .tab-links [href="#${a}"]`).attr("href")
+            }
+        })
+    }
 }
 
+//OK---------------------------------------------------------------------------------------------------------
 document.getElementById("dropdownbutton").addEventListener("click", function () {
     document.getElementById("myDropdown").classList.toggle("show")
 })
-// Close the dropdown menu if the user clicks outside of it
-
+//OK---------------------------------------------------------------------------------------------------------
 document.getElementById("sidebarmenu").addEventListener("click", function () {
     document.getElementById("menumyDropdown").classList.toggle("show")
 })
-// Close the dropdown menu if the user clicks outside of it
+//OK---------------------------------------------------------------------------------------------------------
 window.onclick = function (event) {
+    // Close the dropdown menu if the user clicks outside of it
     if (!event.target.matches(".dropbtn")) {
         var dropdowns = document.getElementsByClassName("dropdown-content")
         var i
@@ -180,47 +234,40 @@ window.onclick = function (event) {
     }
 }
 
-programstarter("./programsessiondatabase.html", "Session&Files")
-document.getElementById("tabsanddatastartbutton").addEventListener("click", function () {
-    programstarter("./programsessiondatabase.html", "Session&Files")
-})
-document.getElementById("conceptmapstartbutton").addEventListener("click", function () {
-    programstarter("./programconceptmap.html", "Conceptmap")
-})
-document.getElementById("naptarstartbutton").addEventListener("click", function () {
-    programstarter("./programnaptar.html", "Naptar")
-})
+//OK---------------------------------------------------------------------------------------------------------
+function programOpenerInit() {
+    let myDropdown = document.querySelector("#myDropdown")
+    ProgramsData.forEach(function (program) {
+        let a = document.createElement("a")
+        a.id = program.buttonid
+        a.setAttribute("tipus", program.tipus)
+        a.innerText = program.tipus
+        myDropdown.appendChild(a)
+        a.addEventListener("click", function (a2) {
+            programstarter({tipus: a.getAttribute("tipus")})
+        })
+    })
+}
 
+programOpenerInit()
+
+//OK---------------------------------------------------------------------------------------------------------
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.sessionid == sessionid)
         if (request.kerestipus == "ujprogram") {
-            if (request.tipus == "conceptmap") {
-                programstarter(request.fileid)
-            } else if (false) {
-            } else {
-            }
+            programstarter({fileid: request.fileid})
         }
 })
-
+//OK---------------------------------------------------------------------------------------------------------
 document.getElementById("opentab").addEventListener("click", function () {
-    window.open("main.html", "_blank")
+
+    window.open("MainMrkS.html#jegyz0e9ad149-49a1-76e7-c1d8-f37bf0d0956b", "_blank")
+
 })
 
-/*
-chrome.tabs.create({
-  url: chrome.runtime.getURL("sidebar.html")
-})
-
-*/
-
-function loaddatabasebuttoninit(buttonselector) {
-    let feltoltesbutton = document.querySelector(buttonselector)
-    let feltoltesrejtett = document.createElement("file")
-    feltoltesrejtett.id = "feltoltesrejtett"
-    feltoltesrejtett.accept = ".json"
-    feltoltesrejtett.style.display = "none"
-    feltoltesbutton.parentNode.insertBefore(feltoltesrejtett, feltoltesbutton.nextSibling)
-
+//OK---------------------------------------------------------------------------------------------------------
+function feltoltesbuttoninit() {
+    let feltoltesbutton = document.querySelector("#feltoltesgomb")
     document.getElementById("feltoltesrejtett").addEventListener("change", loaddatabase, false)
     feltoltesbutton.addEventListener("click", function (e) {
         document.getElementById("feltoltesrejtett").click()
@@ -247,6 +294,238 @@ function loaddatabasebuttoninit(buttonselector) {
     }
 }
 
-document.getElementById("letoltes").addEventListener("click", function () {
-    osszesadatlementese()
+//OK---------------------------------------------------------------------------------------------------------
+document.getElementById("letoltesgomb").addEventListener("click", function () {
+    osszesadatlementese(db, db7)
 })
+
+//OK---------------------------------------------------------------------------------------------------------
+function sessioncolorinit(session) {
+    document.querySelector("#SessionColorButton").addEventListener("click", function (e) {
+        document.getElementById("sessioncolor").click()
+    })
+
+    let sessioncolor = document.querySelector("#sessioncolor");
+
+    if (session == undefined) {
+        sessioncolor.value = "#a0bdd8";
+    } else {
+        if (session.color == null) {
+            sessioncolor.value = "#a0bdd8";
+        } else {
+            sessioncolor.value = session.color;
+        }
+    }
+    document
+        .querySelector("body")
+        .setAttribute(
+            "style",
+            "background-color:" + document.querySelector("#sessioncolor").value
+        );
+
+
+    document
+        .querySelector("#sessioncolor")
+        .addEventListener("change", function (params) {
+            console.log("color")
+            document
+                .querySelector("body")
+                .setAttribute(
+                    "style",
+                    "background-color:" + document.querySelector("#sessioncolor").value
+                );
+            db7.get(session._id).then(function (doc) {
+                doc.color = document.querySelector("#sessioncolor").value;
+                return db7.put(doc);
+            }).catch(function (error) {
+                console.log(error)
+            });
+        });
+}
+
+function programsrestart(session) {
+    if (session._id != "jegyz0e9ad149-49a1-76e7-c1d8-f37bf0d0956b") {
+
+        if (session.programs != undefined) {
+            session.programs.forEach(function (programadatok) {
+                programstarter(programadatok)
+            })
+        } else {
+            programstarter({tipus: "Explorer"})
+        }
+    } else {
+
+        programstarter({tipus: "Explorer"})
+    }
+}
+
+function sessionselectinit() {
+    let self = this
+    document
+        .querySelector("#sessionselect")
+        .addEventListener("change", function (params) {
+            if (params.target.value != 0) {
+
+                db7.get(params.target.value).then(function (doc) {
+                    if (eszkoz == "sidebar") {
+                        chrome.windows.create(
+                            {
+                                url: [],
+                                state: "maximized"
+                            },
+                            function (wind) {
+                                doc.windowid = wind.id;
+                                return db7.put(doc);
+                            }
+                        );
+                    } else {
+
+                        window.open(`MainMrkS.html#${params.target.value}`, "_blank")
+
+
+                    }
+
+                });
+
+
+            }
+        });
+
+
+}
+
+//OK---------------------------------------------------------------------------------------------------------->>>>>>>>>
+
+function sessionselectfrissitoinit() {
+    document
+        .querySelector("#sessionselect")
+        .addEventListener("mouseover", function (params) {
+            $("#sessionselect")
+                .find("option")
+                .remove()
+                .end();
+            document.getElementById("sessionselect").options.add(new Option("", 0));
+            //üres option berak
+            db7
+                .allDocs({
+                    include_docs: true,
+                    attachments: true
+                })
+                .then(function (result) {
+
+                    function szuro(row, win) {
+                        let a = 0;
+                        win.forEach(element2 => {
+                            if (element2.id == row.doc.windowid) {
+                                a = 1;
+                            }
+                        });
+                        return a;
+                    }
+
+                    function berako(element) {
+                        console.log(element)
+                        document
+                            .getElementById("sessionselect")
+                            .options.add(new Option(element.doc.cim, element.id));
+                        //windows-ban ha nincs benne,a mentett db6 akkor berakja
+                    }
+
+                    function listbetolto(win) {
+
+                        let resultrows = result.rows;
+                        resultrows.sort((a, b) => a.doc.cim.localeCompare(b.doc.cim));
+                        resultrows.forEach(element => {
+
+                            if (eszkoz == "sidebar") {
+                                if (szuro(element, win) == 0) {
+                                    berako(element)
+                                }
+                            } else {
+                                berako(element)
+                            }
+
+                        });
+                    }
+
+                    if (eszkoz == "sidebar") {
+                        chrome.windows.getAll(function (win) {
+
+                            listbetolto(win)
+                        });
+                    } else {
+                        listbetolto()
+
+                    }
+
+
+                });
+
+        });
+}
+
+//OK---------------------------------------------------------------------------------------------------------->>>>>>>>>
+
+function sessioncimvaltozasinit(session) {
+    document
+        .querySelector("#sessionname")
+        .addEventListener("change", function (params) {
+
+                db7.get(session._id).then(function (doc) {
+                    doc.cim = document.querySelector("#sessionname").value;
+                    return db7.put(doc);
+                });
+
+        });
+}
+
+function sessiondeleteinit(session) {
+    document
+        .querySelector("#sessiondelete")
+        .addEventListener("click", function (e) {
+            let biztosan = confirm("Biztosan Torlod?");
+            if (biztosan) {
+                db7.get(session._id).then(function (doc) {
+
+                    return db7.remove(doc);
+                }).then(function(){
+                    if(eszkoz=="sidebar"){
+
+                        chrome.windows.getCurrent(
+                            {
+                                populate: true
+                            },
+                            function (win) {
+                                chrome.windows.remove(win.id)
+                            })
+                    }else{
+                        window.close();
+
+                    }
+
+                })
+
+
+
+
+            }
+        });
+}
+
+//OK---------------------------------------------------------------------------------------------------------->>>>>>>>>
+function Init() {
+    getActualSession(function (session) {
+        if (session != undefined) {
+            feltoltesbuttoninit()
+            document.querySelector("#sessionname").value = session.cim;
+            programsrestart(session)
+            sessioncolorinit(session)
+            sessionselectinit()
+            sessionselectfrissitoinit()
+            sessioncimvaltozasinit(session)
+            sessiondeleteinit(session)
+        }
+    })
+}
+
+Init()
