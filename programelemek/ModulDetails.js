@@ -1,4 +1,4 @@
-class Details  {
+class ModulDetails {
     constructor(selectors, beallitasok) {
         /*
         id
@@ -13,62 +13,50 @@ class Details  {
         rang
         datum
         */
+        this.beallitasok = {}
+        this.selectors = {}
+        this.megjegyzeselozoido = 0
+        this.id = ""
 
-        this.data.id = ""
-        this.data.cim = ""
-        this.data.megjegyzes = ""
-        this.data.kategoria = ""
-        this.data.alkategoria = ""
-        this.data.alalkategoria = ""
-        this.data.rang = ""
-        this.data.tipus = ""
-        this.data.allapot = ""
-        this.data.alkotasallapot = ""
-        this.data.datum = ""
-        this.data.sessionid = ""
-        this.data.db = beallitasok.db
-        this.data.db7 = beallitasok.db7
-
-
+        this.beallitasok.db = beallitasok.db
+        this.beallitasok.db7 = beallitasok.db7
         this.beallitasok.htmlpath = beallitasok.htmlpath
         this.beallitasok.automatavalto = beallitasok.automatavalto
         this.beallitasok.detailsboxlathato = beallitasok.detailsboxlathato
 
-        this.selectors.divcontainer = selectors.divcontainer
-        if (beallitasok.divcontainerbebetoltes === true) {
+
+        if (this.beallitasok.divcontainerbebetoltes === true) {
+            this.selectors.divcontainer = selectors.divcontainer
             this.dombetolto()
+        } else {
+
+            this.selectors.urlmezo = selectors.inputtexturlmezo
+            this.selectors.urllogo = selectors.divurllogo
+            this.selectors.cim = selectors.inputtextcim
+            this.selectors.megjegyzes = selectors.textareamegjegyzes
+            this.selectors.kategoria = selectors.inputlistkategoria
+            this.selectors.alkategoria = selectors.inputlistalkategoria
+            this.selectors.alalkategoria = selectors.inputlistalalkategoria
+            this.selectors.tipus = selectors.inputlisttipus
+            this.selectors.allapot = selectors.selectallapot
+            this.selectors.alkotasallapot = selectors.selectalkotasallapot
+            this.selectors.rang = selectors.selectrang
+            this.selectors.datum = selectors.inputtextdatum
+            this.selectors.buttonjegyzet = selectors.buttonjegyzet
+            this.selectors.kategoriadata = selectors.kategoriadata
+            this.selectors.alkategoriadata = selectors.alkategoriadata
+            this.selectors.alalkategoriadata = selectors.alalkategoriadata
+            this.selectors.tipusdata = selectors.tipusdata
+            this.selectors.buttontorles = selectors.buttontorles
+            this.selectors.detailsboxhide = selectors.detailsboxhide
+
+
         }
-        this.selectors.urlmezo = selectors.inputtexturlmezo
-        this.selectors.urllogo = selectors.divurllogo
-        this.selectors.cim = selectors.inputtextcim
-        this.selectors.megjegyzes = selectors.textareamegjegyzes
-        this.selectors.kategoria = selectors.inputlistkategoria
-        this.selectors.alkategoria = selectors.inputlistalkategoria
-        this.selectors.alalkategoria = selectors.inputlistalalkategoria
-        this.selectors.tipus = selectors.inputlisttipus
-        this.selectors.allapot = selectors.selectallapot
-        this.selectors.alkotasallapot = selectors.selectalkotasallapot
-        this.selectors.rang = selectors.selectrang
-        this.selectors.datum = selectors.inputtextdatum
-        this.selectors.buttonjegyzet = selectors.buttonjegyzet
-        this.selectors.kategoriadata = selectors.kategoriadata
-        this.selectors.alkategoriadata = selectors.alkategoriadata
-        this.selectors.alalkategoriadata = selectors.alalkategoriadata
-        this.selectors.tipusdata = selectors.tipusdata
-        this.selectors.buttontorles = selectors.buttontorles
-        this.selectors.detailsboxhide = selectors.detailsboxhide
-
-
         this.init()
-        this.megjegyzeselozoido = 0
     }
 
 
     init() {
-        let self = this
-        let s = this.selectors
-
-this.dombetolto()
         if (this.automatavalto == true) {
             this.tabbetoltindulas()
             this.tabschangeeventlistener()
@@ -90,7 +78,7 @@ this.dombetolto()
             rawFile.onreadystatechange = function () {
                 if (rawFile.readyState === 4) {
                     if (rawFile.status === 200 || rawFile.status == 0) {
-                        document.querySelector(self.divcontainerselector).innerHTML = rawFile.responseText
+                        document.querySelector(self.selectors.divcontainer).innerHTML = rawFile.responseText
                     }
                 }
             }
@@ -100,7 +88,10 @@ this.dombetolto()
 
         readTextFile(self.htmlpath)
     }
+
+//-------------------------------------------------------------------------------------------------------------------OK
     tabbetoltindulas() {
+
         if (this.beallitasok.automatavalto) {
             chrome.tabs.query(
                 {
@@ -108,12 +99,13 @@ this.dombetolto()
                     currentWindow: true
                 },
                 function (tabs) {
-                    frissito(tabs[0])
+                    self.detailsfrissito(tabs[0])
                 }
             )
         }
     }
 
+//-------------------------------------------------------------------------------------------------------------------OK
     tabschangeeventlistener() {
         let self = this
         let s = this.selectors
@@ -148,6 +140,8 @@ this.dombetolto()
     }
 
     detailshideinit() {
+        let s=this.selectors
+        if(document.querySelector(s.detailsboxhide)){
         document.querySelector(s.detailsboxhide).addEventListener("click", function (e) {
             if (self.detailsboxlathato == true) {
                 document.querySelector(s.divcontainer).style.display = "none"
@@ -156,13 +150,20 @@ this.dombetolto()
                 document.querySelector(s.divcontainer).style.display = "block"
                 self.detailsboxlathato = true
             }
-        })
+        })}
     }
 
-    detailsfrissito(id2, Tab, sessionid) {
+    detailsfrissito(id2, Tab) {
         let self = this
         let s = this.selectors
 
+        function seged() {
+            if (adat == "cim") {
+                document.querySelector(s.cim).value = Tab.title
+            } else {
+                document.querySelector(selector).value = ""
+            }
+        }
 
         function adatbeilleszto(selector, adat) {
             if (document.querySelector(selector) && doc) {
@@ -177,22 +178,15 @@ this.dombetolto()
                         document.querySelector(selector).value = doc[adat]
                     }
                 } else if (document.querySelector(selector)) {
-                    if (adat == "cim") {
-                        document.querySelector(s.cim).value = Tab.title
-                    } else {
-                        document.querySelector(selector).value = ""
-                    }
+
+                    seged()
                 }
             } else if (document.querySelector(selector)) {
-                if (adat == "cim") {
-                    document.querySelector(s.cim).value = Tab.title
-                } else {
-                    document.querySelector(selector).value = ""
-                }
+                seged()
             }
         }
 
-        self.data.db.get(id2, function (error, doc) {
+        self.beallitasok.db.get(id2).then(function (doc) {
             adatbeilleszto(s.cim, "cim")
             adatbeilleszto(s.megjegyzes, "megjegyzes")
             adatbeilleszto(s.rang, "rang")
@@ -216,19 +210,23 @@ this.dombetolto()
                     document.querySelector(s.selectors.alkategoria).setAttribute("style", "color:rgb(190, 148, 92); font-size: 14px;font-weight: bold;width:100px")
                     document.querySelector(s.selectors.alalkategoria).setAttribute("style", "color:rgb(190, 148, 92); font-size: 14px;font-weight: bold;width:100px")
                 } else {
-                    if (sessionid) {
-                        self.data.db7.get(sessionid).then(function (doc) {
-                            if (doc.kategoria !== undefined) {
-                                document.querySelector(s.selectors.kategoria).value = doc.kategoria
-                            }
-                            if (doc.alkategoria !== undefined) {
-                                document.querySelector(s.selectors.alkategoria).value = doc.alkategoria
-                            }
-                            if (doc.alalkategoria !== undefined) {
-                                document.querySelector(s.selectors.alalkategoria).value = doc.alalkategoria
-                            }
-                        })
-                    }
+                    getActualSession(function (session) {
+
+                        if (session._id) {
+                            self.beallitasok.db7.get(session._id).then(function (doc) {
+                                if (doc.kategoria !== undefined) {
+                                    document.querySelector(s.selectors.kategoria).value = doc.kategoria
+                                }
+                                if (doc.alkategoria !== undefined) {
+                                    document.querySelector(s.selectors.alkategoria).value = doc.alkategoria
+                                }
+                                if (doc.alalkategoria !== undefined) {
+                                    document.querySelector(s.selectors.alalkategoria).value = doc.alalkategoria
+                                }
+                            })
+                        }
+                    })
+
                     document.querySelector("#kategoria").setAttribute("style", "color:grey; font-size: 14px;width:100px")
                     document.querySelector("#alkategoria").setAttribute("style", "color:grey; font-size: 14px;width:100px")
                     document.querySelector("#alalkategoria").setAttribute("style", "color:grey; font-size: 14px;width:100px")
@@ -238,6 +236,7 @@ this.dombetolto()
     }
 
     inputeventmentoinit() {
+
         let self = this
         let s = this.selectors
 
@@ -250,7 +249,7 @@ this.dombetolto()
                 let alkategoriaseged = document.querySelector(s.alkategoria)
                 let alalkategoriaseged = document.querySelector(s.alalkategoria)
                 let adatok = {}
-                adatok._id = self.data.id
+                adatok._id = self.id
                 adatok[selectortype] = document.querySelector(selector).value
                 if (selectortype !== "cim") {
                     if (cimseged && cimseged.value) {
@@ -268,9 +267,9 @@ this.dombetolto()
                     adatok.alalkategoria = alalkategoriaseged.value
                 }
                 adatok.datum = Date.now()
-                self.db.put(data).catch(function (err) {
+                self.beallitasok.db.put(adatok).catch(function (err) {
                     if (err.name === "conflict") {
-                        db.get(self.data.id).then(function (doc) {
+                        db.get(self.id).then(function (doc) {
                             doc[selectortype] = document.querySelector(selector).value
                             return db.put(doc)
                         })
@@ -281,6 +280,7 @@ this.dombetolto()
 
         /**s 2*/
         function szovegeventlistenerinit(selectortype, selector) {
+
             document.querySelector(selector).addEventListener("keyup", function () {
                 let megjegyzeskovetkezoido = Date.now()
                 self.megjegyzeselozoido = megjegyzeskovetkezoido
@@ -293,7 +293,7 @@ this.dombetolto()
                         let alkategoriaseged = document.querySelector(s.alkategoria)
                         let alalkategoriaseged = document.querySelector(s.alalkategoria)
                         let adatok = {}
-                        adatok._id = self.data.id
+                        adatok._id = self.id
                         adatok[selectortype] = document.querySelector(selector).value
                         if (selectortype !== "cim") {
                             if (cimseged && cimseged.value) {
@@ -312,7 +312,7 @@ this.dombetolto()
                         adatok.datum = Date.now()
                         db.put(adatok).catch(function (err) {
                             if (err.name === "conflict") {
-                                db.get(self.data.id).then(function (doc) {
+                                db.get(self.id).then(function (doc) {
                                     doc[selectortype] = document.querySelector(selector).value
                                     return db.put(doc)
                                 })
@@ -360,7 +360,7 @@ this.dombetolto()
         if (document.querySelector(s.kategoria) && document.querySelector(s.alkategoria) && document.querySelector(s.alalkategoria)) {
             document.querySelector(s.kategoria).addEventListener("mouseover", function () {
                 let kategoriaosszes = []
-                self.data.db.find({
+                self.beallitasok.db.find({
                     selector: {
                         kategoria: {
                             $exists: true
@@ -389,7 +389,7 @@ this.dombetolto()
             })
             document.querySelector(s.alkategoria).addEventListener("mouseover", function () {
                 let alkategoriaosszes = []
-                self.data.db.find({
+                self.beallitasok.db.find({
                     selector: {
                         alkategoria: {
                             $exists: true
@@ -422,7 +422,7 @@ this.dombetolto()
             })
             document.querySelector("alalkategoria").addEventListener("mouseover", function () {
                 let alalkategoriaosszes = []
-                self.data.db.find({
+                self.beallitasok.db.find({
                     selector: {
                         alalkategoria: {
                             $exists: true
@@ -455,45 +455,51 @@ this.dombetolto()
             })
         }
     }
-    tipuslistabetoltoinit(){
-        let s=this.selectors
-    document.querySelector(s.tipus).addEventListener("mouseover", function () {
-        let tipusosszes = []
-        db.find({
-            selector: {
-                tipus: {
-                    $exists: true
-                }
-            },
-            fields: ["tipus"]
-        })
-            .then(function (result) {
-                result.docs.forEach(element => {
-                    element.tipus
-                    tipusosszes.push(element.tipus)
-                })
-                let tipusarray = tipusosszes.filter(function (item, pos) {
-                    return tipusosszes.indexOf(item) == pos
-                })
-                var select = document.querySelector(s.tipusdata)
-                $(s.tipusdata).empty()
-                for (var i = 0; i < tipusarray.length; i++) {
-                    var opt = tipusarray[i]
-                    var el = document.createElement("option")
-                    el.textContent = opt
-                    el.value = opt
-                    select.appendChild(el)
-                }
+
+    tipuslistabetoltoinit() {
+        let s = this.selectors
+        if(document.querySelector(s.tipus)){
+        document.querySelector(s.tipus).addEventListener("mouseover", function () {
+            let tipusosszes = []
+            db.find({
+                selector: {
+                    tipus: {
+                        $exists: true
+                    }
+                },
+                fields: ["tipus"]
             })
-    })}
+                .then(function (result) {
+                    result.docs.forEach(element => {
+                        element.tipus
+                        tipusosszes.push(element.tipus)
+                    })
+                    let tipusarray = tipusosszes.filter(function (item, pos) {
+                        return tipusosszes.indexOf(item) == pos
+                    })
+                    var select = document.querySelector(s.tipusdata)
+                    $(s.tipusdata).empty()
+                    for (var i = 0; i < tipusarray.length; i++) {
+                        var opt = tipusarray[i]
+                        var el = document.createElement("option")
+                        el.textContent = opt
+                        el.value = opt
+                        select.appendChild(el)
+                    }
+                })
+        })
+        }
+
+    }
 
     jegyzetcreateinit() {
         let self = this
         let s = this.selectors
+        if(document.querySelector(s.buttonjegyzet)){
         document.querySelector(s.buttonjegyzet).addEventListener("click", function () {
 
             chrome.windows.getCurrent(function (win) {
-                self.data.db7
+                self.beallitasok.db7
                     .find({
                         selector: {
                             windowid: win.id
@@ -521,19 +527,20 @@ this.dombetolto()
                         }
                         jegyzetadatok.datum = Date.now()
 
-                        self.data.db.put(jegyzetadatok).then(function (doc) {
+                        self.beallitasok.db.put(jegyzetadatok).then(function (doc) {
                             adatbazisboladatfrissito(db, jegyzetadatok._id)
                         })
                     })
             })
-        })
+        })}
     }
 
-    torlesgombinit(sessionid){
-        let self=this
-        let s=this.selectors
+    torlesgombinit() {
+        let self = this
+        let s = this.selectors
+        if(document.querySelector(s.buttontorles)){
         document.querySelector(s.buttontorles).addEventListener("click", function () {
-            self.data.db.get(self.data.id).then(function (doc) {
+            self.beallitasok.db.get(self.id).then(function (doc) {
                 return db.remove(doc)
             })
             setTimeout(() => {
@@ -543,9 +550,11 @@ this.dombetolto()
                         currentWindow: true
                     },
                     function (tabs) {
-                        self.detailsfrissito(Tab.url,Tab,sessionid)
+                        self.detailsfrissito(Tab.url, Tab)
                     }
                 )
             }, 50)
         })}
+
+    }
 }

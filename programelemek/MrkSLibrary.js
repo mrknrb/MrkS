@@ -253,3 +253,23 @@ String.prototype.trunc =
     function (n) {
         return this.length > n ? this.substr(0, n - 1) + "..." : this;
     };
+
+function ranghattergenerator(rang, tipus) {
+    if (tipus == "jegyzet") {
+        return "rgb(193, 132, 243)";
+    } else {
+        if (rang == 1) {
+            return "rgb(255,189,189)";
+        } else if (rang == 2) {
+            return "rgb(255,215,176)";
+        } else if (rang == 3) {
+            return "rgb(255,252,173)";
+        } else if (rang == 4) {
+            return "rgb(221,255,153)";
+        } else if (rang == 5) {
+            return "rgb(204,228,255)";
+        } else {
+            return "#f4f6ff";
+        }
+    }
+}

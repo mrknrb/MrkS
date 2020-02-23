@@ -96,7 +96,7 @@ function programstarter(adatok) {
 
 //OK-----------------------------------------------------------------------------------------
     function programbetolto(program) {
-        let iframehtml = `<iframe src="${program.htmlpath}" sandbox="allow-scripts allow-modals" sessionid="${sessionid}" fileid="${adatok.fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
+        let iframehtml = `<iframe src="${program.htmlpath}" sessionid="${sessionid}" fileid="${adatok.fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
 
         tabcount++
         let tabnumber = tabcount
@@ -424,7 +424,6 @@ function sessionselectfrissitoinit() {
                     }
 
                     function berako(element) {
-                        console.log(element)
                         document
                             .getElementById("sessionselect")
                             .options.add(new Option(element.doc.cim, element.id));

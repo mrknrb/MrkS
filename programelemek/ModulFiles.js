@@ -1,30 +1,34 @@
 class ModulFiles {
 
-    constructor() {
-        this.examplebetoltve = false
-
-
+    constructor(divselector, tableselector, magassag) {
+        this.divselector = divselector
+        this.tableselector = tableselector
+        this.datatablebetoltve = false
+        this.databasemagassag = magassag
         this.kategoriaszuro = undefined;
         this.alkategoriaszuro = undefined;
         this.alalkategoriaszuro = undefined;
+        this.datatablefrissitobetolto()
     }
 
-    adattablafrissitobetolto = function () {
-        let selector = {};
-        selector.datum = {};
+
+    datatablefrissitobetolto() {
+        let self = this
+        let filter = {};
+        filter.datum = {};
         let fields = [];
         fields.push("datum");
-        selector.datum.$gte = null;
-        if (kategoriaszuro != undefined && kategoriaszuro != "") {
-            selector.kategoria = kategoriaszuro;
+        filter.datum.$gte = null;
+        if (self.kategoriaszuro != undefined && self.kategoriaszuro != "") {
+            filter.kategoria = self.kategoriaszuro;
             fields.push("kategoria");
         }
-        if (alkategoriaszuro != undefined && alkategoriaszuro != "") {
-            selector.alkategoria = alkategoriaszuro;
+        if (self.alkategoriaszuro != undefined && self.alkategoriaszuro != "") {
+            filter.alkategoria = self.alkategoriaszuro;
             fields.push("alkategoria");
         }
-        if (alalkategoriaszuro != undefined && alalkategoriaszuro != "") {
-            selector.alalkategoria = alalkategoriaszuro;
+        if (self.alalkategoriaszuro != undefined && self.alalkategoriaszuro != "") {
+            filter.alalkategoria = self.alalkategoriaszuro;
             fields.push("alalkategoria");
         }
 
@@ -35,27 +39,28 @@ class ModulFiles {
         })
             .then(function () {
                 return db.find({
-                    selector: selector,
+                    selector: filter,
                     sort: [{datum: "desc"}]
                 });
             })
             .then(function (result) {
-                if (examplebetoltve == false) {
-                    examplebetolto(result);
+                if (self.datatablebetoltve == false) {
+                    self.datatablebetolto(result);
                 } else {
                     console.log(result);
-                    $("#example")
+                    $(self.tableselector)
                         .dataTable()
                         .fnClearTable();
-                    $("#example")
+                    $(self.tableselector)
                         .dataTable()
                         .fnAddData(result.docs);
                 }
             });
     };
 
-    examplebetolto(result) {
-        self = this
+    datatablebetolto(result) {
+
+        let self = this
         let columns = [];
         let columndefs = [];
         let szuro = [];
@@ -194,10 +199,10 @@ class ModulFiles {
             order = [[11, "desc"]];
         }
 
-        examplebetoltve = true;
+        self.datatablebetoltve = true;
         // Setup - add a text input to each footer cell
         $(document).ready(function () {
-            $("#example").DataTable({
+            $(self.tableselector).DataTable({
                 initComplete: function () {
                     this.api()
                         .columns([4, 5, 6])
@@ -216,30 +221,30 @@ class ModulFiles {
                                     console.log("val:", val);
                                     if (e == 4) {
                                         if (val != undefined) {
-                                            kategoriaszuro = val;
-                                            alkategoriaszuro = "";
-                                            alalkategoriaszuro = "";
+                                            self.kategoriaszuro = val;
+                                            self.alkategoriaszuro = "";
+                                            self.alalkategoriaszuro = "";
                                         }
                                     } else if (e == 5) {
                                         if (val != undefined) {
-                                            alkategoriaszuro = val;
-                                            alalkategoriaszuro = "";
+                                            self.alkategoriaszuro = val;
+                                            self.alalkategoriaszuro = "";
                                         }
                                     } else if (e == 6) {
                                         if (val != undefined) {
-                                            alalkategoriaszuro = val;
+                                            self.alalkategoriaszuro = val;
                                         }
                                     }
-                                    adattablafrissitobetolto();
+                                    datatablefrissitobetolto();
                                 });
 
                             select.on("mouseover", function () {
                                 if (e == 4) {
-                                    kategoriadropdownfrissito();
+                                    self.kategoriadropdownfrissito();
                                 } else if (e == 5) {
-                                    alkategoriadropdownfrissito();
+                                    self.alkategoriadropdownfrissito();
                                 } else if (e == 6) {
-                                    alalkategoriadropdownfrissito();
+                                    self.alalkategoriadropdownfrissito();
                                 }
                             });
                         });
@@ -249,29 +254,14 @@ class ModulFiles {
                     szuromentesebutton.onclick = function (params) {
                         var column = this;
 
-                        ModulSessions.sessionkategoriamento(self.kategoriaszuro, self.alkategoriaszuro, self.alalkategoriaszuro)
+                        self.sessionkategoriamento(self.kategoriaszuro, self.alkategoriaszuro, self.alalkategoriaszuro)
                     };
                     szuromentesebutton.id = "szuromentesebutton";
                     document
-                        .querySelector("#exampletablediv")
+                        .querySelector(self.divselector)
                         .insertAdjacentElement("afterbegin", szuromentesebutton);
 
-                    let tabstablelathatosagbutton = document.createElement("button");
-                    tabstablelathatosagbutton.type = "button";
-                    tabstablelathatosagbutton.innerText = "TabsTable Hide";
-                    tabstablelathatosagbutton.onclick = function (params) {
-                        if (tabstablelathato == true) {
-                            document.querySelector("#tabstablediv").style.display = "none";
-                            tabstablelathato = false;
-                        } else {
-                            document.querySelector("#tabstablediv").style.display = "block";
-                            tabstablelathato = true;
-                        }
-                    };
-                    tabstablelathatosagbutton.id = "tabstablelathatosagbutton";
-                    document
-                        .querySelector("#exampletablediv")
-                        .insertAdjacentElement("afterbegin", tabstablelathatosagbutton);
+
                 },
                 deferRender: true,
                 scroller: {
@@ -279,7 +269,7 @@ class ModulFiles {
                     loadingIndicator: true,
                     boundaryScale: 0.5
                 },
-                scrollY: databasemagassag,
+                scrollY: self.databasemagassag,
                 searching: false,
                 ordering: false,
                 paging: true, //kell a scrollerhez
@@ -535,7 +525,7 @@ class ModulFiles {
             }
             row.setAttribute(
                 "style",
-                "background-color:" + kartyahattergenerator(element.rang)
+                "background-color:" + ranghattergenerator(element.rang)
             );
 
             row.addEventListener("click", function () {
@@ -559,4 +549,25 @@ class ModulFiles {
             });
         }
     };
+
+    sessionkategoriamento(kategoriaszuro, alkategoriaszuro, alalkategoriaszuro) {
+
+        getActualSession(function (session) {
+
+            db7.get(session._id).then(function (doc) {
+                if (kategoriaszuro !== "-1") {
+                    doc.kategoria = kategoriaszuro;
+                }
+                if (alkategoriaszuro !== "-1") {
+                    doc.alkategoria = alkategoriaszuro;
+                }
+                if (alalkategoriaszuro !== "-1") {
+                    doc.alalkategoria = alalkategoriaszuro;
+                }
+                return db7.put(doc);
+            });
+
+        })
+
+    }
 }

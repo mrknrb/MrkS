@@ -241,6 +241,7 @@ if (eszkozdetektalo() == "sidebar") {
             return false;
         }
     }
+
 //* nincs használatban*/
     function windowszuro(tabs) {
         let a = false;
@@ -265,26 +266,6 @@ if (eszkozdetektalo() == "sidebar") {
         return a;
     }
 
-    chrome.tabs.onRemoved.addListener(function (tabid, removeInfo) {
-        if (removeInfo.isWindowClosing == false) {
-            db7
-                .find({
-                    selector: {
-                        windowid: removeInfo.windowId
-                    }
-                })
-                .then(function (result) {
-                    result.docs[0].tabs.forEach(function (element, index) {
-                        if (element.tabid == tabid) {
-                            db7.get(result.docs[0]._id).then(function (doc) {
-                                doc.tabs.splice(index, 1);
-                                return db7.put(doc);
-                            });
-                        }
-                    });
-                });
-        }
-    });
     function ismeretlenablakkezelo(openwin) {
         db7.get("jegyz0e9ad149-49a1-76e7-c1d8-f37bf0d0956b").then(function (doc) {
 
@@ -307,7 +288,7 @@ if (eszkozdetektalo() == "sidebar") {
                         doc.windowid = openwin.id;
                         return db7.put(doc);
 
-                    } else  {
+                    } else {
 
 
                         db7
@@ -327,6 +308,7 @@ if (eszkozdetektalo() == "sidebar") {
 
         });
     }
+
     chrome.windows.onRemoved.addListener(function (windowid) {
         db7
             .find({
@@ -345,84 +327,156 @@ if (eszkozdetektalo() == "sidebar") {
 
     })
 
-    function start3() {
-        console.log("allDocs:", "allDocs");
+    chrome.tabs.onRemoved.addListener(function (tabid, removeInfo) {
+        if (removeInfo.isWindowClosing == false) {
+            db7
+                .find({
+                    selector: {
+                        windowid: removeInfo.windowId
+                    }
+                })
+                .then(function (result) {
+                    result.docs[0].tabs.forEach(function (element, index) {
+                        if (element.tabid == tabid) {
+                            db7.get(result.docs[0]._id).then(function (doc) {
+                                doc.tabs.splice(index, 1);
+                                return db7.put(doc);
+                            });
+                        }
+                    });
+                });
+        }
+    });
+
+    function elsoindulasellenorzo() {
+
+
+    }
+
+    function start5() {
+
         db7
             .allDocs({
                 include_docs: true,
                 attachments: true
             })
             .then(function (mentwins) {
-                console.log("mentwins:", mentwins);
                 chrome.windows.getAll(
                     {
                         populate: true
                     },
                     function (openwins) {
-                        console.log(openwins);
                         openwins.forEach(openwin => {
-                            let nincsilyenwindow = 0;
+                            let nincsilyenwindow = 0
                             mentwins.rows.forEach(mentwin => {
                                 if (openwin.id == mentwin.doc.windowid) {
-                                    nincsilyenwindow = 1;
+                                    nincsilyenwindow = 1
                                     db7.get(mentwin.id).then(function (doc) {
-                                        openwin.tabs.forEach(function (opentab) {
-                                            let nincsbenneawindowban = 0;
-                                            mentwin.doc.tabs.forEach(function (mentab, i) {
-                                                if (opentab.id == mentab.tabid) {
-                                                    // console.log("mentab.tabid:", mentab.tabid);
-                                                    // console.log("  opentab.id:",   opentab.id);
+                                        //---------------------------------------------------------------------------
+                                        let tortentvaltozas = false
+                                        let menttabsarray = doc.tabs
 
-                                                    nincsbenneawindowban = 1;
-                                                    if (opentab.index != mentab.index) {
-                                                        doc.tabs[i].index = opentab.index;
+                                        openwin.tabs.forEach(function (opentab) {
+                                            let nincsbenneawindowban = 0
+                                            doc.tabs.forEach(function (menttab, i) {
+                                                if (opentab.id == menttab.tabid) {
+                                                    // ----------------------------------------------------ha az openwin benne van a mentwinben
+                                                    nincsbenneawindowban = 1
+
+                                                    if (opentab.title != menttab.cim) {
+                                                        tortentvaltozas = true
+
+                                                        doc.tabs[i].cim = opentab.title
                                                     }
-                                                    if (opentab.cim != mentab.cim) {
-                                                        doc.tabs[i].cim = opentab.title;
-                                                    }
-                                                    if (opentab.url != mentab.url) {
-                                                        doc.tabs[i].url = opentab.url;
+                                                    if (opentab.url != menttab.url) {
+                                                        tortentvaltozas = true
+
+                                                        doc.tabs[i].url = opentab.url
                                                     }
                                                 }
-                                                doc.tabs[i].lastopen = Date();
-                                            });
+                                            })
+
+
                                             if (nincsbenneawindowban == 0 && tabszuro(opentab.url)) {
-                                                // console.log("nincsbenneawindowban:", nincsbenneawindowban);
+                                                //------------------------------------------------------- ha az openwin, nincs benne a mentwinben
+
+                                                tortentvaltozas = true
+
                                                 doc.tabs.push({
                                                     id: jegyzetguidGenerator(),
                                                     tabid: opentab.id,
                                                     url: opentab.url,
                                                     cim: opentab.title,
-                                                    datum: Date(),
-                                                    index: opentab.index,
-                                                    lastopen: Date()
+                                                    datum: Date()
                                                 });
                                             }
+
+
                                         });
-                                        return db7.put(doc);
+
+                                        doc.tabs.forEach(function (menttab, i) {
+                                            let megnyitva=false
+                                            openwin.tabs.forEach(function (opentab) {
+                                            if (opentab.id == menttab.tabid) {
+                                                megnyitva=true
+                                            }
+                                        })
+                                            if(megnyitva==false){
+
+                                                if (menttab.tabid != -1) {
+                                                    doc.tabs[i].tabid = -1
+                                                    tortentvaltozas = true
+                                                    console.log( "csakment")
+                                                }
+
+                                            }
+                                        })
+
+                                        /*
+                                        menttabsarray.forEach(function (menttab, i) {
+                                            //--------------------------------------------------------ha menttab nincs megnyitva
+
+
+
+                                            if (menttab.megnyitva !==true ) {
+
+                                                if (menttab.tabid != -1) {
+                                                    doc.tabs[i].tabid = -1
+                                                    tortentvaltozas = true
+
+                                                }
+
+                                            }
+                                        }) */
+
+                                       console.log( tortentvaltozas)
+                                        if (tortentvaltozas) {
+                                            console.log(doc)
+                                            return db7.put(doc);
+                                        }
+                                //------------------------------------------------------------------------------------------------------------------------------------------------------
                                     });
                                 }
                             });
-
                             if (nincsilyenwindow == 0) {
-
                                 ismeretlenablakkezelo(openwin)
-
-
                             }
-
-
                         });
                     }
                 );
             });
-        setTimeout(start3, 10000);
+        setTimeout(start5, 10000);
     }
 
+    setTimeout(() => {
+        start5();
+    }, 10000);
+
 //todo ez miért is jó?
+    /*
     setTimeout(() => {
         start3();
-    }, 10000);
+    }, 10000);*/
 
 
     chrome.windows.onCreated.addListener(function (openwin) {

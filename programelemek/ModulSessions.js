@@ -1,413 +1,250 @@
-class Sessions {
-    constructor(selectors) {
-        let s = this.selectors
+class ModulSessions {
+    constructor(sessionselectors, beallitasok) {
 
-        s.sessionid = undefined
+        this.divselector = sessionselectors.divselector
+        this.tableselector = sessionselectors.tableselector
+
+        this.databasemagassag = beallitasok.magassag
+        this.sessionid = ""
         this.pageScrollPos = 0;
 
-        this.sessionaktualis = sessioncimkiiras;
-        this.sessionciminputtextselector = document.querySelector(
-            sessionciminputtextselector
-        );
         this.initfirstwindow()
 
-        this.eszkoz = MrkLibrary.eszkozdetektalo();
+        this.eszkoz = eszkozdetektalo();
         if (this.eszkoz == "sidebar") {
             this.tabeventsinit()
         }
-        this.tabstablelathato = true;
-
-        this.kategoriaszuro = undefined;
-        this.alkategoriaszuro = undefined;
-        this.alalkategoriaszuro = undefined;
+        this.sessionslathato = true;
 
         this.aktivwindowid = 0;
         this.aktivsessionid = 0
+this.elozorowseged
     }
 
     initfirstwindow() {
         let self = this
 
 //todo nem torli a mobilon az adatot(nem jön fel a confirm)
-        function vegyesbetolto() {
+        getActualSession(function (session) {
 
-            db7
-                .find({
-                    selector: {
-                        _id: "jegyz0e9ad149-49a1-76e7-c1d8-f37bf0d0956b"
-                    }
-                })
-                .then(function (result) {
-                    sessionname.value = result.docs[0].cim;
-                    if (eszkoz != "android") {
-                        chrome.windows.getCurrent(
-                            {
-                                populate: true
-                            },
-                            function (win) {
-                                db7.get(result.docs[0]._id).then(function (doc) {
-                                    doc.windowid = win.id;
-                                    return db7.put(doc);
-                                });
 
-                                sessiondelete(win, result);
-                                sessioncimvaltozas();
-                                sessioncolor(result);
-                                sessiontabsfrissito();
-                                adattablafrissitobetolto();
-                            }
-                        );
-                    } else {
-                        self.aktivwindowid = result.docs[0].windowid;
-                        sessioncimvaltozas();
-                        sessioncolor(result);
-                        sessiontabsfrissito();
-                        adattablafrissitobetolto();
-                    }
-                });
-        }
-
-        if (eszkoz != "android") {
-            chrome.windows.getCurrent(
-                {
-                    populate: true
-                },
-                function (win) {
-                    db7
-                        .find({
-                            selector: {
-                                windowid: win.id
-                            }
-                        })
-                        .then(function (result) {
-                            if (result == undefined || result.docs[0] == undefined) {
-                                vegyesbetolto();
-                            } else {
-                                sessionname.value = result.docs[0].cim;
-                                sessiondelete(win, result);
-                                sessioncimvaltozas();
-                                sessioncolor(result);
-                                self.kategoriaszuro = result.docs[0].kategoria;
-                                self.alkategoriaszuro = result.docs[0].alkategoria;
-                                self.alalkategoriaszuro = result.docs[0].alalkategoria;
-                                adattablafrissitobetolto();
-                            }
-
-                            //a window cím mező, ha megváltozik, akkor azt mentse a megfelelő winidre pipa
-                        });
-                }
-            );
-        } else {
-            vegyesbetolto();
-        }
-    }
-
-    kartyahattergenerator(rang, tipus) {
-        if (tipus == "jegyzet") {
-            return "rgb(193, 132, 243)";
-        } else {
-            if (rang == 1) {
-                return "rgb(255,189,189)";
-            } else if (rang == 2) {
-                return "rgb(255,215,176)";
-            } else if (rang == 3) {
-                return "rgb(255,252,173)";
-            } else if (rang == 4) {
-                return "rgb(221,255,153)";
-            } else if (rang == 5) {
-                return "rgb(204,228,255)";
-            } else {
-                return "#f4f6ff";
-            }
-        }
+        })
+        this.sessiontableinit()
     }
 
 
     sessiontableinit() {
-        let pageScrollPos=0
-        $(document).ready(function () {
-            // Setup - add a text input to each footer cell
-            $("#tabstable").DataTable({
-                initComplete: function () {
-                    let tabsfrissitobutton = document.createElement("button");
-                    tabsfrissitobutton.type = "button";
-                    tabsfrissitobutton.innerText = "Frissites";
-                    tabsfrissitobutton.onclick = function (params) {
-                        sessiontabsfrissito();
-                        adattablafrissitobetolto();
-                    };
-                    tabsfrissitobutton.id = "tabsfrissitobutton";
-                    document
-                        .querySelector("#tabstable_filter")
-                        .appendChild(tabsfrissitobutton);
-                    sessiontabsfrissito();
-                },
-                // 'div.dataTables_scrollBody'
-                preDrawCallback: function (settings) {
-                    pageScrollPos = $("#tabstable")
-                        .parent()
-                        .scrollTop();
-                },
-                drawCallback: function (settings) {
-                    $("#tabstable")
-                        .parent()
-                        .scrollTop(pageScrollPos);
-                    //$('#tabstable_wrapper').css('height', '400px')
-                },
-                searching: true,
-                orderCellsTop: true,
-                fixedHeader: true,
-                fixedFooter: true,
-                scrollY: tabstablemagassag,
-                scrollCollapse: true,
-                paging: false,
-                info: false,
-                ordering: false,
-                contentPadding: "iii",
-                data: sessiontabsfrissito(1),
-                columns: [
-                    {
-                        title: "I",
-                        defaultContent: ""
-                    },
-                    {
-                        title: "Cim",
-                        defaultContent: ""
-                    },
-                    {
-                        title: "Date",
-                        defaultContent: ""
-                    },
-                    {
-                        title: "UNL",
-                        defaultContent: "//"
-                    },
-                    {
-                        title: "X",
-                        defaultContent: "×"
-                    }
-                ],
-                createdRow: function (row, data, dataIndex) {
-                    if (row.querySelector(".mentettlist") == undefined) {
-                        row.setAttribute(
-                            "tabid",
-                            row.querySelector(".tabslist").getAttribute("tabid")
-                        );
-                        row.setAttribute("class2", "tabssorok");
+        let self = this
+        this.sessiontabsdata(function (adatok) {
 
-                        row
-                            .querySelector(".tabslist")
-                            .parentElement.addEventListener("click", function () {
-                            let tabind = parseInt(
-                                row.querySelector(".tabslist").getAttribute("tabid")
-                            );
-                            chrome.tabs.get(tabind, function (Tab, tab) {
-                                chrome.tabs.highlight(
-                                    {
-                                        tabs: Tab.index
-                                    },
-                                    function () {
-                                    }
-                                );
-                            });
-                        });
-                    } else {
-                        let tabind = row
-                            .querySelector(".mentettlist")
-                            .getAttribute("tabidchrome");
-                        if (tabind == "-1") {
-                            row.setAttribute("style", "background-color:grey");
-                        } else {
-                            row.setAttribute("style", "background-color:rgb(160, 160, 160)");
+            let pageScrollPos = 0
+            $(document).ready(function () {
+                // Setup - add a text input to each footer cell
+                $(self.tableselector).DataTable({
+                    initComplete: function () {
+                        let tabsfrissitobutton = document.createElement("button");
+                        tabsfrissitobutton.type = "button";
+                        tabsfrissitobutton.innerText = "Frissites";
+                        tabsfrissitobutton.onclick = function (params) {
+                            self.tabstablefrissito();
+                        };
+                        tabsfrissitobutton.id = "tabsfrissitobutton";
+                        document
+                            .querySelector(`${self.tableselector}_filter`)
+                            .appendChild(tabsfrissitobutton);
+                        self.tabstablefrissito();
+                    },
+                    // 'div.dataTables_scrollBody'
+                    preDrawCallback: function (settings) {
+                        pageScrollPos = $(self.tableselector)
+                            .parent()
+                            .scrollTop();
+                    },
+                    drawCallback: function (settings) {
+                        $(self.tableselector)
+                            .parent()
+                            .scrollTop(pageScrollPos);
+                        //$('#tabstable_wrapper').css('height', '400px')
+                    },
+                    searching: true,
+                    orderCellsTop: true,
+                    fixedHeader: true,
+                    fixedFooter: true,
+                    scrollY: tabstablemagassag,
+                    scrollCollapse: true,
+                    paging: false,
+                    info: false,
+                    ordering: false,
+                    contentPadding: "iii",
+                    data: adatok,
+                    columns: [
+                        {
+                            title: "I",
+                            defaultContent: ""
+                        },
+                        {
+                            title: "Cim",
+                            defaultContent: ""
+                        },
+                        {
+                            title: "Date",
+                            defaultContent: ""
                         }
+                    ],
+                    createdRow: function (row, data, dataIndex) {
 
-                        // console.log("tabind:", tabind);
-                        row
-                            .querySelector(".mentettlist")
-                            .parentElement.addEventListener("click", function () {
-                            let tabind2 = row
-                                .querySelector(".mentettlist")
-                                .getAttribute("tabid");
-                            let windowid = row
-                                .querySelector(".mentettlist")
-                                .getAttribute("windowid");
-                            chrome.tabs.create(
-                                {
-                                    url: row.querySelector(".mentettlist").getAttribute("taburl")
-                                },
-                                function (tab) {
-                                    db7.get(windowid).then(function (doc) {
-                                        doc.tabs.forEach(menttab => {
-                                            if (menttab.id == tabind2) {
-                                                menttab.tabid = tab.id;
-                                            }
-                                        });
-                                        return db7.put(doc);
-                                    });
-                                }
-                            );
-                        });
-                    }
-
-                    if (row.querySelector(".mentetttorlo") == undefined) {
-                        row
-                            .querySelector(".tabsbezaro")
-                            .parentElement.addEventListener("click", function () {
-                            let tabid = row.getAttribute("tabid");
-                            let tabid2 = parseInt(tabid);
-                            chrome.tabs.remove(tabid2, function () {
-                            });
-                            row.remove();
-                        });
-                    } else {
-                        row
-                            .querySelector(".mentetttorlo")
-                            .parentElement.addEventListener("click", function () {
-                            console.log("row:", row);
-                            console.log(
-                                'row.querySelector(".mentettlist"):',
-                                row.querySelector(".mentettlist")
-                            );
-                            let windowid = row
-                                .querySelector(".mentettlist")
-                                .getAttribute("windowid");
-                            let tabind2 = row
-                                .querySelector(".mentettlist")
-                                .getAttribute("tabid");
-                            db7.get(windowid).then(function (doc) {
-                                doc.tabs.forEach(function (menttab, index) {
-                                    if (menttab.id == tabind2) {
-                                        doc.tabs.splice(index, 1);
-                                        return db7.put(doc);
-                                    }
-                                });
-
-                                sessiontabsfrissito();
-                            });
-                        });
-                    }
-                    if (row.querySelector(".tabsunload") != undefined) {
-                        row
-                            .querySelector(".tabsunload")
-                            .parentElement.addEventListener("click", function () {
-                            console.log(":", "mukodik");
-                            let windowid = 0;
-                            if (eszkoz != "android") {
-                                windowid = row
-                                    .querySelector(".tabslist")
-                                    .getAttribute("windowid");
-                            } else {
-                                windowid = aktivwindowid;
-                            }
-
-                            let tabind2 = row.querySelector(".tabslist").getAttribute("tabid");
-                            let tabtitle = row.querySelector(".tabslist").innerText;
-                            let taburl = row.querySelector(".tabslist").getAttribute("taburl");
-                            //   console.log("windowid:", windowid);
-
-                            // console.log("tabind2:", tabind2);
-
-                            db7
-                                .find({
-                                    selector: {
-                                        windowid: parseInt(windowid)
-                                    }
-                                })
-                                .then(function (mentwin) {
-                                    db7
-                                        .get(mentwin.docs[0]._id)
-                                        .then(function (doc) {
-                                            if (eszkoz != "android") {
-                                                doc.tabs.forEach(function (menttab, index) {
-                                                    if (menttab.tabid == tabind2) {
-                                                        console.log("tabind2:", tabind2);
-                                                        console.log("menttab.id:", menttab.tabid);
-
-                                                        console.log("doc:", doc);
-                                                        doc.tabs[index].tabid = -1;
-                                                        console.log("doc:", doc);
-                                                        return db7.put(doc);
-                                                    }
-                                                });
-                                            } else {
-                                                row
-                                                    .querySelector(".tabsunload")
-                                                    .setAttribute(
-                                                        "style",
-                                                        "background-color:black;font-style:bold"
-                                                    );
-                                                doc.tabs.push({
-                                                    id: guidGenerator(),
-                                                    tabid: -1,
-                                                    url: taburl,
-                                                    cim: tabtitle,
-                                                    datum: Date(),
-                                                    index: 0,
-                                                    lastopen: Date()
-                                                });
-                                                return db7.put(doc);
-                                            }
-                                        })
-                                        .then(function (doc) {
-                                            if (eszkoz != "android") {
-                                                chrome.tabs.remove(
-                                                    parseInt(
-                                                        row.querySelector(".tabslist").getAttribute("tabid")
-                                                    ),
-                                                    function () {
-                                                    }
-                                                );
-                                            }
-
-                                            sessiontabsfrissito();
-                                        });
-                                });
-                        });
-                    }
-                    if (
-                        row.querySelector(".tabsunloadmentett") != undefined &&
-                        row.querySelector(".mentettlist") != undefined
-                    ) {
-                        row
-                            .querySelector(".tabsunloadmentett")
-                            .parentElement.addEventListener("click", function () {
-                            console.log(":", "mukodik");
-
-                            let windowid = row
-                                .querySelector(".mentettlist")
-                                .getAttribute("windowid");
-                            let tabind2 = row
-                                .querySelector(".mentettlist")
-                                .getAttribute("tabid");
-                            //   console.log("windowid:", windowid);
-
-                            // console.log("tabind2:", tabind2);
-
-                            db7
-                                .get(windowid)
-                                .then(function (doc) {
-                                    doc.tabs.forEach(function (menttab, index) {
-                                        if (menttab.id == tabind2) {
-                                            doc.tabs[index].tabid = -1;
-                                            return db7.put(doc);
-                                        }
-                                    });
-                                })
-                                .then(function (doc) {
-                                    sessiontabsfrissito();
-                                });
-                        });
-                    }
-                },
-                columnDefs: [
-                    {
-                        width: "90%",
-                        targets: [1]
-                    }
-                ]
+                        self.rowadatbeilleszto(row, data, dataIndex)
+                    },
+                    columnDefs: [
+                        {
+                            width: "90%",
+                            targets: [1]
+                        }
+                    ]
+                });
+                self.tabkijelolo();
             });
-            tabkijelolo();
-        });
+        })
+    }
+
+    rowadatbeilleszto(row, data, dataIndex) {
+        if (data.active) {
+            row.style.backgroundColor = "#a0bdd8"
+            self.elozorowseged=row
+        } else if (data.opened) {
+            row.style.backgroundColor = "#d1c9d8"
+        } else {
+            row.style.backgroundColor = "#888785"
+        }
+        //gyorsabban vált a kijelölésnél
+        if (data.opened) {
+            let col2 = row.querySelectorAll("td");
+            col2[1].addEventListener("click", function (e) {
+                self.elozorowseged.style.backgroundColor = "#d1c9d8"
+                row.style.backgroundColor = "#a0bdd8"
+
+            })
+
+        }
+        //--------------------------------------------szinezo
+        let icon = `<img src="https://www.google.com/s2/favicons?domain=${data.url}" width="16" height="16" class="datafavicon">`
+        //--------------------------
+        if (data.opened) {
+        }
+        let cim2 = "";
+        if (data.cim !== undefined && data.cim !== null) {
+            cim2 = data.cim.trunc(110);
+        }
+        let cim3 = document.createElement("b")
+        if (data.opened == false) {
+            cim3.style.color = "white"
+        }
+        cim3.innerText = cim2
+        //--------------------------
+        let datum = datumkora(data.datum, "days");
+        let datum2 = document.createElement("b")
+        datum2.innerText = datum
+        //--------------------------------------------
+        let col = row.querySelectorAll("td");
+        col[0].innerHTML = icon;
+        col[1].appendChild(cim3)
+        col[2].appendChild(datum2)
+        if (data.opened && eszkoz == "android") {
+            col[0].addEventListener("click", function (e) {
+
+                getActualSession(function (session) {
+
+                    db7.get(session._id).then(function (doc) {
+                    doc.tabs.push({
+                        id: jegyzetguidGenerator(),
+                        tabid: data.tabid,
+                        url: data.url,
+                        cim: data.cim,
+                        datum: Date()
+                    });
+                        return db7.put(doc);
+                    })
+                })
+
+
+            })
+        } else if (data.opened) {
+            col[0].addEventListener("click", function (e) {
+                getActualSession(function (session) {
+                    db7.get(session._id).then(function (doc) {
+
+                        doc.tabs.forEach(function (tab, i) {
+                            if (data.id == tab.id) {
+                              doc.tabs[i].tabid = -1
+                            }
+                        })
+
+
+                        return db7.put(doc);
+                    }).then(function (d) {
+                        chrome.tabs.remove(data.tabid,
+                            function() {}
+                        );
+                    })
+                })
+            })
+        }
+        if (data.opened) {
+            col[1].addEventListener("click", function (e) {
+                chrome.tabs.get(data.tabid, function(Tab, tab) {
+                    chrome.tabs.highlight(
+                        {
+                            tabs: Tab.index
+                        },
+                        function() {}
+                    );
+                });
+            })
+        } else {
+            col[1].addEventListener("click", function (e) {
+                getActualSession(function () {
+                    chrome.tabs.create(
+                        {
+                            url: data.url
+                        },
+                        function(tab) {
+                            db7.get(session.id).then(function(doc) {
+                                doc.tabs.forEach(function (menttab, i) {
+                                    if (menttab.id == data.id) {
+                                        tabs[i].tabid = tab.id;
+                                        tabs[i].datum = Date()
+                                    }
+                                });
+                                return db7.put(doc);
+                            });
+                        }
+                    );
+                })
+            })
+        }
+        if (data.opened) {
+            col[2].addEventListener("click", function (e) {
+                chrome.tabs.remove(data.tabid, function() {});
+                row.remove();
+            })
+        } else {
+            col[2].addEventListener("click", function (e) {
+                getActualSession(function (session) {
+                    db7.get(session._id).then(function(doc) {
+                        doc.tabs.forEach(function(menttab, index) {
+                            if (menttab.id == data.id) {
+                                doc.tabs.splice(index, 1);
+                                return db7.put(doc);
+                            }
+                        });
+                        row.remove();
+                    });
+                })
+
+
+
+            })
+        }
     }
 
     tabkijelolo() {
@@ -426,9 +263,61 @@ class Sessions {
         );
     };
 
-    sessiontabsfrissito(elso = 0) {
+    sessiontabsdata(callback) {
+        getActualSession(function (session) {
+            chrome.windows.getCurrent(
+                {
+                    populate: true
+                },
+                function (window) {
+                    console.log(window)
+                    let adatok = []
+                    let adatokseged = []
+                    window.tabs.forEach(function (opentab) {
+                        let adat = {}
+                        adat.active = opentab.active
+                        adat.opened = true
+                        adat.tabid = opentab.id
+                        adat.url = opentab.url
+                        adat.cim = opentab.title
+                        adatok.push(adat)
+                    })
+                    session.tabs.forEach(function (mentab) {
+                        //az ilyen for olyan, mint a foreach, de van break
+                        let opened = false
+                        let adatokindex = -1
+                        for (let adat of adatok) {
+                            adatokindex++
+                            if (mentab.tabid == adat.tabid) {
+                                opened = true
+                                break
+                            }
+                        }
+                        if (opened == true) {
+                            adatok[adatokindex].id = mentab.id
+                            adatok[adatokindex].datum = mentab.datum
+                        } else {
+                            let adat = {}
+                            adat.opened = false
+                            adat.id = mentab.id
+                            adat.url = mentab.url
+                            adat.cim = mentab.cim
+                            adat.datum = mentab.datum
+                            adatokseged.unshift(adat)
+                        }
+                    })
+                    let adatok2 = adatok.concat(adatokseged)
+                    callback(adatok2)
+
+
+                })
+        })
+    }
+
+    tabsadatgeneralo(elso = 0) {
         let tabsadatok = [];
 
+        //-----------------------------------------------------------------------------------------------------------------
         chrome.windows.getCurrent(
             {
                 populate: true
@@ -448,7 +337,6 @@ class Sessions {
                         }
                     })
                     .then(function (mentwin) {
-                        //console.log("mentwin:", mentwin);
                         let tabsadatokopen = [];
                         let tabsadatokhagyott = [];
                         let tabsadatokmentett = [];
@@ -515,90 +403,87 @@ class Sessions {
                             tabsadatokopen.push([i, cim3, datum, unload, bezaras, element.url]);
                         });
 
-                        tabsadatok = tabsadatokopen.concat(
-                            tabsadatokhagyott.concat(tabsadatokmentett)
+                        tabsadatok = tabsadatokopen.concat(tabsadatokhagyott.concat(tabsadatokmentett)
                         );
 
                         //console.log("tabsadatok:", tabsadatok);
+                        return tabsadatok;
 
-                        if (elso == 1) {
-                            return tabsadatok;
-                        } else {
-                            $("#tabstable")
-                                .DataTable()
-                                .clear();
-                            // console.log("tabsadatok:", tabsadatok);
-                            $("#tabstable")
-                                .DataTable()
-                                .rows.add(tabsadatok); // Add new data
-                            $("#tabstable")
-                                .DataTable()
-                                .columns.adjust()
-                                .draw();
-                            tabkijelolo();
-                            setTimeout(() => {
-                                if (
-                                    document.querySelector("#tabstablediv .dataTables_empty") !=
-                                    null
-                                ) {
-                                    sessiontabsfrissito();
-                                } else {
-                                }
-                            }, 1000);
-                        }
                     });
             }
         );
     }
 
+    tabstablefrissito() {
+        let self = this
+        this.sessiontabsdata(function (adatok) {
+
+            $(self.tableselector)
+                .DataTable()
+                .clear();
+            // console.log("tabsadatok:", tabsadatok);
+            $(self.tableselector)
+                .DataTable()
+                .rows.add(adatok); // Add new data
+            $(self.tableselector)
+                .DataTable()
+                .columns.adjust()
+                .draw();
+            self.tabkijelolo();
+            setTimeout(() => {
+                if (
+                    document.querySelector(self.divselector + " .dataTables_empty") !=
+                    null
+                ) {
+                    this.tabstablefrissito();
+                } else {
+                }
+            }, 1000);
+
+
+        })
+    }
+
     tabeventsinit() {
+        let self = this
         chrome.tabs.onActivated.addListener(function (tabId, ChangeInfo) {
             setTimeout(() => {
-                sessiontabsfrissito();
+                self.tabstablefrissito();
             }, 50);
         });
         chrome.tabs.onCreated.addListener(function (tabId, ChangeInfo) {
             setTimeout(() => {
-                sessiontabsfrissito();
+                self.tabstablefrissito();
             }, 200);
             setTimeout(() => {
-                sessiontabsfrissito();
+                self.tabstablefrissito();
             }, 500);
         });
 
         chrome.tabs.onRemoved.addListener(function (tabid, removeInfo) {
-            sessiontabsfrissito();
+            self.tabstablefrissito();
 
             setTimeout(() => {
-                sessiontabsfrissito();
+                self.tabstablefrissito();
             }, 500);
             setTimeout(() => {
-                sessiontabsfrissito();
+                self.tabstablefrissito();
             }, 1000);
         });
 
     }
 
-    sessionkategoriamento(kategoriaszuro, alkategoriaszuro, alalkategoriaszuro, sessionidnemkot) {
-        let sessionidseg = this.aktivsessionid
-        if (sessionidnemkot !== undefined) {
-            sessionidseg = sessionidnemkot
+    setsessionstablevisibility() {
+        let self = this
+
+        if (self.sessionslathato == true) {
+            document.querySelector(self.divselector).style.display = "none";
+            self.sessionslathato = false;
+        } else {
+            document.querySelector(self.divselector).style.display = "block";
+            self.sessionslathato = true;
         }
-        db7.get(sessionidseg).then(function (doc) {
-            if (kategoriaszuro !== "-1") {
-                doc.kategoria = kategoriaszuro;
-            }
-            if (alkategoriaszuro !== "-1") {
-                doc.alkategoria = alkategoriaszuro;
-            }
-            if (alalkategoriaszuro !== "-1") {
-                doc.alalkategoria = alalkategoriaszuro;
-            }
-            return db7.put(doc);
-        });
-
-
-    }
+    };
 
 
 }
