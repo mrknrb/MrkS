@@ -23,11 +23,33 @@ class ModulDetails {
         this.beallitasok.htmlpath = beallitasok.htmlpath
         this.beallitasok.automatavalto = beallitasok.automatavalto
         this.beallitasok.detailsboxlathato = beallitasok.detailsboxlathato
-
+        this.beallitasok.divcontainerbebetoltes = beallitasok.divcontainerbebetoltes
 
         if (this.beallitasok.divcontainerbebetoltes === true) {
             this.selectors.divcontainer = selectors.divcontainer
+            this.selectors.urlmezo = "#urlmezo"
+            this.selectors.urllogo = "#urllogo"
+            this.selectors.cim = "#urlcim"
+            this.selectors.megjegyzes = "#megjegyzesmezo"
+            this.selectors.kategoria = "#kategoria"
+            this.selectors.alkategoria = "#alkategoria"
+            this.selectors.alalkategoria = "#alalkategoria"
+            this.selectors.tipus ="#tipus"
+            this.selectors.tipusdata = "#tipuslista"
+            this.selectors.allapot = "#allapot"
+            this.selectors.alkotasallapot ="#alkotasallapot"
+            this.selectors.rang = "#rang"
+            this.selectors.datum ="#datum"
+            this.selectors.buttonjegyzet = "#jegyzetgomb"
+            this.selectors.kategoriadata = "#kategorialista"
+            this.selectors.alkategoriadata = "#alkategorialista"
+            this.selectors.alalkategoriadata = "#alalkategorialista"
+            this.selectors.buttontorles ="#torlesgomb"
+            this.selectors.detailsboxhide ="#urllogo"
+
+
             this.dombetolto()
+            console.log("ok")
         } else {
 
             this.selectors.urlmezo = selectors.inputtexturlmezo
@@ -57,16 +79,17 @@ class ModulDetails {
 
 
     init() {
-        if (this.automatavalto == true) {
+        if (this.beallitasok.automatavalto == true) {
             this.tabbetoltindulas()
             this.tabschangeeventlistener()
         }
+        /*
         this.detailshideinit()
         this.inputeventmentoinit()
         this.tipuslistabetoltoinit()
         this.kategoriaklistabetoltoinit()
         this.jegyzetcreateinit()
-        this.torlesgombinit()
+        this.torlesgombinit()*/
     }
 
     dombetolto() {
@@ -85,13 +108,12 @@ class ModulDetails {
 
             rawFile.send(null)
         }
-
-        readTextFile(self.htmlpath)
+        readTextFile(this.beallitasok.htmlpath)
     }
 
 //-------------------------------------------------------------------------------------------------------------------OK
     tabbetoltindulas() {
-
+let self=this
         if (this.beallitasok.automatavalto) {
             chrome.tabs.query(
                 {
@@ -99,7 +121,7 @@ class ModulDetails {
                     currentWindow: true
                 },
                 function (tabs) {
-                    self.detailsfrissito(tabs[0])
+                    self.detailsfrissito(tabs[0].url,tabs[0])
                 }
             )
         }
@@ -110,8 +132,9 @@ class ModulDetails {
         let self = this
         let s = this.selectors
         chrome.tabs.onActivated.addListener(function (activeInfo) {
+
             chrome.tabs.get(activeInfo.tabId, function (Tab, tab) {
-                self.detailsfrissito(Tab.id)
+                self.detailsfrissito(Tab.url,Tab)
             })
         })
         chrome.tabs.onUpdated.addListener(function (tabId, ChangeInfo) {
@@ -124,7 +147,7 @@ class ModulDetails {
                     if (tabs[0] != undefined) {
                         if (tabs[0].url === ChangeInfo.url) {
                             chrome.tabs.get(tabId, function (Tab, tab) {
-                                frissito(Tab)
+                                self.detailsfrissito(Tab.url,Tab)
                             })
                             setTimeout(() => {
                                 chrome.tabs.get(tabId, function (Tab, tab) {
@@ -157,7 +180,7 @@ class ModulDetails {
         let self = this
         let s = this.selectors
 
-        function seged() {
+        function seged(selector, adat,doc) {
             if (adat == "cim") {
                 document.querySelector(s.cim).value = Tab.title
             } else {
@@ -165,7 +188,7 @@ class ModulDetails {
             }
         }
 
-        function adatbeilleszto(selector, adat) {
+        function adatbeilleszto(selector, adat,doc) {
             if (document.querySelector(selector) && doc) {
                 if (document.querySelector(selector) && doc[adat]) {
                     if (adat == "datum") {
@@ -179,30 +202,41 @@ class ModulDetails {
                     }
                 } else if (document.querySelector(selector)) {
 
-                    seged()
+                    seged(selector, adat,doc)
                 }
             } else if (document.querySelector(selector)) {
-                seged()
+                seged(selector, adat,doc)
             }
         }
-
         self.beallitasok.db.get(id2).then(function (doc) {
-            adatbeilleszto(s.cim, "cim")
-            adatbeilleszto(s.megjegyzes, "megjegyzes")
-            adatbeilleszto(s.rang, "rang")
-            adatbeilleszto(s.kategoria, "kategoria")
-            adatbeilleszto(s.alkategoria, "alkategoria")
-            adatbeilleszto(s.alalkategoria, "alalkategoria")
-            adatbeilleszto(s.allapot, "allapot")
-            adatbeilleszto(s.alkotasallapot, "alkotasallapot")
-            adatbeilleszto(s.tipus, "tipus")
-            adatbeilleszto(s.datum, "datum")
+            beillesztoseged(doc)
+        }).catch(function (error) {
+            beillesztoseged(undefined)
+        })
+        function beillesztoseged(doc){
+
+            console.log("doc",id2)
+            adatbeilleszto(s.cim, "cim",doc)
+            adatbeilleszto(s.megjegyzes, "megjegyzes",doc)
+            adatbeilleszto(s.rang, "rang",doc)
+            adatbeilleszto(s.kategoria, "kategoria",doc)
+            adatbeilleszto(s.alkategoria, "alkategoria",doc)
+            adatbeilleszto(s.alalkategoria, "alalkategoria",doc)
+            adatbeilleszto(s.allapot, "allapot",doc)
+            adatbeilleszto(s.alkotasallapot, "alkotasallapot",doc)
+            adatbeilleszto(s.tipus, "tipus",doc)
+            adatbeilleszto(s.datum, "datum",doc)
             if (document.querySelector(s.urllogo)) {
                 document.querySelector(s.urllogo).innerHTML = `<img src="https://www.google.com/s2/favicons?domain=${id2}" width="20" height="20" class="favicon">`
             }
             if (document.querySelector(s.urlmezo)) {
                 document.querySelector(s.urlmezo).value = id2
             }
+            if(doc==undefined&&Tab){
+            if (document.querySelector(s.cim)) {
+                document.querySelector(s.cim).value = Tab.title
+            }}
+
             if (document.querySelector(s.kategoria) && document.querySelector(s.alkategoria) && document.querySelector(s.alalkategoria)) {
                 if (doc) {
 
@@ -232,7 +266,7 @@ class ModulDetails {
                     document.querySelector("#alalkategoria").setAttribute("style", "color:grey; font-size: 14px;width:100px")
                 }
             }
-        })
+        }
     }
 
     inputeventmentoinit() {
@@ -548,9 +582,10 @@ class ModulDetails {
                     {
                         active: true,
                         currentWindow: true
+
                     },
                     function (tabs) {
-                        self.detailsfrissito(Tab.url, Tab)
+                        self.detailsfrissito(tabs[0].url, tabs[0])
                     }
                 )
             }, 50)

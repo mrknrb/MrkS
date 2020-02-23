@@ -202,17 +202,21 @@ this.elozorowseged
             })
         } else {
             col[1].addEventListener("click", function (e) {
-                getActualSession(function () {
+                getActualSession(function (session) {
                     chrome.tabs.create(
                         {
                             url: data.url
                         },
                         function(tab) {
-                            db7.get(session.id).then(function(doc) {
+
+                            db7.get(session._id).then(function(doc) {
+
                                 doc.tabs.forEach(function (menttab, i) {
+
                                     if (menttab.id == data.id) {
-                                        tabs[i].tabid = tab.id;
-                                        tabs[i].datum = Date()
+                                       menttab.tabid = tab.id;
+
+                                        menttab.datum = Date()
                                     }
                                 });
                                 return db7.put(doc);
@@ -270,7 +274,7 @@ this.elozorowseged
                     populate: true
                 },
                 function (window) {
-                    console.log(window)
+
                     let adatok = []
                     let adatokseged = []
                     window.tabs.forEach(function (opentab) {
@@ -312,106 +316,6 @@ this.elozorowseged
 
                 })
         })
-    }
-
-    tabsadatgeneralo(elso = 0) {
-        let tabsadatok = [];
-
-        //-----------------------------------------------------------------------------------------------------------------
-        chrome.windows.getCurrent(
-            {
-                populate: true
-            },
-            function (openwin) {
-                let windowid = 0;
-                if (eszkoz != "android") {
-                    windowid = openwin.id;
-                } else {
-                    windowid = aktivwindowid;
-                }
-
-                db7
-                    .find({
-                        selector: {
-                            windowid: windowid
-                        }
-                    })
-                    .then(function (mentwin) {
-                        let tabsadatokopen = [];
-                        let tabsadatokhagyott = [];
-                        let tabsadatokmentett = [];
-
-                        if (mentwin.docs[0] != undefined) {
-                            mentwin.docs[0].tabs.forEach(mentab => {
-                                let open = false;
-                                openwin.tabs.forEach(element => {
-                                    if (mentab.tabid == element.id) {
-                                        open = true;
-                                    }
-                                });
-                                if (open == false) {
-                                    let i = `<img src="https://www.google.com/s2/favicons?domain=${mentab.url}" width="16" height="16" class="datafavicon">`;
-                                    let cim = mentab.cim;
-                                    if (mentab.cim == undefined) {
-                                        cim = mentab.url;
-                                    }
-                                    cim = mentab.cim;
-                                    let cim2 = "";
-                                    if (cim !== undefined && cim !== null) {
-                                        cim2 = cim.trunc(110);
-                                    }
-                                    let cim3 = `<a class="mentettlist" windowid="${mentwin.docs[0]._id}" tabid="${mentab.id}" tabidchrome="${mentab.tabid}" taburl="${mentab.url}" style="user-select: none;  color:white;text-decoration: none">${cim2}</a>`;
-                                    let datum = datumkora(mentab.datum, "days");
-                                    let unload = "<a></a>";
-                                    if (mentab.tabid != "-1") {
-                                        unload = `<a class="tabsunloadmentett" tabid=${mentab.id} style="user-select: none;  text-decoration: none;font-weight: bold">▢</a>`;
-                                    }
-                                    let bezaras = `<a class="mentetttorlo" mentabid=${mentab.id} tabid=${undefined} style="user-select: none; color:white; text-decoration: none;font-weight: bold">╳</a>`;
-
-                                    let tabadatok = [i, cim3, datum, unload, bezaras, mentab.url];
-                                    if (mentab.tabid == "-1") {
-                                        tabsadatokmentett.unshift(tabadatok);
-                                    } else {
-                                        tabsadatokhagyott.unshift(tabadatok);
-                                    }
-                                }
-                            });
-                        }
-
-                        openwin.tabs.forEach(element => {
-                            let i = `<img src="https://www.google.com/s2/favicons?domain=${element.url}" width="16" height="16" class="datafavicon">`;
-                            let cim = element.title;
-                            let cim2 = "";
-                            if (cim !== undefined) {
-                                cim2 = cim.trunc(110);
-                            }
-                            let datum = undefined;
-                            let windowid;
-                            if (mentwin.docs[0] != undefined) {
-                                mentwin.docs[0].tabs.forEach(element2 => {
-                                    if (element2.tabid == element.id) {
-                                        datum = datumkora(element2.datum, "days");
-                                    } else {
-                                    }
-                                });
-                            } else {
-                            }
-
-                            let cim3 = `<a class="tabslist" windowid="${openwin.id}" tabid=${element.id} taburl="${element.url}" style="user-select: none;  text-decoration: none">${cim2}</a>`;
-                            let unload = `<a class="tabsunload"  tabid=${element.id} style="user-select: none;  text-decoration: none;font-weight: bold">▢</a>`;
-                            let bezaras = `<a class="tabsbezaro" tabid=${element.id} style="user-select: none;  text-decoration: none;font-weight: bold">╳</a>`;
-                            tabsadatokopen.push([i, cim3, datum, unload, bezaras, element.url]);
-                        });
-
-                        tabsadatok = tabsadatokopen.concat(tabsadatokhagyott.concat(tabsadatokmentett)
-                        );
-
-                        //console.log("tabsadatok:", tabsadatok);
-                        return tabsadatok;
-
-                    });
-            }
-        );
     }
 
     tabstablefrissito() {

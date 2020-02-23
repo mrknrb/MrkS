@@ -170,7 +170,7 @@ function getActualSession(callback) {
                         }
                     })
                     .then(function (session) {
-                        console.log(session)
+
                         if (session.docs[0] != undefined) {
                             callback(session.docs[0])
                         } else {

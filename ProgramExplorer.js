@@ -17,10 +17,10 @@ let eszkoz = eszkozdetektalo();
 
 
 
-let selectors = {
+let detailsselectors = {
     divcontainer: "#detailsdiv"
 }
-let beallitasok = {
+let detailsbeallitasok = {
     db: db,
     db7: db7,
     htmlpath: "programelemek/details.html",
@@ -28,7 +28,8 @@ let beallitasok = {
     detailsboxlathato: true,
     divcontainerbebetoltes: true
 }
-//let details = new ModulDetails( selectors, beallitasok)
+let details = new ModulDetails( detailsselectors, detailsbeallitasok)
+
 let sessionselectors={
     divselector:"#tabstablediv",
     tableselector:"#tabstable"

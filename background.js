@@ -432,23 +432,6 @@ if (eszkozdetektalo() == "sidebar") {
                                             }
                                         })
 
-                                        /*
-                                        menttabsarray.forEach(function (menttab, i) {
-                                            //--------------------------------------------------------ha menttab nincs megnyitva
-
-
-
-                                            if (menttab.megnyitva !==true ) {
-
-                                                if (menttab.tabid != -1) {
-                                                    doc.tabs[i].tabid = -1
-                                                    tortentvaltozas = true
-
-                                                }
-
-                                            }
-                                        }) */
-
                                        console.log( tortentvaltozas)
                                         if (tortentvaltozas) {
                                             console.log(doc)
