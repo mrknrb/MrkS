@@ -31,7 +31,28 @@ var db7 = new PouchDB("SessionsNet", {
 getActualSession(function (session) {
     sessionid=session._id
 })
+if (eszkoz == "android") {
 
+
+    var dbremote = new PouchDB(
+        "https://7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix:abd57bfe15284685f7743dbb910fb99a69fc822826bd3c94746c7b60b1c308f2@7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix.cloudantnosqldb.appdomain.cloud/db"
+    );
+    var db7remote = new PouchDB(
+        "https://7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix:abd57bfe15284685f7743dbb910fb99a69fc822826bd3c94746c7b60b1c308f2@7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix.cloudantnosqldb.appdomain.cloud/db7"
+    );
+
+    db.sync(dbremote);
+    db7.sync(db7remote);
+    function start2() {
+        db.sync(dbremote);
+
+        db7.sync(db7remote);
+
+        setTimeout(start2, 10000);
+    }
+
+    start2();
+}
 //OK---------------------------------------------------------------------------------------------------------
 function programstarter(adatok) {
     /**adatok:{fileid,tipus,programtabid}*/

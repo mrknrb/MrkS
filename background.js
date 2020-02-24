@@ -35,7 +35,7 @@ function start2() {
 // boot up the first call
 start2();
 
-
+if(eszkozdetektalo()!="android"){
 //**ha androidos kikapcsol
 let googledocs = [];
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -769,3 +769,4 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
   */
 
+}

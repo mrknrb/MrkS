@@ -108,6 +108,7 @@ class ModulSessions {
     }
 
     rowadatbeilleszto(row, data, dataIndex) {
+        let self=this
         if (data.active) {
             row.style.backgroundColor = "#a0bdd8"
             self.elozorowseged = row
@@ -151,7 +152,7 @@ class ModulSessions {
         col[0].innerHTML = icon;
         col[1].appendChild(cim3)
         col[2].appendChild(datum2)
-        if (data.opened && eszkoz == "android") {
+        if (data.opened && self.eszkoz == "android") {
             col[0].addEventListener("click", function (e) {
 
                 getActualSession(function (session) {

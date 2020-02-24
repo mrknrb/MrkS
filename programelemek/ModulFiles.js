@@ -11,6 +11,7 @@ let self=this
         this.kategoriaszuro = undefined;
         this.alkategoriaszuro = undefined;
         this.alalkategoriaszuro = undefined;
+        this.eszkoz=eszkozdetektalo()
         getActualSession(function (session) {
             if(session.kategoria){
                 self.kategoriaszuro = session.kategoria;
@@ -77,7 +78,7 @@ let self=this
         let columndefs = [];
         let szuro = [];
         let order = [];
-        if (eszkoz != "tab") {
+        if (this.eszkoz != "tab") {
             //oldalsáv mód
             columns = [
                 {
@@ -495,7 +496,7 @@ let self=this
                 alkotasallapot = element.alkotasallapot;
             }
 
-            if (eszkoz != "tab") {
+            if (this.eszkoz != "tab") {
                 //oldalsáv mód
                 let col = row.querySelectorAll("td");
                 col[0].innerHTML = icon;

@@ -41,6 +41,7 @@ function eszkozdetektalo() {
     if (window.mobilecheck()) {
         return "android";
     } else if (window.innerWidth > 860) {
+        console.log("android módd!!!!!!!!!!!!!!!!!!!!!")
         return "tab";
     } else {
         return "sidebar";
@@ -195,13 +196,11 @@ function getActualSession(callback) {
                                         if (vegyesnyitva == false) {
 
                                             vegyessession()
-                                        } else  {
+                                        } else {
                                             callback(undefined)
                                         }
                                     })
                             });
-
-
 
 
                         }
@@ -217,11 +216,13 @@ function getActualSession(callback) {
     } else {
 
         let sessionid = window.location.href
-if(sessionid.split('#')[1]==undefined){
-    sessionid=window.parent.location.href
-}
+        if (sessionid.split('#')[1] == undefined) {
+            sessionid = window.parent.location.href
+        }
         let sessionid2 = sessionid.split('#')[1]
-
+if(sessionid2==""){
+    sessionid2="jegyz0e9ad149-49a1-76e7-c1d8-f37bf0d0956b"
+}
         db7.get(sessionid2).then(function (doc) {
             if (doc != undefined) {
                 callback(doc)
@@ -229,6 +230,9 @@ if(sessionid.split('#')[1]==undefined){
                 vegyessession()
             }
 
+        }).catch(function (error) {
+            console.log(error)
+            vegyessession()
         })
 
 
@@ -246,8 +250,6 @@ if(sessionid.split('#')[1]==undefined){
     }
 
 }
-
-
 
 
 const isValidUrl = string => {
@@ -284,17 +286,18 @@ function ranghattergenerator(rang, tipus) {
     }
 }
 
-let elementhideobject={}
-function elementhider(buttonselector,elementselector) {
+let elementhideobject = {}
+
+function elementhider(buttonselector, elementselector) {
     document.querySelector(buttonselector).addEventListener("click", function (e) {
         if (elementhideobject[elementselector]) {
 
             document.querySelector(elementselector).style.display = "block"
-            elementhideobject[elementselector]=false
+            elementhideobject[elementselector] = false
         } else {
 
             document.querySelector(elementselector).style.display = "none"
-            elementhideobject[elementselector]=true
+            elementhideobject[elementselector] = true
         }
     })
 }
