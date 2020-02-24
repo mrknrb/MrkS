@@ -22,8 +22,8 @@ class ModulDetails {
         this.beallitasok.db7 = beallitasok.db7
         this.beallitasok.htmlpath = beallitasok.htmlpath
         this.beallitasok.automatavalto = beallitasok.automatavalto
-        this.beallitasok.detailsboxlathato = beallitasok.detailsboxlathato
         this.beallitasok.divcontainerbebetoltes = beallitasok.divcontainerbebetoltes
+
 
         if (this.beallitasok.divcontainerbebetoltes === true) {
             this.selectors.divcontainer = selectors.divcontainer
@@ -34,18 +34,17 @@ class ModulDetails {
             this.selectors.kategoria = "#kategoria"
             this.selectors.alkategoria = "#alkategoria"
             this.selectors.alalkategoria = "#alalkategoria"
-            this.selectors.tipus ="#tipus"
+            this.selectors.tipus = "#tipus"
             this.selectors.tipusdata = "#tipuslista"
             this.selectors.allapot = "#allapot"
-            this.selectors.alkotasallapot ="#alkotasallapot"
+            this.selectors.alkotasallapot = "#alkotasallapot"
             this.selectors.rang = "#rang"
-            this.selectors.datum ="#datum"
+            this.selectors.datum = "#datum"
             this.selectors.buttonjegyzet = "#jegyzetgomb"
             this.selectors.kategoriadata = "#kategorialista"
             this.selectors.alkategoriadata = "#alkategorialista"
             this.selectors.alalkategoriadata = "#alalkategorialista"
-            this.selectors.buttontorles ="#torlesgomb"
-            this.selectors.detailsboxhide ="#urllogo"
+            this.selectors.buttontorles = "#torlesgomb"
 
 
             this.dombetolto()
@@ -70,27 +69,23 @@ class ModulDetails {
             this.selectors.alalkategoriadata = selectors.alalkategoriadata
             this.selectors.tipusdata = selectors.tipusdata
             this.selectors.buttontorles = selectors.buttontorles
-            this.selectors.detailsboxhide = selectors.detailsboxhide
 
 
         }
-        this.init()
-    }
-
-
-    init() {
         if (this.beallitasok.automatavalto == true) {
-            this.tabbetoltindulas()
-            this.tabschangeeventlistener()
+            this.tabbetoltindulas()//--------------------------ok
+            this.tabschangeeventlistener()//--------------------------ok
         }
-        /*
-        this.detailshideinit()
+
+
         this.inputeventmentoinit()
         this.tipuslistabetoltoinit()
         this.kategoriaklistabetoltoinit()
+        //todo az új jegyzetet csináld meg
         this.jegyzetcreateinit()
-        this.torlesgombinit()*/
+        this.torlesgombinit()
     }
+
 
     dombetolto() {
         let self = this
@@ -108,12 +103,13 @@ class ModulDetails {
 
             rawFile.send(null)
         }
+
         readTextFile(this.beallitasok.htmlpath)
     }
 
 //-------------------------------------------------------------------------------------------------------------------OK
     tabbetoltindulas() {
-let self=this
+        let self = this
         if (this.beallitasok.automatavalto) {
             chrome.tabs.query(
                 {
@@ -121,7 +117,7 @@ let self=this
                     currentWindow: true
                 },
                 function (tabs) {
-                    self.detailsfrissito(tabs[0].url,tabs[0])
+                    self.detailsfrissito(tabs[0].url, tabs[0])
                 }
             )
         }
@@ -134,7 +130,7 @@ let self=this
         chrome.tabs.onActivated.addListener(function (activeInfo) {
 
             chrome.tabs.get(activeInfo.tabId, function (Tab, tab) {
-                self.detailsfrissito(Tab.url,Tab)
+                self.detailsfrissito(Tab.url, Tab)
             })
         })
         chrome.tabs.onUpdated.addListener(function (tabId, ChangeInfo) {
@@ -147,7 +143,7 @@ let self=this
                     if (tabs[0] != undefined) {
                         if (tabs[0].url === ChangeInfo.url) {
                             chrome.tabs.get(tabId, function (Tab, tab) {
-                                self.detailsfrissito(Tab.url,Tab)
+                                self.detailsfrissito(Tab.url, Tab)
                             })
                             setTimeout(() => {
                                 chrome.tabs.get(tabId, function (Tab, tab) {
@@ -162,37 +158,39 @@ let self=this
         })
     }
 
-    detailshideinit() {
-        let s=this.selectors
-        if(document.querySelector(s.detailsboxhide)){
-        document.querySelector(s.detailsboxhide).addEventListener("click", function (e) {
-            if (self.detailsboxlathato == true) {
-                document.querySelector(s.divcontainer).style.display = "none"
-                self.detailsboxlathato = false
-            } else {
-                document.querySelector(s.divcontainer).style.display = "block"
-                self.detailsboxlathato = true
-            }
-        })}
+    kategorianarancsszinezo() {
+        let s = this.selectors
+        document.querySelector(s.kategoria).setAttribute("style", "color:rgb(190, 148, 92); font-size: 14px;font-weight: bold;width:100px")
+        document.querySelector(s.alkategoria).setAttribute("style", "color:rgb(190, 148, 92); font-size: 14px;font-weight: bold;width:100px")
+        document.querySelector(s.alalkategoria).setAttribute("style", "color:rgb(190, 148, 92); font-size: 14px;font-weight: bold;width:100px")
     }
 
     detailsfrissito(id2, Tab) {
         let self = this
         let s = this.selectors
 
-        function seged(selector, adat,doc) {
+        function seged(selector, adat, doc) {
+
             if (adat == "cim") {
+
+                if(Tab!=undefined){
                 document.querySelector(s.cim).value = Tab.title
+
+                }else{
+                    console.log(adat)
+                    document.querySelector(s.cim).value =""
+                }
             } else {
                 document.querySelector(selector).value = ""
             }
         }
 
-        function adatbeilleszto(selector, adat,doc) {
+        function adatbeilleszto(selector, adat, doc) {
+
             if (document.querySelector(selector) && doc) {
-                if (document.querySelector(selector) && doc[adat]) {
+                if (doc[adat]) {
                     if (adat == "datum") {
-                        new Intl.DateTimeFormat("default", {
+                        document.querySelector(selector).value = new Intl.DateTimeFormat("default", {
                             year: "numeric",
                             month: "numeric",
                             day: "numeric"
@@ -200,70 +198,70 @@ let self=this
                     } else {
                         document.querySelector(selector).value = doc[adat]
                     }
-                } else if (document.querySelector(selector)) {
+                } else {
 
-                    seged(selector, adat,doc)
+                    seged(selector, adat, doc)
                 }
             } else if (document.querySelector(selector)) {
-                seged(selector, adat,doc)
+                seged(selector, adat, doc)
             }
         }
-        self.beallitasok.db.get(id2).then(function (doc) {
+
+        let elkuldve = false
+        self.beallitasok.db.get(id2.toString()).then(function (doc) {
+            elkuldve = true
+
             beillesztoseged(doc)
         }).catch(function (error) {
-            beillesztoseged(undefined)
+            if (elkuldve == false) {
+                beillesztoseged(undefined)
+            }
         })
-        function beillesztoseged(doc){
 
-            console.log("doc",id2)
-            adatbeilleszto(s.cim, "cim",doc)
-            adatbeilleszto(s.megjegyzes, "megjegyzes",doc)
-            adatbeilleszto(s.rang, "rang",doc)
-            adatbeilleszto(s.kategoria, "kategoria",doc)
-            adatbeilleszto(s.alkategoria, "alkategoria",doc)
-            adatbeilleszto(s.alalkategoria, "alalkategoria",doc)
-            adatbeilleszto(s.allapot, "allapot",doc)
-            adatbeilleszto(s.alkotasallapot, "alkotasallapot",doc)
-            adatbeilleszto(s.tipus, "tipus",doc)
-            adatbeilleszto(s.datum, "datum",doc)
+        function beillesztoseged(doc) {
+            self.id = id2
+            console.log("doc", doc)
+            adatbeilleszto(s.cim, "cim", doc)
+            adatbeilleszto(s.megjegyzes, "megjegyzes", doc)
+            adatbeilleszto(s.rang, "rang", doc)
+            adatbeilleszto(s.kategoria, "kategoria", doc)
+            adatbeilleszto(s.alkategoria, "alkategoria", doc)
+            adatbeilleszto(s.alalkategoria, "alalkategoria", doc)
+            adatbeilleszto(s.allapot, "allapot", doc)
+            adatbeilleszto(s.alkotasallapot, "alkotasallapot", doc)
+            adatbeilleszto(s.tipus, "tipus", doc)
+            adatbeilleszto(s.datum, "datum", doc)
             if (document.querySelector(s.urllogo)) {
                 document.querySelector(s.urllogo).innerHTML = `<img src="https://www.google.com/s2/favicons?domain=${id2}" width="20" height="20" class="favicon">`
             }
             if (document.querySelector(s.urlmezo)) {
+                console.log("url")
                 document.querySelector(s.urlmezo).value = id2
             }
-            if(doc==undefined&&Tab){
-            if (document.querySelector(s.cim)) {
-                document.querySelector(s.cim).value = Tab.title
-            }}
+
 
             if (document.querySelector(s.kategoria) && document.querySelector(s.alkategoria) && document.querySelector(s.alalkategoria)) {
                 if (doc) {
-
-                    document.querySelector(s.selectors.kategoria).setAttribute("style", "color:rgb(190, 148, 92); font-size: 14px;font-weight: bold;width:100px")
-                    document.querySelector(s.selectors.alkategoria).setAttribute("style", "color:rgb(190, 148, 92); font-size: 14px;font-weight: bold;width:100px")
-                    document.querySelector(s.selectors.alalkategoria).setAttribute("style", "color:rgb(190, 148, 92); font-size: 14px;font-weight: bold;width:100px")
+                    self.kategorianarancsszinezo()
                 } else {
                     getActualSession(function (session) {
-
                         if (session._id) {
                             self.beallitasok.db7.get(session._id).then(function (doc) {
                                 if (doc.kategoria !== undefined) {
-                                    document.querySelector(s.selectors.kategoria).value = doc.kategoria
+                                    document.querySelector(s.kategoria).value = doc.kategoria
                                 }
                                 if (doc.alkategoria !== undefined) {
-                                    document.querySelector(s.selectors.alkategoria).value = doc.alkategoria
+                                    document.querySelector(s.alkategoria).value = doc.alkategoria
                                 }
                                 if (doc.alalkategoria !== undefined) {
-                                    document.querySelector(s.selectors.alalkategoria).value = doc.alalkategoria
+                                    document.querySelector(s.alalkategoria).value = doc.alalkategoria
                                 }
                             })
                         }
                     })
-
-                    document.querySelector("#kategoria").setAttribute("style", "color:grey; font-size: 14px;width:100px")
-                    document.querySelector("#alkategoria").setAttribute("style", "color:grey; font-size: 14px;width:100px")
-                    document.querySelector("#alalkategoria").setAttribute("style", "color:grey; font-size: 14px;width:100px")
+                    document.querySelector(s.kategoria).setAttribute("style", "color:grey; font-size: 14px;width:100px")
+                    document.querySelector(s.alkategoria).setAttribute("style", "color:grey; font-size: 14px;width:100px")
+                    document.querySelector(s.alalkategoria).setAttribute("style", "color:grey; font-size: 14px;width:100px")
                 }
             }
         }
@@ -301,11 +299,12 @@ let self=this
                     adatok.alalkategoria = alalkategoriaseged.value
                 }
                 adatok.datum = Date.now()
+                self.kategorianarancsszinezo()
                 self.beallitasok.db.put(adatok).catch(function (err) {
                     if (err.name === "conflict") {
-                        db.get(self.id).then(function (doc) {
+                        self.beallitasok.db.get(self.id).then(function (doc) {
                             doc[selectortype] = document.querySelector(selector).value
-                            return db.put(doc)
+                            return self.beallitasok.db.put(doc)
                         })
                     }
                 })
@@ -316,10 +315,11 @@ let self=this
         function szovegeventlistenerinit(selectortype, selector) {
 
             document.querySelector(selector).addEventListener("keyup", function () {
+
                 let megjegyzeskovetkezoido = Date.now()
                 self.megjegyzeselozoido = megjegyzeskovetkezoido
                 setTimeout(() => {
-                    if (megjegyzeskovetkezoido - megjegyzeselozoido === 0) {
+                    if (megjegyzeskovetkezoido - self.megjegyzeselozoido === 0) {
 
 
                         let cimseged = document.querySelector(s.cim)
@@ -344,11 +344,13 @@ let self=this
                             adatok.alalkategoria = alalkategoriaseged.value
                         }
                         adatok.datum = Date.now()
-                        db.put(adatok).catch(function (err) {
+                        console.log(adatok)
+                        self.kategorianarancsszinezo()
+                        self.beallitasok.db.put(adatok).catch(function (err) {
                             if (err.name === "conflict") {
-                                db.get(self.id).then(function (doc) {
+                                self.beallitasok.db.get(self.id).then(function (doc) {
                                     doc[selectortype] = document.querySelector(selector).value
-                                    return db.put(doc)
+                                    return self.beallitasok.db.put(doc)
                                 })
                             }
                         })
@@ -454,7 +456,7 @@ let self=this
                         }
                     })
             })
-            document.querySelector("alalkategoria").addEventListener("mouseover", function () {
+            document.querySelector(s.alalkategoria).addEventListener("mouseover", function () {
                 let alalkategoriaosszes = []
                 self.beallitasok.db.find({
                     selector: {
@@ -491,37 +493,37 @@ let self=this
     }
 
     tipuslistabetoltoinit() {
+        let self=this
         let s = this.selectors
-        if(document.querySelector(s.tipus)){
-        document.querySelector(s.tipus).addEventListener("mouseover", function () {
-            let tipusosszes = []
-            db.find({
-                selector: {
-                    tipus: {
-                        $exists: true
-                    }
-                },
-                fields: ["tipus"]
-            })
-                .then(function (result) {
-                    result.docs.forEach(element => {
-                        element.tipus
-                        tipusosszes.push(element.tipus)
-                    })
-                    let tipusarray = tipusosszes.filter(function (item, pos) {
-                        return tipusosszes.indexOf(item) == pos
-                    })
-                    var select = document.querySelector(s.tipusdata)
-                    $(s.tipusdata).empty()
-                    for (var i = 0; i < tipusarray.length; i++) {
-                        var opt = tipusarray[i]
-                        var el = document.createElement("option")
-                        el.textContent = opt
-                        el.value = opt
-                        select.appendChild(el)
-                    }
+        if (document.querySelector(s.tipus)) {
+            document.querySelector(s.tipus).addEventListener("mouseover", function () {
+                let tipusosszes = []
+                self.beallitasok.db.find({
+                    selector: {
+                        tipus: {
+                            $exists: true
+                        }
+                    },
+                    fields: ["tipus"]
                 })
-        })
+                    .then(function (result) {
+                        result.docs.forEach(element => {
+                            tipusosszes.push(element.tipus)
+                        })
+                        let tipusarray = tipusosszes.filter(function (item, pos) {
+                            return tipusosszes.indexOf(item) == pos
+                        })
+                        var select = document.querySelector(s.tipusdata)
+                        $(s.tipusdata).empty()
+                        for (var i = 0; i < tipusarray.length; i++) {
+                            var opt = tipusarray[i]
+                            var el = document.createElement("option")
+                            el.textContent = opt
+                            el.value = opt
+                            select.appendChild(el)
+                        }
+                    })
+            })
         }
 
     }
@@ -529,67 +531,74 @@ let self=this
     jegyzetcreateinit() {
         let self = this
         let s = this.selectors
-        if(document.querySelector(s.buttonjegyzet)){
-        document.querySelector(s.buttonjegyzet).addEventListener("click", function () {
+        if (document.querySelector(s.buttonjegyzet)) {
+            document.querySelector(s.buttonjegyzet).addEventListener("click", function () {
 
-            chrome.windows.getCurrent(function (win) {
-                self.beallitasok.db7
-                    .find({
-                        selector: {
-                            windowid: win.id
+                getActualSession(function (session) {
+
+
+                    let jegyzetadatok = {}
+                    jegyzetadatok._id = guidGenerator()
+                    if (session != undefined) {
+                        if (session.kategoria != undefined&&session.kategoria != "") {
+                            jegyzetadatok.kategoria = session.kategoria
+                            document.querySelector("#kategoria").value = session.kategoria
                         }
-                    })
-                    .then(function (result) {
-                        let doc = result.docs[0]
-                        console.log("result:", result)
-
-                        let jegyzetadatok = {}
-                        jegyzetadatok._id = guidGenerator()
-                        if (result.docs[0] != undefined) {
-                            if (doc.kategoria != undefined) {
-                                jegyzetadatok.kategoria = doc.kategoria
-                                document.querySelector("#kategoria").value = doc.kategoria
-                            }
-                            if (doc.alkategoria != undefined) {
-                                jegyzetadatok.alkategoria = doc.alkategoria
-                                document.querySelector("#alkategoria").value = doc.alkategoria
-                            }
-                            if (doc.alalkategoria != undefined) {
-                                jegyzetadatok.alalkategoria = doc.alalkategoria
-                                document.querySelector("#alalkategoria").value = doc.alalkategoria
-                            }
+                        if (session.alkategoria != undefined&&session.alkategoria != "") {
+                            jegyzetadatok.alkategoria = session.alkategoria
+                            document.querySelector("#alkategoria").value = session.alkategoria
                         }
-                        jegyzetadatok.datum = Date.now()
-
-                        self.beallitasok.db.put(jegyzetadatok).then(function (doc) {
-                            adatbazisboladatfrissito(db, jegyzetadatok._id)
-                        })
+                        if (session.alalkategoria != undefined&&session.alalkategoria != "") {
+                            jegyzetadatok.alalkategoria = session.alalkategoria
+                            document.querySelector("#alalkategoria").value = session.alalkategoria
+                        }
+                    }
+                    jegyzetadatok.datum = Date.now()
+                    self.kategorianarancsszinezo()
+                    self.beallitasok.db.put(jegyzetadatok).then(function (doc) {
+                        self.detailsfrissito(jegyzetadatok._id)
                     })
+
+
+                })
+
+
+
             })
-        })}
+        }
     }
 
     torlesgombinit() {
         let self = this
         let s = this.selectors
-        if(document.querySelector(s.buttontorles)){
-        document.querySelector(s.buttontorles).addEventListener("click", function () {
-            self.beallitasok.db.get(self.id).then(function (doc) {
-                return db.remove(doc)
-            })
-            setTimeout(() => {
-                chrome.tabs.query(
-                    {
-                        active: true,
-                        currentWindow: true
+        if (document.querySelector(s.buttontorles)) {
+            document.querySelector(s.buttontorles).addEventListener("click", function () {
 
-                    },
-                    function (tabs) {
-                        self.detailsfrissito(tabs[0].url, tabs[0])
-                    }
-                )
-            }, 50)
-        })}
+
+                    self.beallitasok.db.get(self.id).then(function (doc) {
+                        let biztosan = confirm("Biztosan Torlod?");
+                        if (biztosan) {
+                        return self.beallitasok.db.remove(doc) }
+                    })
+                    setTimeout(() => {
+                        chrome.tabs.query(
+                            {
+                                active: true,
+                                currentWindow: true
+
+                            },
+                            function (tabs) {
+                                self.detailsfrissito(tabs[0].url, tabs[0])
+                            }
+                        )
+                    }, 50)
+
+
+
+
+
+            })
+        }
 
     }
 }

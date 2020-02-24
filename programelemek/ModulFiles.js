@@ -1,14 +1,27 @@
 class ModulFiles {
 
-    constructor(divselector, tableselector, magassag) {
+    constructor(divselector, tableselector, detailsmodul,magassag) {
+let self=this
         this.divselector = divselector
         this.tableselector = tableselector
         this.datatablebetoltve = false
         this.databasemagassag = magassag
+
+        this.detailsmodul = detailsmodul;
         this.kategoriaszuro = undefined;
         this.alkategoriaszuro = undefined;
         this.alalkategoriaszuro = undefined;
-        this.datatablefrissitobetolto()
+        getActualSession(function (session) {
+            if(session.kategoria){
+                self.kategoriaszuro = session.kategoria;
+            }
+            if(session.alkategoria){
+                self.alkategoriaszuro = session.alkategoria;}
+            if(session.alalkategoria){
+            self.alalkategoriaszuro = session.alalkategoria;
+}
+            self.datatablefrissitobetolto()
+        })
     }
 
 
@@ -36,7 +49,7 @@ class ModulFiles {
             index: {
                 fields: fields
             }
-        })
+        })//todo nézd meg, hogy az alldocsszal és a saját callback functionoddal vagy ezzel a finddal gyorsabb-e
             .then(function () {
                 return db.find({
                     selector: filter,
@@ -47,7 +60,6 @@ class ModulFiles {
                 if (self.datatablebetoltve == false) {
                     self.datatablebetolto(result);
                 } else {
-                    console.log(result);
                     $(self.tableselector)
                         .dataTable()
                         .fnClearTable();
@@ -218,7 +230,7 @@ class ModulFiles {
                                 .on("change", function () {
                                     //Cannot read property 'replace' of null
                                     var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                                    console.log("val:", val);
+
                                     if (e == 4) {
                                         if (val != undefined) {
                                             self.kategoriaszuro = val;
@@ -235,7 +247,7 @@ class ModulFiles {
                                             self.alalkategoriaszuro = val;
                                         }
                                     }
-                                    datatablefrissitobetolto();
+                                    self.datatablefrissitobetolto();
                                 });
 
                             select.on("mouseover", function () {
@@ -262,6 +274,7 @@ class ModulFiles {
                         .insertAdjacentElement("afterbegin", szuromentesebutton);
 
 
+
                 },
                 deferRender: true,
                 scroller: {
@@ -282,7 +295,7 @@ class ModulFiles {
                 columnDefs: columndefs,
                 createdRow: function (row, data, dataIndex) {
                     //row.querySelectorAll("td")[1].innerText = "000";
-                    this.adatfrissito2(row, data);
+                    self.adatfrissito2(row, data);
                 }
             });
         });
@@ -331,7 +344,7 @@ class ModulFiles {
     alkategoriadropdownfrissito() {
         //  console.log("ff")
         //todo folytasd a kategoriaszurot(lehet, hogy az alldocsszal kéne megoldani ezt is és talán a tábla betöltőt is)
-
+let self=this
         let alkategoriaosszes = [];
         db.find({
             selector: {
@@ -345,7 +358,7 @@ class ModulFiles {
                 // console.log(result)
                 // console.log(result.docs[0])
                 result.docs.forEach(element => {
-                    if (element.kategoria === kategoriaszuro) {
+                    if (element.kategoria === self.kategoriaszuro) {
                         alkategoriaosszes.push(element.alkategoria);
                     }
                 });
@@ -387,8 +400,8 @@ class ModulFiles {
                 // console.log(result.docs[0])
                 result.docs.forEach(element => {
                     if (
-                        kategoriaszuro === element.kategoria &&
-                        alkategoriaszuro === element.alkategoria
+                        self.kategoriaszuro === element.kategoria &&
+                        self.alkategoriaszuro === element.alkategoria
                     ) {
                         alalkategoriaosszes.push(element.alalkategoria);
                     }
@@ -415,13 +428,14 @@ class ModulFiles {
     }
 
     adatfrissito2(row, element) {
+        let self=this
         if (element != undefined) {
             let icon = `<img src="https://www.google.com/s2/favicons?domain=${element._id}" width="20" height="20" class="datafavicon">`;
 
             let cim = "";
             if (element.cim !== undefined) {
                 cim = `<b style="font-weight:bold;line-height: 1" >${element.cim.trunc(
-                    50
+                    35
                 )}</b>`;
                 // console.log(cim2)
             }
@@ -436,7 +450,7 @@ class ModulFiles {
 
             let megjegyzes = "";
             if (element.megjegyzes !== undefined) {
-                megjegyzes = element.megjegyzes;
+                megjegyzes = element.megjegyzes.trunc(35)
             }
             let kategoria = "";
             if (element.kategoria !== undefined) {
@@ -529,11 +543,11 @@ class ModulFiles {
             );
 
             row.addEventListener("click", function () {
-                adatbazisboladatfrissito(db, element._id);
+                self.detailsmodul.detailsfrissito(element._id)
             });
 
             row.querySelectorAll("td")[1].addEventListener("click", function () {
-                console.log("element.tipus:", element.tipus);
+
                 filebetolto(element._id, element.tipus);
             });
 

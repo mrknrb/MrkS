@@ -387,8 +387,6 @@ function start5() {
                                                 }
                                             }
                                         })
-
-
                                         if (nincsbenneawindowban == 0 && tabszuro(opentab.url)) {
                                             //------------------------------------------------------- ha az openwin, nincs benne a mentwinben
 

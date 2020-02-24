@@ -1,7 +1,16 @@
+
+let db = new PouchDB("NodesNet", {
+    auto_compaction: true
+})
+let db7 = new PouchDB("SessionsNet", {
+    auto_compaction: true
+})
+
+
 if (window.frameElement.getAttribute("fileid") != undefined) {
     db.get(window.frameElement.getAttribute("fileid")).then(function (doc) {
         if (doc.tipus == "conceptmap" && doc.data != undefined) {
-            adatbazisboladatfrissito(db, doc._id)
+
             conceptmapbetolto(doc);
         }
     });

@@ -4,19 +4,19 @@ let sessionid = ""
 let eszkoz = eszkozdetektalo()
 let ProgramsData = [
     {
-        tipus: "ConceptMap",
+        tipus: "conceptmap",
         logo: "C",
         htmlpath: "./ProgramConceptMap.html",
         buttonid: "ConceptMapButton"
     },
     {
-        tipus: "Explorer",
+        tipus: "explorer",
         logo: "E",
         htmlpath: "./ProgramExplorer.html",
         buttonid: "ExplorerButton"
     },
     {
-        tipus: "Naptar",
+        tipus: "naptar",
         logo: "N",
         htmlpath: "./ProgramNaptar.html",
         buttonid: "NaptarButton"
@@ -28,7 +28,9 @@ var db = new PouchDB("NodesNet", {
 var db7 = new PouchDB("SessionsNet", {
     auto_compaction: true
 })
-
+getActualSession(function (session) {
+    sessionid=session._id
+})
 
 //OK---------------------------------------------------------------------------------------------------------
 function programstarter(adatok) {
@@ -67,6 +69,7 @@ function programstarter(adatok) {
 
 //OK----------------------------------------------------------------------------------------
     if (adatok.fileid != undefined) {
+
         db.get(adatok.fileid).then(function (doc) {
             ProgramsData.forEach(function (program) {
                 if (program.tipus === doc.tipus) {
@@ -76,7 +79,6 @@ function programstarter(adatok) {
                     programbetolto(program)
                 }
             })
-
 
         })
     } else if (adatok.tipus != undefined) {
@@ -253,8 +255,10 @@ programOpenerInit()
 
 //OK---------------------------------------------------------------------------------------------------------
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+
     if (request.sessionid == sessionid)
         if (request.kerestipus == "ujprogram") {
+
             programstarter({fileid: request.fileid})
         }
 })
@@ -351,11 +355,11 @@ function programsrestart(session) {
                 programstarter(programadatok)
             })
         } else {
-            programstarter({tipus: "Explorer"})
+            programstarter({tipus: "explorer"})
         }
     } else {
 
-        programstarter({tipus: "Explorer"})
+        programstarter({tipus: "explorer"})
     }
 }
 

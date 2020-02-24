@@ -1,17 +1,21 @@
 function filebetolto(fileid, filetipus) {
-    let sessionid = window.frameElement.getAttribute("sessionid");
 
     if (filetipus == "conceptmap") {
-        chrome.runtime.sendMessage(
-            {
-                kerestipus: "ujprogram",
-                tipus: filetipus,
-                fileid: fileid,
-                sessionid: sessionid
-            },
-            function (response) {
-            }
-        );
+        getActualSession(function (session) {
+
+            chrome.runtime.sendMessage(
+                {
+                    kerestipus: "ujprogram",
+                    tipus: filetipus,
+                    fileid: fileid,
+                    sessionid: session._id
+                },
+                function (response) {
+                }
+            );
+        })
+
+
     } else {
         window.open(fileid, "_blank");
     }
@@ -213,7 +217,11 @@ function getActualSession(callback) {
     } else {
 
         let sessionid = window.location.href
+if(sessionid.split('#')[1]==undefined){
+    sessionid=window.parent.location.href
+}
         let sessionid2 = sessionid.split('#')[1]
+
         db7.get(sessionid2).then(function (doc) {
             if (doc != undefined) {
                 callback(doc)
@@ -238,6 +246,8 @@ function getActualSession(callback) {
     }
 
 }
+
+
 
 
 const isValidUrl = string => {
@@ -272,4 +282,19 @@ function ranghattergenerator(rang, tipus) {
             return "#f4f6ff";
         }
     }
+}
+
+let elementhideobject={}
+function elementhider(buttonselector,elementselector) {
+    document.querySelector(buttonselector).addEventListener("click", function (e) {
+        if (elementhideobject[elementselector]) {
+
+            document.querySelector(elementselector).style.display = "block"
+            elementhideobject[elementselector]=false
+        } else {
+
+            document.querySelector(elementselector).style.display = "none"
+            elementhideobject[elementselector]=true
+        }
+    })
 }

@@ -8,36 +8,35 @@ let db7 = new PouchDB("SessionsNet", {
 })
 
 
-
 let tabstablemagassag = 348;
 let databasemagassag = 348;
 let eszkoz = eszkozdetektalo();
-if(eszkoz=="android"){
-var dbremote = new PouchDB(
-    "https://7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix:abd57bfe15284685f7743dbb910fb99a69fc822826bd3c94746c7b60b1c308f2@7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix.cloudantnosqldb.appdomain.cloud/db"
-);
-var db7remote = new PouchDB(
-    "https://7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix:abd57bfe15284685f7743dbb910fb99a69fc822826bd3c94746c7b60b1c308f2@7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix.cloudantnosqldb.appdomain.cloud/db7"
-);
+if (eszkoz == "android") {
+    var dbremote = new PouchDB(
+        "https://7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix:abd57bfe15284685f7743dbb910fb99a69fc822826bd3c94746c7b60b1c308f2@7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix.cloudantnosqldb.appdomain.cloud/db"
+    );
+    var db7remote = new PouchDB(
+        "https://7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix:abd57bfe15284685f7743dbb910fb99a69fc822826bd3c94746c7b60b1c308f2@7404efff-b043-4c34-a8c5-c0dc859a5c46-bluemix.cloudantnosqldb.appdomain.cloud/db7"
+    );
 
-function start2() {
-    db.sync(dbremote);
+    function start2() {
+        db.sync(dbremote);
 
-    db7.sync(db7remote);
+        db7.sync(db7remote);
 
-    setTimeout(start2, 10000);
-}
+        setTimeout(start2, 10000);
+    }
 
-start2();
+    start2();
 }
 
 // eszkoz = "android";
 
 
-
-
 let detailsselectors = {
-    divcontainer: "#detailsdiv"
+    divcontainer: "#detailsdiv",
+    detailsboxhide: "#detailsboxopen"
+
 }
 let detailsbeallitasok = {
     db: db,
@@ -47,17 +46,17 @@ let detailsbeallitasok = {
     detailsboxlathato: true,
     divcontainerbebetoltes: true
 }
-let details = new ModulDetails( detailsselectors, detailsbeallitasok)
+let details = new ModulDetails(detailsselectors, detailsbeallitasok)
 
-let sessionselectors={
-    divselector:"#tabstablediv",
-    tableselector:"#tabstable"
+let sessionselectors = {
+    divselector: "#tabstablediv",
+    tableselector: "#tabstable"
 }
-let sessionbeallitasok={
-    magassag:tabstablemagassag
+let sessionbeallitasok = {
+    magassag: tabstablemagassag
 }
 let session = new ModulSessions(sessionselectors, sessionbeallitasok)
-//let datatable = new ModulFiles("#datatablediv", "datatable", databasemagassag)
+let datatable = new ModulFiles("#datatablediv", "#datatable", details, databasemagassag)
 
 function stylebeallitasok() {
     let basicstyletables = "";
@@ -75,7 +74,7 @@ function stylebeallitasok() {
             .querySelector("#megjegyzesmezo")
             .setAttribute("style", "height:120px;width:100%");
 
-        basicstyletables = `#example tbody th, #example tbody td, #tabstable tbody th, #tabstable tbody td{ padding: 0px 0px;}`;
+        basicstyletables = `#datatable tbody th, #datatable tbody td, #tabstable tbody th, #tabstable tbody td{ padding: 0px 0px;}`;
     } else if (eszkoz == "tab") {
         document
             .querySelector("#megjegyzesmezo")
@@ -91,7 +90,7 @@ function stylebeallitasok() {
         tabstablemagassag = 250;
         databasemagassag = 500;
 
-        basicstyletables = `#example tbody th, #example tbody td, #tabstable tbody th, #tabstable tbody td{ padding: 0px 0px;}`;
+        basicstyletables = `#datatable tbody th, #datatable tbody td, #tabstable tbody th, #tabstable tbody td{ padding: 0px 0px;}`;
     } else if (eszkoz == "android") {
         tabstablemagassag = 330;
         databasemagassag = 330;
@@ -105,7 +104,7 @@ function stylebeallitasok() {
         document
             .querySelector("#megjegyzesmezo")
             .setAttribute("style", "height:120px;width:100%");
-        basicstyletables = `#example tbody th, #example tbody td, #tabstable tbody th, #tabstable tbody td{ padding: 8px 10px;}`;
+        basicstyletables = `#datatable tbody th, #datatable tbody td, #tabstable tbody th, #tabstable tbody td{ padding: 8px 10px;}`;
     }
     var styleSheettables = document.createElement("style");
     styleSheettables.type = "text/css";
@@ -113,4 +112,6 @@ function stylebeallitasok() {
     document.head.appendChild(styleSheettables);
 }
 
-//stylebeallitasok();
+elementhider("#detailsboxopen", "#detailsdiv")
+elementhider("#tabstableopen", "#tabstablediv")
+stylebeallitasok();

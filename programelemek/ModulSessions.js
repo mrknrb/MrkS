@@ -18,7 +18,7 @@ class ModulSessions {
 
         this.aktivwindowid = 0;
         this.aktivsessionid = 0
-this.elozorowseged
+        this.elozorowseged
     }
 
     initfirstwindow() {
@@ -110,7 +110,7 @@ this.elozorowseged
     rowadatbeilleszto(row, data, dataIndex) {
         if (data.active) {
             row.style.backgroundColor = "#a0bdd8"
-            self.elozorowseged=row
+            self.elozorowseged = row
         } else if (data.opened) {
             row.style.backgroundColor = "#d1c9d8"
         } else {
@@ -136,6 +136,7 @@ this.elozorowseged
             cim2 = data.cim.trunc(110);
         }
         let cim3 = document.createElement("b")
+        cim3.style.userSelect = "none"
         if (data.opened == false) {
             cim3.style.color = "white"
         }
@@ -143,6 +144,7 @@ this.elozorowseged
         //--------------------------
         let datum = datumkora(data.datum, "days");
         let datum2 = document.createElement("b")
+        datum2.style.userSelect = "none"
         datum2.innerText = datum
         //--------------------------------------------
         let col = row.querySelectorAll("td");
@@ -155,13 +157,13 @@ this.elozorowseged
                 getActualSession(function (session) {
 
                     db7.get(session._id).then(function (doc) {
-                    doc.tabs.push({
-                        id: jegyzetguidGenerator(),
-                        tabid: data.tabid,
-                        url: data.url,
-                        cim: data.cim,
-                        datum: Date()
-                    });
+                        doc.tabs.push({
+                            id: jegyzetguidGenerator(),
+                            tabid: data.tabid,
+                            url: data.url,
+                            cim: data.cim,
+                            datum: Date()
+                        });
                         return db7.put(doc);
                     })
                 })
@@ -175,7 +177,7 @@ this.elozorowseged
 
                         doc.tabs.forEach(function (tab, i) {
                             if (data.id == tab.id) {
-                              doc.tabs[i].tabid = -1
+                                doc.tabs[i].tabid = -1
                             }
                         })
 
@@ -183,7 +185,8 @@ this.elozorowseged
                         return db7.put(doc);
                     }).then(function (d) {
                         chrome.tabs.remove(data.tabid,
-                            function() {}
+                            function () {
+                            }
                         );
                     })
                 })
@@ -191,12 +194,13 @@ this.elozorowseged
         }
         if (data.opened) {
             col[1].addEventListener("click", function (e) {
-                chrome.tabs.get(data.tabid, function(Tab, tab) {
+                chrome.tabs.get(data.tabid, function (Tab, tab) {
                     chrome.tabs.highlight(
                         {
                             tabs: Tab.index
                         },
-                        function() {}
+                        function () {
+                        }
                     );
                 });
             })
@@ -207,14 +211,14 @@ this.elozorowseged
                         {
                             url: data.url
                         },
-                        function(tab) {
+                        function (tab) {
 
-                            db7.get(session._id).then(function(doc) {
+                            db7.get(session._id).then(function (doc) {
 
                                 doc.tabs.forEach(function (menttab, i) {
 
                                     if (menttab.id == data.id) {
-                                       menttab.tabid = tab.id;
+                                        menttab.tabid = tab.id;
 
                                         menttab.datum = Date()
                                     }
@@ -228,14 +232,15 @@ this.elozorowseged
         }
         if (data.opened) {
             col[2].addEventListener("click", function (e) {
-                chrome.tabs.remove(data.tabid, function() {});
+                chrome.tabs.remove(data.tabid, function () {
+                });
                 row.remove();
             })
         } else {
             col[2].addEventListener("click", function (e) {
                 getActualSession(function (session) {
-                    db7.get(session._id).then(function(doc) {
-                        doc.tabs.forEach(function(menttab, index) {
+                    db7.get(session._id).then(function (doc) {
+                        doc.tabs.forEach(function (menttab, index) {
                             if (menttab.id == data.id) {
                                 doc.tabs.splice(index, 1);
                                 return db7.put(doc);
@@ -244,7 +249,6 @@ this.elozorowseged
                         row.remove();
                     });
                 })
-
 
 
             })
