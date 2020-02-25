@@ -41,7 +41,6 @@ function eszkozdetektalo() {
     if (window.mobilecheck()) {
         return "android";
     } else if (window.innerWidth > 860) {
-        console.log("android módd!!!!!!!!!!!!!!!!!!!!!")
         return "tab";
     } else {
         return "sidebar";
@@ -220,9 +219,9 @@ function getActualSession(callback) {
             sessionid = window.parent.location.href
         }
         let sessionid2 = sessionid.split('#')[1]
-if(sessionid2==""){
-    sessionid2="jegyz0e9ad149-49a1-76e7-c1d8-f37bf0d0956b"
-}
+        if (sessionid2 == "") {
+            sessionid2 = "jegyz0e9ad149-49a1-76e7-c1d8-f37bf0d0956b"
+        }
         db7.get(sessionid2).then(function (doc) {
             if (doc != undefined) {
                 callback(doc)
@@ -300,4 +299,205 @@ function elementhider(buttonselector, elementselector) {
             elementhideobject[elementselector] = true
         }
     })
+}
+
+
+function pouchkategoriaszuro(kategoriak, callback) {
+
+
+    let ido = Date.now()
+    db.allDocs({
+        include_docs: true,
+    }).then(function (result) {
+        let talalatok = []
+        result.rows.forEach(element => {
+            if (element.doc.tipus == kategoriak.tipus || !kategoriak.tipus) {
+                if (kategoriak.kategoria) {
+                    if (kategoriak.alkategoria) {
+                        if (kategoriak.alalkategoria) {
+                            if (element.doc.kategoria == kategoriak.kategoria && element.doc.alkategoria == kategoriak.alkategoria && element.doc.alalkategoria == kategoriak.alalkategoria) {
+                                talalatok.push(element)
+                            }
+                        } else {
+                            if (element.doc.kategoria == kategoriak.kategoria && element.doc.alkategoria == kategoriak.alkategoria) {
+                                talalatok.push(element)
+                            }
+                        }
+                    } else {
+                        if (element.doc.kategoria == kategoriak.kategoria) {
+                            talalatok.push(element)
+                        }
+                    }
+                } else {
+                    talalatok.push(element)
+                }
+            }
+        })
+
+        talalatok.sort(function (a, b) {
+            if (!b.doc.datum) {
+                b.doc.datum = 0
+            }
+            if (!a.doc.datum) {
+                a.doc.datum = 0
+            }
+            return b.doc.datum - a.doc.datum;
+        });
+        //talalatok.sort((b, a) => (a.doc.datum > b.doc.datum) - (a.doc.datum < b.doc.datum))
+        console.log(Date.now() - ido)
+        callback(talalatok)
+    })
+
+}
+
+function pouchkategoriadropdown(kategoriak, kategoriatipus, callback) {
+
+    console.log(kategoriak)
+    let ido = Date.now()
+    db.allDocs({
+        include_docs: true,
+    }).then(function (result) {
+        let talalatok = []
+        result.rows.forEach(element => {
+
+            if (kategoriatipus == "kategoria") {
+                let bennevan = false
+                talalatok.forEach(talalat => {
+                    if (talalat == element.doc.kategoria) {
+                        bennevan = true
+                    }
+                })
+                if (!bennevan) {
+                    talalatok.push(element.doc.kategoria)
+                }
+            }
+            if (kategoriatipus == "alkategoria" && kategoriak.kategoria && kategoriak.kategoria == element.doc.kategoria) {
+
+                let bennevan = false
+                talalatok.forEach(talalat => {
+                    if (talalat == element.doc.alkategoria) {
+                        bennevan = true
+                    }
+                })
+                if (!bennevan) {
+                    talalatok.push(element.doc.alkategoria)
+                }
+            }
+            if (kategoriatipus == "alalkategoria" && kategoriak.kategoria && kategoriak.alkategoria && kategoriak.kategoria == element.doc.kategoria && kategoriak.alkategoria == element.doc.alkategoria) {
+
+                let bennevan = false
+                talalatok.forEach(talalat => {
+                    if (talalat == element.doc.alalkategoria) {
+                        bennevan = true
+                    }
+                })
+                if (!bennevan) {
+                    talalatok.push(element.doc.alalkategoria)
+                }
+            }
+            if (kategoriatipus == "tipus") {
+                let bennevan = false
+                talalatok.forEach(talalat => {
+                    if (talalat == element.doc.tipus) {
+                        bennevan = true
+                    }
+                })
+                if (!bennevan) {
+                    talalatok.push(element.doc.tipus)
+                }
+            }
+        })
+        talalatok.sort((a, b) => (a > b) - (a < b))
+        console.log(Date.now() - ido)
+
+        callback(talalatok)
+    })
+
+
+}
+
+
+function ablakInit( ablakid,width,height,callback) {
+
+    let ablak = document.createElement("div")
+    ablak.style.width = width
+    ablak.style.height = height
+    ablak.style.position = "absolute"
+    ablak.style.top = "10%"
+    ablak.style.left = "10%"
+    ablak.style.zIndex = "9"
+    ablak.style.backgroundColor = "#f1f1f1"
+    ablak.style.border = "1px solid #d3d3d3"
+
+    ablak.id = ablakid
+    let header = document.createElement("div")
+    header.style.width = "100%"
+    header.style.height = "20px"
+    header.style.backgroundColor = "#b5d3f1"
+    header.id = ablakid + "header"
+    let bezarasgomb = document.createElement("div")
+
+    bezarasgomb.style.cssFloat = "right"
+    bezarasgomb.style.width = "20px"
+    bezarasgomb.style.height = "20px"
+    bezarasgomb.style.backgroundColor = "#f16d7a"
+    bezarasgomb.id = ablakid + "bezarasgomb"
+    let body = document.createElement("div")
+    body.style.width = "100%"
+    body.style.backgroundColor = "#eaecf1"
+    body.style.overflow="auto"
+    body.id = ablakid + "body"
+    header.appendChild(bezarasgomb)
+    ablak.appendChild(header)
+    ablak.appendChild(body)
+    document.querySelector("body").appendChild(ablak)
+
+
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (document.getElementById(ablak.id + "header")) {
+        // if present, the header is where you move the DIV from:
+        document.getElementById(ablak.id + "header").onmousedown = dragMouseDown;
+    } else {
+        // otherwise, move the DIV from anywhere inside the DIV:
+        ablak.onmousedown = dragMouseDown;
+    }
+
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        ablak.style.top = (ablak.offsetTop - pos2) + "px";
+        ablak.style.left = (ablak.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+        // stop moving when mouse button is released:
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+    bezarasgomb.addEventListener("click",function () {
+
+        ablak.remove()
+
+
+    })
+
+
+    callback()
 }

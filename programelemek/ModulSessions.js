@@ -1,13 +1,12 @@
 class ModulSessions {
-    constructor(sessionselectors, beallitasok) {
+    constructor(tableselector, magassag) {
 
-        this.divselector = sessionselectors.divselector
-        this.tableselector = sessionselectors.tableselector
+        this.tableselector = tableselector
+        this.tabstablemagassag = magassag
 
-        this.databasemagassag = beallitasok.magassag
+
         this.sessionid = ""
         this.pageScrollPos = 0;
-
         this.initfirstwindow()
 
         this.eszkoz = eszkozdetektalo();
@@ -70,7 +69,7 @@ class ModulSessions {
                     orderCellsTop: true,
                     fixedHeader: true,
                     fixedFooter: true,
-                    scrollY: tabstablemagassag,
+                    scrollY: self.tabstablemagassag,
                     scrollCollapse: true,
                     paging: false,
                     info: false,
@@ -79,15 +78,12 @@ class ModulSessions {
                     data: adatok,
                     columns: [
                         {
-                            title: "I",
                             defaultContent: ""
                         },
                         {
-                            title: "Cim",
                             defaultContent: ""
                         },
                         {
-                            title: "Date",
                             defaultContent: ""
                         }
                     ],
@@ -97,7 +93,7 @@ class ModulSessions {
                     },
                     columnDefs: [
                         {
-                            width: "90%",
+                            width: "100%",
                             targets: [1]
                         }
                     ]
@@ -134,13 +130,14 @@ class ModulSessions {
         }
         let cim2 = "";
         if (data.cim !== undefined && data.cim !== null) {
-            cim2 = data.cim.trunc(110);
+            cim2 = data.cim.trunc(70);
         }
         let cim3 = document.createElement("b")
         cim3.style.userSelect = "none"
         if (data.opened == false) {
             cim3.style.color = "white"
         }
+
         cim3.innerText = cim2
         //--------------------------
         let datum = datumkora(data.datum, "days");
@@ -150,6 +147,7 @@ class ModulSessions {
         //--------------------------------------------
         let col = row.querySelectorAll("td");
         col[0].innerHTML = icon;
+
         col[1].appendChild(cim3)
         col[2].appendChild(datum2)
         if (data.opened && self.eszkoz == "android") {
@@ -341,7 +339,7 @@ class ModulSessions {
             self.tabkijelolo();
             setTimeout(() => {
                 if (
-                    document.querySelector(self.divselector + " .dataTables_empty") !=
+                    document.querySelector(self.tableselector + " .dataTables_empty") !=
                     null
                 ) {
                     this.tabstablefrissito();
@@ -382,28 +380,8 @@ class ModulSessions {
 
     }
 
-    setsessionstablevisibility() {
-        let self = this
-
-        if (self.sessionslathato == true) {
-            document.querySelector(self.divselector).style.display = "none";
-            self.sessionslathato = false;
-        } else {
-            document.querySelector(self.divselector).style.display = "block";
-            self.sessionslathato = true;
-        }
-    };
 
 
 }
-
-//let eszkoz = "android";
-
-
-//csak azért, hogy gyorsabban betöltsön
-
-
 //todo sessions ne lassuljon le
 
-
-//todo adattablafrissitot csinald meg

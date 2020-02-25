@@ -16,6 +16,12 @@ let ProgramsData = [
         buttonid: "ExplorerButton"
     },
     {
+        tipus: "research",
+        logo: "R",
+        htmlpath: "./ProgramResearch.html",
+        buttonid: "ResearchButton"
+    },
+    {
         tipus: "naptar",
         logo: "N",
         htmlpath: "./ProgramNaptar.html",
@@ -437,7 +443,6 @@ function sessionselectfrissitoinit() {
                     attachments: true
                 })
                 .then(function (result) {
-
                     function szuro(row, win) {
                         let a = 0;
                         win.forEach(element2 => {
@@ -447,20 +452,16 @@ function sessionselectfrissitoinit() {
                         });
                         return a;
                     }
-
                     function berako(element) {
                         document
                             .getElementById("sessionselect")
                             .options.add(new Option(element.doc.cim, element.id));
                         //windows-ban ha nincs benne,a mentett db6 akkor berakja
                     }
-
                     function listbetolto(win) {
-
                         let resultrows = result.rows;
                         resultrows.sort((a, b) => a.doc.cim.localeCompare(b.doc.cim));
                         resultrows.forEach(element => {
-
                             if (eszkoz == "sidebar") {
                                 if (szuro(element, win) == 0) {
                                     berako(element)
@@ -468,24 +469,17 @@ function sessionselectfrissitoinit() {
                             } else {
                                 berako(element)
                             }
-
                         });
                     }
-
                     if (eszkoz == "sidebar") {
                         chrome.windows.getAll(function (win) {
-
                             listbetolto(win)
                         });
                     } else {
                         listbetolto()
-
                     }
-
-
-                });
-
-        });
+                })
+        })
 }
 
 //OK---------------------------------------------------------------------------------------------------------->>>>>>>>>
@@ -494,15 +488,12 @@ function sessioncimvaltozasinit(session) {
     document
         .querySelector("#sessionname")
         .addEventListener("change", function (params) {
-
                 db7.get(session._id).then(function (doc) {
                     doc.cim = document.querySelector("#sessionname").value;
                     return db7.put(doc);
-                });
-
-        });
+                })
+        })
 }
-
 function sessiondeleteinit(session) {
     document
         .querySelector("#sessiondelete")
@@ -510,11 +501,9 @@ function sessiondeleteinit(session) {
             let biztosan = confirm("Biztosan Torlod?");
             if (biztosan) {
                 db7.get(session._id).then(function (doc) {
-
                     return db7.remove(doc);
                 }).then(function(){
                     if(eszkoz=="sidebar"){
-
                         chrome.windows.getCurrent(
                             {
                                 populate: true
@@ -524,14 +513,8 @@ function sessiondeleteinit(session) {
                             })
                     }else{
                         window.close();
-
                     }
-
                 })
-
-
-
-
             }
         });
 }
@@ -553,3 +536,5 @@ function Init() {
 }
 
 Init()
+
+

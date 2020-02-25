@@ -1,76 +1,57 @@
 class ModulFiles {
-
-    constructor(divselector, tableselector, detailsmodul,magassag) {
-let self=this
-        this.divselector = divselector
+    constructor(tableselector, magassag) {
+        let self = this
         this.tableselector = tableselector
-        this.datatablebetoltve = false
         this.databasemagassag = magassag
 
-        this.detailsmodul = detailsmodul;
-        this.kategoriaszuro = undefined;
-        this.alkategoriaszuro = undefined;
-        this.alalkategoriaszuro = undefined;
-        this.eszkoz=eszkozdetektalo()
+
+        this.datatablebetoltve = false
+        this.kategoriaszuro = "";
+        this.alkategoriaszuro = "";
+        this.alalkategoriaszuro = "";
+        this.tipusszuro = "";
+        this.eszkoz = eszkozdetektalo()
         getActualSession(function (session) {
-            if(session.kategoria){
+            if (session.kategoria) {
                 self.kategoriaszuro = session.kategoria;
             }
-            if(session.alkategoria){
-                self.alkategoriaszuro = session.alkategoria;}
-            if(session.alalkategoria){
-            self.alalkategoriaszuro = session.alalkategoria;
-}
+            if (session.alkategoria) {
+                self.alkategoriaszuro = session.alkategoria;
+            }
+            if (session.alalkategoria) {
+                self.alalkategoriaszuro = session.alalkategoria;
+            }
+            if (session.tipus) {
+                self.tipusszuro = session.tipus;
+            }
             self.datatablefrissitobetolto()
         })
     }
-
-
     datatablefrissitobetolto() {
         let self = this
-        let filter = {};
-        filter.datum = {};
-        let fields = [];
-        fields.push("datum");
-        filter.datum.$gte = null;
-        if (self.kategoriaszuro != undefined && self.kategoriaszuro != "") {
-            filter.kategoria = self.kategoriaszuro;
-            fields.push("kategoria");
-        }
-        if (self.alkategoriaszuro != undefined && self.alkategoriaszuro != "") {
-            filter.alkategoria = self.alkategoriaszuro;
-            fields.push("alkategoria");
-        }
-        if (self.alalkategoriaszuro != undefined && self.alalkategoriaszuro != "") {
-            filter.alalkategoria = self.alalkategoriaszuro;
-            fields.push("alalkategoria");
-        }
 
-        db.createIndex({
-            index: {
-                fields: fields
+        let kategoriak = {}
+        kategoriak.kategoria = self.kategoriaszuro
+        kategoriak.alkategoria = self.alkategoriaszuro
+        kategoriak.alalkategoria = self.alalkategoriaszuro
+        kategoriak.tipus = self.tipusszuro
+        pouchkategoriaszuro(kategoriak, function (result) {
+
+
+            if (self.datatablebetoltve == false) {
+                self.datatablebetolto(result);
+            } else {
+                $(self.tableselector)
+                    .dataTable()
+                    .fnClearTable();
+                $(self.tableselector)
+                    .dataTable()
+                    .fnAddData(result);
             }
-        })//todo nézd meg, hogy az alldocsszal és a saját callback functionoddal vagy ezzel a finddal gyorsabb-e
-            .then(function () {
-                return db.find({
-                    selector: filter,
-                    sort: [{datum: "desc"}]
-                });
-            })
-            .then(function (result) {
-                if (self.datatablebetoltve == false) {
-                    self.datatablebetolto(result);
-                } else {
-                    $(self.tableselector)
-                        .dataTable()
-                        .fnClearTable();
-                    $(self.tableselector)
-                        .dataTable()
-                        .fnAddData(result.docs);
-                }
-            });
-    };
+        })
 
+
+    }
     datatablebetolto(result) {
 
         let self = this
@@ -218,7 +199,7 @@ let self=this
             $(self.tableselector).DataTable({
                 initComplete: function () {
                     this.api()
-                        .columns([4, 5, 6])
+                        .columns([4, 5, 6, 7])
                         .every(function (e) {
                             let column2 = this;
 
@@ -247,6 +228,10 @@ let self=this
                                         if (val != undefined) {
                                             self.alalkategoriaszuro = val;
                                         }
+                                    } else if (e == 7) {
+                                        if (val != undefined) {
+                                            self.tipusszuro = val;
+                                        }
                                     }
                                     self.datatablefrissitobetolto();
                                 });
@@ -258,23 +243,11 @@ let self=this
                                     self.alkategoriadropdownfrissito();
                                 } else if (e == 6) {
                                     self.alalkategoriadropdownfrissito();
+                                } else if (e == 7) {
+                                    self.tipusdropdownfrissito();
                                 }
                             });
                         });
-                    let szuromentesebutton = document.createElement("button");
-                    szuromentesebutton.type = "button";
-                    szuromentesebutton.innerText = "Szuro mentese";
-                    szuromentesebutton.onclick = function (params) {
-                        var column = this;
-
-                        self.sessionkategoriamento(self.kategoriaszuro, self.alkategoriaszuro, self.alalkategoriaszuro)
-                    };
-                    szuromentesebutton.id = "szuromentesebutton";
-                    document
-                        .querySelector(self.divselector)
-                        .insertAdjacentElement("afterbegin", szuromentesebutton);
-
-
 
                 },
                 deferRender: true,
@@ -291,152 +264,135 @@ let self=this
                 info: false,
                 retrieve: true, //az elején előjövő bug ellen lehet, hogy jó most tesztelem  https://datatables.net/manual/tech-notes/3
 
-                data: result.docs,
+                data: result,
                 columns: columns,
                 columnDefs: columndefs,
                 createdRow: function (row, data, dataIndex) {
                     //row.querySelectorAll("td")[1].innerText = "000";
-                    self.adatfrissito2(row, data);
+                    self.adatfrissito2(row, data.doc);
                 }
             });
         });
 
     }
-
     kategoriadropdownfrissito() {
-        //  console.log("ff")
-        //todo folytasd a kategoriaszurot(lehet, hogy az alldocsszal kéne megoldani ezt is és talán a tábla betöltőt is)
-
-        let kategoriaosszes = [];
-        db.find({
-            selector: {
-                kategoria: {
-                    $exists: true
-                }
-            },
-            fields: ["kategoria"]
-        })
-            .then(function (result) {
-                console.log("result:", result);
-                result.docs.forEach(element => {
-                    kategoriaosszes.push(element.kategoria);
-                });
-                let kategoriaarray = kategoriaosszes.filter(function (item, pos) {
-                    return kategoriaosszes.indexOf(item) == pos;
-                });
-
-                $(`#select4`)
-                    .find("option")
-                    .remove()
-                    .end();
-
-                kategoriaarray.forEach(function (eg, i) {
-                    var el = document.createElement("option");
-                    el.textContent = eg;
-                    el.value = eg;
-                    document.querySelector(`#select4`).appendChild(el);
-                });
-            })
-            .catch(function (err) {
-                //console.log(err);
+        let self = this
+        let kategoriak = {}
+        kategoriak.kategoria = self.kategoriaszuro
+        kategoriak.alkategoria = self.alkategoriaszuro
+        kategoriak.alalkategoria = self.alalkategoriaszuro
+        kategoriak.tipus = self.tipusszuro
+        pouchkategoriadropdown(kategoriak, "kategoria", function (result) {
+            var space = document.createElement("option");
+            space.textContent = " "
+            space.value = " "
+            $(`${self.tableselector}_wrapper #select4`)
+                .find("option")
+                .remove()
+                .end()
+                .append(space)
+            result.forEach(function (eg, i) {
+                var el = document.createElement("option");
+                el.textContent = eg;
+                el.value = eg;
+                document.querySelector(`${self.tableselector}_wrapper #select4`).appendChild(el);
             });
-    }
+        })
 
+    }
     alkategoriadropdownfrissito() {
-        //  console.log("ff")
-        //todo folytasd a kategoriaszurot(lehet, hogy az alldocsszal kéne megoldani ezt is és talán a tábla betöltőt is)
-let self=this
-        let alkategoriaosszes = [];
-        db.find({
-            selector: {
-                alkategoria: {
-                    $exists: true
-                }
-            },
-            fields: ["kategoria", "alkategoria"]
-        })
-            .then(function (result) {
-                // console.log(result)
-                // console.log(result.docs[0])
-                result.docs.forEach(element => {
-                    if (element.kategoria === self.kategoriaszuro) {
-                        alkategoriaosszes.push(element.alkategoria);
-                    }
-                });
-                let alkategoriaarray = alkategoriaosszes.filter(function (item, pos) {
-                    return alkategoriaosszes.indexOf(item) == pos;
-                });
-
-                $(`#select5`)
-                    .find("option")
-                    .remove()
-                    .end();
-                alkategoriaarray.forEach(function (eg, i) {
-                    var el = document.createElement("option");
-                    console.log("eg:", eg);
-                    el.textContent = eg;
-                    el.value = eg;
-                    document.querySelector(`#select5`).appendChild(el);
-                });
-            })
-            .catch(function (err) {
-                //console.log(err);
+        let self = this
+        let kategoriak = {}
+        kategoriak.kategoria = self.kategoriaszuro
+        kategoriak.alkategoria = self.alkategoriaszuro
+        kategoriak.alalkategoria = self.alalkategoriaszuro
+        kategoriak.tipus = self.tipusszuro
+        pouchkategoriadropdown(kategoriak, "alkategoria", function (result) {
+            var space = document.createElement("option");
+            space.textContent = " "
+            space.value = " "
+            $(`${self.tableselector}_wrapper #select5`)
+                .find("option")
+                .remove()
+                .end()
+                .append(space)
+            result.forEach(function (eg, i) {
+                var el = document.createElement("option");
+                el.textContent = eg;
+                el.value = eg;
+                document.querySelector(`${self.tableselector}_wrapper #select5`).appendChild(el);
             });
-    }
 
-//default szuro visszaálítása és jelenlegi szuro mentese berak
+
+        })
+
+
+    }
     alalkategoriadropdownfrissito() {
-        //  console.log("ff")
-        let alalkategoriaosszes = [];
-        db.find({
-            selector: {
-                alalkategoria: {
-                    $exists: true
-                }
-            },
-            fields: ["kategoria", "alkategoria", "alalkategoria"]
-        })
-            .then(function (result) {
-                // console.log(result)
-                // console.log(result.docs[0])
-                result.docs.forEach(element => {
-                    if (
-                        self.kategoriaszuro === element.kategoria &&
-                        self.alkategoriaszuro === element.alkategoria
-                    ) {
-                        alalkategoriaosszes.push(element.alalkategoria);
-                    }
-                });
-                let alalkategoriaarray = alalkategoriaosszes.filter(function (item, pos) {
-                    return alalkategoriaosszes.indexOf(item) == pos;
-                });
 
-                $(`#select6`)
-                    .find("option")
-                    .remove()
-                    .end();
-                alalkategoriaarray.forEach(function (eg, i) {
-                    var el = document.createElement("option");
-                    console.log("eg:", eg);
-                    el.textContent = eg;
-                    el.value = eg;
-                    document.querySelector(`#select6`).appendChild(el);
-                });
-            })
-            .catch(function (err) {
-                //console.log(err);
+        let self = this
+        let kategoriak = {}
+        kategoriak.kategoria = self.kategoriaszuro
+        kategoriak.alkategoria = self.alkategoriaszuro
+        kategoriak.alalkategoria = self.alalkategoriaszuro
+        kategoriak.tipus = self.tipusszuro
+        pouchkategoriadropdown(kategoriak, "alalkategoria", function (result) {
+            var space = document.createElement("option");
+            space.textContent = " "
+            space.value = " "
+            $(`${self.tableselector}_wrapper #select6`)
+                .find("option")
+                .remove()
+                .end()
+                .append(space)
+            result.forEach(function (eg, i) {
+                var el = document.createElement("option");
+                el.textContent = eg;
+                el.value = eg;
+                document.querySelector(`${self.tableselector}_wrapper #select6`).appendChild(el);
             });
-    }
 
+
+        })
+
+    }
+    tipusdropdownfrissito() {
+        let self = this
+        let kategoriak = {}
+        kategoriak.kategoria = self.kategoriaszuro
+        kategoriak.alkategoria = self.alkategoriaszuro
+        kategoriak.alalkategoria = self.alalkategoriaszuro
+        kategoriak.tipus = self.tipusszuro
+        pouchkategoriadropdown(kategoriak, "tipus", function (result) {
+            var space = document.createElement("option");
+            space.textContent = " "
+            space.value = " "
+            $(`${self.tableselector}_wrapper #select7`)
+                .find("option")
+                .remove()
+                .end()
+            .append(space)
+            result.forEach(function (eg, i) {
+                var el = document.createElement("option");
+                el.textContent = eg;
+                el.value = eg;
+                document.querySelector(`${self.tableselector}_wrapper #select7`).appendChild(el);
+            });
+        })
+    }
     adatfrissito2(row, element) {
-        let self=this
+        let szoveghossz = 25
+        if (this.eszkoz == "tab") {
+            szoveghossz = 70
+        }
+        let self = this
         if (element != undefined) {
             let icon = `<img src="https://www.google.com/s2/favicons?domain=${element._id}" width="20" height="20" class="datafavicon">`;
 
             let cim = "";
             if (element.cim !== undefined) {
                 cim = `<b style="font-weight:bold;line-height: 1" >${element.cim.trunc(
-                    35
+                    szoveghossz
                 )}</b>`;
                 // console.log(cim2)
             }
@@ -451,7 +407,7 @@ let self=this
 
             let megjegyzes = "";
             if (element.megjegyzes !== undefined) {
-                megjegyzes = element.megjegyzes.trunc(35)
+                megjegyzes = element.megjegyzes.trunc(szoveghossz)
             }
             let kategoria = "";
             if (element.kategoria !== undefined) {
@@ -544,7 +500,7 @@ let self=this
             );
 
             row.addEventListener("click", function () {
-                self.detailsmodul.detailsfrissito(element._id)
+                self.click(element._id)
             });
 
             row.querySelectorAll("td")[1].addEventListener("click", function () {
@@ -563,22 +519,24 @@ let self=this
                 }
             });
         }
-    };
+    }
+    rowclickevent(callback) {
 
-    sessionkategoriamento(kategoriaszuro, alkategoriaszuro, alalkategoriaszuro) {
-
+        this.click = function (id) {
+            callback(id)
+        }
+    }
+    sessionkategoriamento() {
+        let self = this
         getActualSession(function (session) {
-
+            console.log(self.kategoriaszuro)
+            console.log(self.alkategoriaszuro)
+            console.log(self.alalkategoriaszuro)
             db7.get(session._id).then(function (doc) {
-                if (kategoriaszuro !== "-1") {
-                    doc.kategoria = kategoriaszuro;
-                }
-                if (alkategoriaszuro !== "-1") {
-                    doc.alkategoria = alkategoriaszuro;
-                }
-                if (alalkategoriaszuro !== "-1") {
-                    doc.alalkategoria = alalkategoriaszuro;
-                }
+                doc.kategoria = self.kategoriaszuro;
+                doc.alkategoria = self.alkategoriaszuro;
+                doc.alalkategoria = self.alalkategoriaszuro;
+                doc.tipus = self.tipusszuro;
                 return db7.put(doc);
             });
 

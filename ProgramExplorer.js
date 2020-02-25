@@ -10,36 +10,49 @@ let db7 = new PouchDB("SessionsNet", {
 
 let tabstablemagassag = 348;
 let databasemagassag = 348;
-
-
 let eszkoz = eszkozdetektalo()
 
+function stylebeallitasok1() {
+    if (eszkoz == "sidebar") {
+        tabstablemagassag = 330;
+        databasemagassag = 330;
+    } else if (eszkoz == "tab") {
+        tabstablemagassag = 250;
+        databasemagassag = 500;
 
+    } else if (eszkoz == "android") {
+        tabstablemagassag = 330;
+        databasemagassag = 330;
+    }
+}
+
+stylebeallitasok1();
+//----------------------------------------------------------------------------------------------------------------------Details
 let detailsselectors = {
     divcontainer: "#detailsdiv",
-    detailsboxhide: "#detailsboxopen"
-
 }
 let detailsbeallitasok = {
-    db: db,
-    db7: db7,
-    htmlpath: "programelemek/details.html",
     automatavalto: true,
-    detailsboxlathato: true,
     divcontainerbebetoltes: true
 }
 let details = new ModulDetails(detailsselectors, detailsbeallitasok)
+//--------------------------------------------------------------------------------------------------------------------------Sessions
+let session = new ModulSessions("#tabstable", tabstablemagassag)
+//----------------------------------------------------------------------------------------------------------------------Database
+let datatable = new ModulFiles("#datatable", databasemagassag)
 
-let sessionselectors = {
-    divselector: "#tabstablediv",
-    tableselector: "#tabstable"
-}
-let sessionbeallitasok = {
-    magassag: tabstablemagassag
-}
-let session = new ModulSessions(sessionselectors, sessionbeallitasok)
-let datatable = new ModulFiles("#datatablediv", "#datatable", details, databasemagassag)
+datatable.rowclickevent(function (id) {
+    details.detailsfrissito(id)
+})
+document.querySelector("#szuromentes").addEventListener("click", function (e) {
+    datatable.sessionkategoriamento()
+})
 
+document.querySelector("#datatablefrissites").addEventListener("click", function (e) {
+    datatable.datatablefrissitobetolto()
+})
+
+//--------------------------------------------------------------------------------------------------------------------
 function stylebeallitasok() {
     let basicstyletables = "";
     if (eszkoz == "sidebar") {
@@ -94,6 +107,7 @@ function stylebeallitasok() {
     document.head.appendChild(styleSheettables);
 }
 
+stylebeallitasok();
 elementhider("#detailsboxopen", "#detailsdiv")
 elementhider("#tabstableopen", "#tabstablediv")
-stylebeallitasok();
+
