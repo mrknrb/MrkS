@@ -105,11 +105,11 @@ class ModulFiles {
                     targets: 0
                 },
                 {
-                    width: "50%",
+                    width: "50",
                     targets: [1]
                 },
                 {
-                    width: "50%",
+                    width: "50",
                     targets: [3],
                     render: $.fn.dataTable.render.ellipsis(50)
                 }

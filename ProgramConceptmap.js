@@ -434,7 +434,11 @@ function conceptmapbetolto(doc) {
 
 }
 
-function conceptmapuresbetolto() {}
+function conceptmapuresbetolto() {
+
+
+
+}
 
 
 let diagram = {

@@ -107,6 +107,8 @@ function programstarter(adatok) {
                 }
             })
 
+        }).catch(function (error) {
+            alert("Load Failed!")
         })
     } else if (adatok.tipus != undefined) {
         //a tipussal nyit egy új programot
