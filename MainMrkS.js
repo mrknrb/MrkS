@@ -2,32 +2,7 @@
 let jelenlegitab = ""
 let sessionid = ""
 let eszkoz = eszkozdetektalo()
-let ProgramsData = [
-    {
-        tipus: "conceptmap",
-        logo: "C",
-        htmlpath: "./ProgramConceptMap.html",
-        buttonid: "ConceptMapButton"
-    },
-    {
-        tipus: "explorer",
-        logo: "E",
-        htmlpath: "./ProgramExplorer.html",
-        buttonid: "ExplorerButton"
-    },
-    {
-        tipus: "research",
-        logo: "R",
-        htmlpath: "./ProgramResearch.html",
-        buttonid: "ResearchButton"
-    },
-    {
-        tipus: "naptar",
-        logo: "N",
-        htmlpath: "./ProgramNaptar.html",
-        buttonid: "NaptarButton"
-    }
-]
+
 var db = new PouchDB("NodesNet", {
     auto_compaction: true
 })
@@ -35,7 +10,7 @@ var db7 = new PouchDB("SessionsNet", {
     auto_compaction: true
 })
 getActualSession(function (session) {
-    sessionid=session._id
+    sessionid = session._id
 })
 if (eszkoz == "android") {
 
@@ -49,6 +24,7 @@ if (eszkoz == "android") {
 
     db.sync(dbremote);
     db7.sync(db7remote);
+
     function start2() {
         db.sync(dbremote);
 
@@ -62,14 +38,14 @@ if (eszkoz == "android") {
 //OK---------------------------------------------------------------------------------------------------------
 function programstarter(adatok) {
     /**adatok:{fileid,tipus,programtabid}*/
-
 //OK-----------------------------------------------------------------------------------------
+
     let programtabid2 = adatok.programtabid
+
     if (adatok.programtabid == undefined) {
         programtabid2 = guidGenerator()
     }
-
-    function programmento(tipus) {
+    function programmento(tipus,fileid) {
 
         getActualSession(function (session) {
             db7
@@ -77,8 +53,12 @@ function programstarter(adatok) {
                 .then(function (doc) {
                     let adatok2 = {}
                     adatok2.tipus = tipus
+                    if(adatok.fileid){
                     adatok2.fileid = adatok.fileid
+                    }else{ adatok2.fileid = fileid}
                     adatok2.programtabid = programtabid2
+
+                    console.log("adatok2",adatok)
                     if (doc.programs == undefined) {
                         doc.programs = []
                     }
@@ -95,8 +75,8 @@ function programstarter(adatok) {
 
 
 //OK----------------------------------------------------------------------------------------
+    //todo
     if (adatok.fileid != undefined) {
-
         db.get(adatok.fileid).then(function (doc) {
             ProgramsData.forEach(function (program) {
                 if (program.tipus === doc.tipus) {
@@ -104,20 +84,72 @@ function programstarter(adatok) {
                         programmento(program.tipus)
                     }
                     programbetolto(program)
+
                 }
             })
 
         }).catch(function (error) {
-            alert("Load Failed!")
+            alert("Load Failed!2")
+
+            getActualSession(function (session) {
+                db7
+                    .get(session._id)
+                    .then(function (doc) {
+                        doc.programs.forEach(function (program, index) {
+                            if (adatok.fileid == program.fileid) {
+                                doc.programs.splice(index, 1);
+
+
+                                return db7.put(doc);
+                            }
+                        })
+
+
+
+                    }).catch(function (error) {
+                    console.log(error)
+                })
+
+
+        })
         })
     } else if (adatok.tipus != undefined) {
         //a tipussal nyit egy új programot
         ProgramsData.forEach(function (program) {
             if (program.tipus === adatok.tipus) {
-                if (adatok.programtabid == undefined) {
-                    programmento(adatok.tipus)
+
+                if (program.startmentes == true) {
+                    let adatok2 = {}
+                    adatok2._id = guidGenerator()
+                    adatok2.tipus = adatok.tipus
+                    adatok2.datum = Date.now()
+                    getActualSession(function (session) {
+                        if (session != undefined) {
+                            if (session.kategoria != undefined && session.kategoria != "") {
+                                adatok2.kategoria = session.kategoria
+                            }
+                            if (session.alkategoria != undefined && session.alkategoria != "") {
+                                adatok2.alkategoria = session.alkategoria
+                            }
+                            if (session.alalkategoria != undefined && session.alalkategoria != "") {
+                                adatok2.alalkategoria = session.alalkategoria
+                            }
+                        }
+                        db.put(adatok2).then(function (e) {
+                            if (adatok.programtabid == undefined) {
+                                programmento(adatok.tipus,adatok2._id)
+                            }
+                            programbetolto(program)
+
+                        }).catch(function (err) {
+                            alert("Load Failed!")
+                        })
+                    })
+                } else {
+                    programbetolto(program)
+
                 }
-                programbetolto(program)
+
             }
         })
 
@@ -127,7 +159,7 @@ function programstarter(adatok) {
 
 //OK-----------------------------------------------------------------------------------------
     function programbetolto(program) {
-        let iframehtml = `<iframe src="${program.htmlpath}" sessionid="${sessionid}" fileid="${adatok.fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
+        let iframehtml = `<iframe src="${program.htmlpath}" tipus="${adatok.tipus}" sessionid="${sessionid}" fileid="${adatok.fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
 
         tabcount++
         let tabnumber = tabcount
@@ -174,30 +206,29 @@ function programstarter(adatok) {
 
 //OK^--------------------------------------------------------------------------------------------------------A torlo meg van csinálva elvileg
         jQuery(".tabs .tab-links .tabbezarobuttons").on("click", function (e) {
-            let xx=this
-getActualSession(function(session){
+            let xx = this
+            getActualSession(function (session) {
 
-    db7
-        .get(session._id)
-        .then(function (doc) {
-            console.log(doc)
-            let programtabid3 = jQuery(xx).attr("programtabid")
-            doc.programs.forEach(function (program, index) {
-                console.log(programtabid3,program.programtabid)
-                if (programtabid3 == program.programtabid) {
-                    doc.programs.splice(index, 1);
-                }
+                db7
+                    .get(session._id)
+                    .then(function (doc) {
+                        console.log(doc)
+                        let programtabid3 = jQuery(xx).attr("programtabid")
+                        doc.programs.forEach(function (program, index) {
+                            console.log(programtabid3, program.programtabid)
+                            if (programtabid3 == program.programtabid) {
+                                doc.programs.splice(index, 1);
+                            }
+                        })
+
+
+                        return db7.put(doc);
+
+                    }).catch(function (error) {
+                    console.log(error)
+                })
+
             })
-
-
-            return db7.put(doc);
-
-        }).catch(function (error) {
-        console.log(error)
-    })
-
-})
-
 
 
             var currentAttrValue = jQuery(this).attr("href")
@@ -379,8 +410,11 @@ function sessioncolorinit(session) {
 function programsrestart(session) {
     if (session._id != "jegyz0e9ad149-49a1-76e7-c1d8-f37bf0d0956b") {
 
+        console.log("session",session)
         if (session.programs != undefined) {
             session.programs.forEach(function (programadatok) {
+
+                console.log("programadatok",programadatok)
                 programstarter(programadatok)
             })
         } else {
@@ -454,12 +488,14 @@ function sessionselectfrissitoinit() {
                         });
                         return a;
                     }
+
                     function berako(element) {
                         document
                             .getElementById("sessionselect")
                             .options.add(new Option(element.doc.cim, element.id));
                         //windows-ban ha nincs benne,a mentett db6 akkor berakja
                     }
+
                     function listbetolto(win) {
                         let resultrows = result.rows;
                         resultrows.sort((a, b) => a.doc.cim.localeCompare(b.doc.cim));
@@ -473,6 +509,7 @@ function sessionselectfrissitoinit() {
                             }
                         });
                     }
+
                     if (eszkoz == "sidebar") {
                         chrome.windows.getAll(function (win) {
                             listbetolto(win)
@@ -490,12 +527,13 @@ function sessioncimvaltozasinit(session) {
     document
         .querySelector("#sessionname")
         .addEventListener("change", function (params) {
-                db7.get(session._id).then(function (doc) {
-                    doc.cim = document.querySelector("#sessionname").value;
-                    return db7.put(doc);
-                })
+            db7.get(session._id).then(function (doc) {
+                doc.cim = document.querySelector("#sessionname").value;
+                return db7.put(doc);
+            })
         })
 }
+
 function sessiondeleteinit(session) {
     document
         .querySelector("#sessiondelete")
@@ -504,8 +542,8 @@ function sessiondeleteinit(session) {
             if (biztosan) {
                 db7.get(session._id).then(function (doc) {
                     return db7.remove(doc);
-                }).then(function(){
-                    if(eszkoz=="sidebar"){
+                }).then(function () {
+                    if (eszkoz == "sidebar") {
                         chrome.windows.getCurrent(
                             {
                                 populate: true
@@ -513,7 +551,7 @@ function sessiondeleteinit(session) {
                             function (win) {
                                 chrome.windows.remove(win.id)
                             })
-                    }else{
+                    } else {
                         window.close();
                     }
                 })

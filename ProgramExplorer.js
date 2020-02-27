@@ -111,3 +111,4 @@ stylebeallitasok();
 elementhider("#detailsboxopen", "#detailsdiv")
 elementhider("#tabstableopen", "#tabstablediv")
 
+inputsuggestionoff()

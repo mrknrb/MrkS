@@ -1,25 +1,3 @@
-function filebetolto(fileid, filetipus) {
-
-    if (filetipus == "conceptmap") {
-        getActualSession(function (session) {
-
-            chrome.runtime.sendMessage(
-                {
-                    kerestipus: "ujprogram",
-                    tipus: filetipus,
-                    fileid: fileid,
-                    sessionid: session._id
-                },
-                function (response) {
-                }
-            );
-        })
-
-
-    } else {
-        window.open(fileid, "_blank");
-    }
-}
 
 function eszkozdetektalo() {
     window.mobilecheck = function () {
@@ -500,4 +478,67 @@ function ablakInit( ablakid,width,height,callback) {
 
 
     callback()
+}
+function inputsuggestionoff(){
+
+    document.querySelectorAll("input").forEach(function (inputs) {
+        inputs.autocomplete="off"
+    })
+}
+
+let ProgramsData = [
+    {
+        tipus: "conceptmap",
+        logo: "C",
+        htmlpath: "./ProgramConceptMap.html",
+        buttonid: "ConceptMapButton",
+        startmentes: true
+    },
+    {
+        tipus: "explorer",
+        logo: "E",
+        htmlpath: "./ProgramExplorer.html",
+        buttonid: "ExplorerButton",
+        startmentes: false
+    },
+    {
+        tipus: "research",
+        logo: "R",
+        htmlpath: "./ProgramResearch.html",
+        buttonid: "ResearchButton",
+        startmentes: true
+    },
+    {
+        tipus: "naptar",
+        logo: "N",
+        htmlpath: "./ProgramNaptar.html",
+        buttonid: "NaptarButton",
+        startmentes: false
+    }
+]
+function filebetolto(fileid, filetipus) {
+
+let talalat=false
+    ProgramsData.forEach(function (program) {
+        if (program.tipus === filetipus) {
+            talalat=true
+            getActualSession(function (session) {
+
+                chrome.runtime.sendMessage(
+                    {
+                        kerestipus: "ujprogram",
+                        tipus: filetipus,
+                        fileid: fileid,
+                        sessionid: session._id
+                    },
+                    function (response) {
+                    }
+                );
+            })
+        }
+    })
+if(!talalat){
+    window.open(fileid, "_blank");
+}
+
 }
