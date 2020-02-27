@@ -583,19 +583,3 @@ let diagram = {
         }
     ]
 }
-
-function loadfilesamewindow(fileid){
-    db.get(fileid).then(function (file) {
-        if(file.tipus==window.frameElement.getAttribute("tipus")){
-            window.frameElement.setAttribute("fileid",fileid)
-            let src=window.frameElement.getAttribute("src")
-            window.frameElement.setAttribute("src",src)
-
-
-
-        }
-    }).catch(function (err) {
-
-    })
-    
-}
