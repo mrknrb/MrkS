@@ -146,6 +146,9 @@ function programstarter(adatok) {
                         })
                     })
                 } else {
+                    if (adatok.programtabid == undefined) {
+                        programmento(program.tipus)
+                    }
                     programbetolto(program)
 
                 }

@@ -395,7 +395,7 @@ function pouchkategoriadropdown(kategoriak, kategoriatipus, callback) {
 }
 
 
-function ablakInit( ablakid,width,height,callback) {
+function ablakInit( ablakid,width,height,headerlegyen,callback) {
 
     let ablak = document.createElement("div")
     ablak.style.width = width
@@ -408,16 +408,22 @@ function ablakInit( ablakid,width,height,callback) {
     ablak.style.border = "1px solid #d3d3d3"
 
     ablak.id = ablakid
+    let headermagassag=""
+    if(headerlegyen){
+        headermagassag="20px"
+    }else{
+        headermagassag="0px"
+    }
     let header = document.createElement("div")
     header.style.width = "100%"
-    header.style.height = "20px"
+    header.style.height = headermagassag
     header.style.backgroundColor = "#b5d3f1"
     header.id = ablakid + "header"
     let bezarasgomb = document.createElement("div")
 
     bezarasgomb.style.cssFloat = "right"
-    bezarasgomb.style.width = "20px"
-    bezarasgomb.style.height = "20px"
+    bezarasgomb.style.width = headermagassag
+    bezarasgomb.style.height = headermagassag
     bezarasgomb.style.backgroundColor = "#f16d7a"
     bezarasgomb.id = ablakid + "bezarasgomb"
     let body = document.createElement("div")
@@ -425,8 +431,10 @@ function ablakInit( ablakid,width,height,callback) {
     body.style.backgroundColor = "#eaecf1"
     body.style.overflow="auto"
     body.id = ablakid + "body"
+
     header.appendChild(bezarasgomb)
     ablak.appendChild(header)
+
     ablak.appendChild(body)
     document.querySelector("body").appendChild(ablak)
 
@@ -540,5 +548,21 @@ let talalat=false
 if(!talalat){
     window.open(fileid, "_blank");
 }
+
+}
+
+function loadfilesamewindow(fileid){
+    db.get(fileid).then(function (file) {
+        if(file.tipus==window.frameElement.getAttribute("tipus")){
+            window.frameElement.setAttribute("fileid",fileid)
+            let src=window.frameElement.getAttribute("src")
+            window.frameElement.setAttribute("src",src)
+
+
+
+        }
+    }).catch(function (err) {
+
+    })
 
 }

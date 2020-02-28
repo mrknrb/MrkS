@@ -146,7 +146,7 @@ document.querySelector("#search").addEventListener("click", function (e) {
     })
 })
 
-ablakInit("test","500px","500px",function () {
+ablakInit("test","500px","500px",true,function () {
     let table=document.createElement("table")
     table.class="display compact"
     table.id="datatable"
@@ -154,7 +154,7 @@ ablakInit("test","500px","500px",function () {
 
     let datatable = new ModulFiles("#datatable", 400)
 })
-ablakInit("test2","500px","500px",function () {
+ablakInit("test2","500px","500px",true,function () {
     let table=document.createElement("table")
     table.class="display compact"
     table.id="datatable2"
