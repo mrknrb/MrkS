@@ -271,6 +271,11 @@ let elementhideobject = {}
 
 function elementhider(buttonselector, elementselector) {
     document.querySelector(buttonselector).addEventListener("click", function (e) {
+        if( document.querySelector(elementselector).style.display=="none"){
+            elementhideobject[elementselector]=true
+        }
+
+
         if (elementhideobject[elementselector]) {
 
             document.querySelector(elementselector).style.display = "block"
