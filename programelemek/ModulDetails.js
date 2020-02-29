@@ -389,10 +389,40 @@ class ModulDetails {
     }
 
     kategoriaklistabetoltoinit() {
+
         let self = this
         let s = this.selectors
+
         if (document.querySelector(s.kategoria) && document.querySelector(s.alkategoria) && document.querySelector(s.alalkategoria)) {
             document.querySelector(s.kategoria).addEventListener("mouseover", function () {
+
+                let kategoriak = {}
+                kategoriak.kategoria = document.querySelector(s.kategoria).value
+                kategoriak.alkategoria =document.querySelector(s.alkategoria).value
+                kategoriak.alalkategoria = document.querySelector(s.alalkategoria).value
+                kategoriak.tipus = document.querySelector(s.tipus).value
+
+                pouchkategoriadropdown(kategoriak, "kategoria", function (result) {
+
+                    var select = document.querySelector(s.kategoriadata)
+                    $(s.kategoriadata).empty()
+                    for (var i = 0; i < result.length; i++) {
+                        var opt = result[i]
+                        var el = document.createElement("option")
+                        el.textContent = opt
+                        el.value = opt
+                        select.appendChild(el)
+                    }
+                })
+
+
+            })}
+
+
+        if (document.querySelector(s.kategoria) && document.querySelector(s.alkategoria) && document.querySelector(s.alalkategoria)) {
+            /*
+            document.querySelector(s.kategoria).addEventListener("mouseover", function () {
+
                 let kategoriaosszes = []
                 db.find({
                     selector: {
@@ -404,7 +434,6 @@ class ModulDetails {
                 })
                     .then(function (result) {
                         result.docs.forEach(element => {
-                            element.kategoria
                             kategoriaosszes.push(element.kategoria)
                         })
                         let kategoriaarray = kategoriaosszes.filter(function (item, pos) {
@@ -421,71 +450,56 @@ class ModulDetails {
                         }
                     })
             })
+*/
+
             document.querySelector(s.alkategoria).addEventListener("mouseover", function () {
-                let alkategoriaosszes = []
-                db.find({
-                    selector: {
-                        alkategoria: {
-                            $exists: true
-                        }
-                    },
-                    fields: ["kategoria", "alkategoria"]
+
+
+                let kategoriak = {}
+                kategoriak.kategoria = document.querySelector(s.kategoria).value
+                kategoriak.alkategoria =document.querySelector(s.alkategoria).value
+                kategoriak.alalkategoria = document.querySelector(s.alalkategoria).value
+                kategoriak.tipus = document.querySelector(s.tipus).value
+
+                pouchkategoriadropdown(kategoriak, "alkategoria", function (result) {
+
+                    var select = document.querySelector(s.alkategoriadata)
+                    $(s.alkategoriadata).empty()
+                    for (var i = 0; i < result.length; i++) {
+                        var opt = result[i]
+                        var el = document.createElement("option")
+                        el.textContent = opt
+                        el.value = opt
+                        select.appendChild(el)
+                    }
                 })
-                    .then(function (result) {
-                        // console.log(result)
-                        // console.log(result.docs[0])
-                        result.docs.forEach(element => {
-                            if (element.kategoria === document.querySelector(s.kategoria).value) {
-                                alkategoriaosszes.push(element.alkategoria)
-                            }
-                        })
-                        let alkategoriaarray = alkategoriaosszes.filter(function (item, pos) {
-                            return alkategoriaosszes.indexOf(item) == pos
-                        })
-                        var select = document.querySelector(s.alkategoriadata)
-                        $(s.alkategoriadata).empty()
-                        //select.children().remove();
-                        for (var i = 0; i < alkategoriaarray.length; i++) {
-                            var opt = alkategoriaarray[i]
-                            var el = document.createElement("option")
-                            el.textContent = opt
-                            el.value = opt
-                            select.appendChild(el)
-                        }
-                    })
+
+
             })
             document.querySelector(s.alalkategoria).addEventListener("mouseover", function () {
-                let alalkategoriaosszes = []
-                db.find({
-                    selector: {
-                        alalkategoria: {
-                            $exists: true
-                        }
-                    },
-                    fields: ["kategoria", "alkategoria", "alalkategoria"]
+
+                let kategoriak = {}
+                kategoriak.kategoria = document.querySelector(s.kategoria).value
+                kategoriak.alkategoria =document.querySelector(s.alkategoria).value
+                kategoriak.alalkategoria = document.querySelector(s.alalkategoria).value
+                kategoriak.tipus = document.querySelector(s.tipus).value
+
+                pouchkategoriadropdown(kategoriak, "alalkategoria", function (result) {
+
+                    var select = document.querySelector(s.alalkategoriadata)
+                    $(s.alalkategoriadata).empty()
+                    for (var i = 0; i < result.length; i++) {
+                        var opt = result[i]
+                        var el = document.createElement("option")
+                        el.textContent = opt
+                        el.value = opt
+                        select.appendChild(el)
+                    }
                 })
-                    .then(function (result) {
-                        // console.log(result)
-                        // console.log(result.docs[0])
-                        result.docs.forEach(element => {
-                            if (document.querySelector(s.kategoria).value === element.kategoria && document.querySelector(s.alkategoria).value === element.alkategoria) {
-                                alalkategoriaosszes.push(element.alalkategoria)
-                            }
-                        })
-                        let alalkategoriaarray = alalkategoriaosszes.filter(function (item, pos) {
-                            return alalkategoriaosszes.indexOf(item) == pos
-                        })
-                        var select = document.querySelector(s.alalkategoriadata)
-                        $(s.alalkategoriadata).empty()
-                        //select.children().remove();
-                        for (var i = 0; i < alalkategoriaarray.length; i++) {
-                            var opt = alalkategoriaarray[i]
-                            var el = document.createElement("option")
-                            el.textContent = opt
-                            el.value = opt
-                            select.appendChild(el)
-                        }
-                    })
+
+
+
+
             })
         }
     }
@@ -495,32 +509,30 @@ class ModulDetails {
         let s = this.selectors
         if (document.querySelector(s.tipus)) {
             document.querySelector(s.tipus).addEventListener("mouseover", function () {
-                let tipusosszes = []
-                db.find({
-                    selector: {
-                        tipus: {
-                            $exists: true
-                        }
-                    },
-                    fields: ["tipus"]
+
+                let kategoriak = {}
+                kategoriak.kategoria = document.querySelector(s.kategoria).value
+                kategoriak.alkategoria =document.querySelector(s.alkategoria).value
+                kategoriak.alalkategoria = document.querySelector(s.alalkategoria).value
+                kategoriak.tipus = document.querySelector(s.tipus).value
+
+                pouchkategoriadropdown(kategoriak, "tipus", function (result) {
+
+                    var select = document.querySelector(s.tipusdata)
+                    $(s.tipusdata).empty()
+                    for (var i = 0; i < result.length; i++) {
+                        var opt = result[i]
+                        var el = document.createElement("option")
+                        el.textContent = opt
+                        el.value = opt
+                        select.appendChild(el)
+                    }
                 })
-                    .then(function (result) {
-                        result.docs.forEach(element => {
-                            tipusosszes.push(element.tipus)
-                        })
-                        let tipusarray = tipusosszes.filter(function (item, pos) {
-                            return tipusosszes.indexOf(item) == pos
-                        })
-                        var select = document.querySelector(s.tipusdata)
-                        $(s.tipusdata).empty()
-                        for (var i = 0; i < tipusarray.length; i++) {
-                            var opt = tipusarray[i]
-                            var el = document.createElement("option")
-                            el.textContent = opt
-                            el.value = opt
-                            select.appendChild(el)
-                        }
-                    })
+
+
+
+
+
             })
         }
 

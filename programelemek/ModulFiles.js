@@ -27,7 +27,7 @@ class ModulFiles {
             self.datatablefrissitobetolto()
         })
     }
-    datatablefrissitobetolto() {
+    datatablefrissitobetolto(keresoszo) {
         let self = this
 
         let kategoriak = {}
@@ -35,6 +35,9 @@ class ModulFiles {
         kategoriak.alkategoria = self.alkategoriaszuro
         kategoriak.alalkategoria = self.alalkategoriaszuro
         kategoriak.tipus = self.tipusszuro
+        if(keresoszo){
+        kategoriak.keresoszo = keresoszo
+        }
         pouchkategoriaszuro(kategoriak, function (result) {
 
 
@@ -541,6 +544,22 @@ class ModulFiles {
             });
 
         })
+
+    }
+    fileskereso(keresoszo){
+
+        let self = this
+        let kategoriak = {}
+        kategoriak.kategoria = self.kategoriaszuro
+        kategoriak.alkategoria = self.alkategoriaszuro
+        kategoriak.alalkategoria = self.alalkategoriaszuro
+        kategoriak.tipus = self.tipusszuro
+
+
+
+
+
+
 
     }
 }

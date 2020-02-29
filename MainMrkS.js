@@ -84,7 +84,7 @@ function programstarter(adatok) {
                     if (adatok.programtabid == undefined) {
                         programmento(program.tipus)
                     }
-                    programbetolto(program)
+                    programbetolto(program,doc)
 
                 }
             })
@@ -162,13 +162,20 @@ function programstarter(adatok) {
     }
 
 //OK-----------------------------------------------------------------------------------------
-    function programbetolto(program) {
+    function programbetolto(program,doc) {
         let iframehtml = `<iframe src="${program.htmlpath}" tipus="${adatok.tipus}" sessionid="${sessionid}" fileid="${adatok.fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
 
         tabcount++
         let tabnumber = tabcount
         let tab = document.createElement("li")
-        tab.innerHTML = `<a class="tabbuttons" id="tabbutton${tabnumber}" href="#tab${tabnumber}" fileid="${adatok.fileid}" style="width:50px">${program.logo}</a><a id="tabbezarobutton${tabnumber}" programtabid="${programtabid2}"class="tabbezarobuttons" href="#tab${tabnumber}" style="width:20px; text-align: center;font-weight:900">×</a>`
+        let cim=""
+        if(doc){
+            if(doc.cim){
+           cim=doc.cim.truncnopont(9)
+            }
+        }
+
+        tab.innerHTML = `<a class="tabbuttons" id="tabbutton${tabnumber}" href="#tab${tabnumber}" fileid="${adatok.fileid}" style="height:20px;width:80px;overflow: hidden">${program.logo} ${cim}</a><a id="tabbezarobutton${tabnumber}" programtabid="${programtabid2}"class="tabbezarobuttons" href="#tab${tabnumber}" style="height: 20px; width:20px; vertical-align: top;text-align: center;font-weight:900">×</a>`
         document.querySelector(".tab-links").appendChild(tab)
         let page = document.createElement("div")
         page.id = `tab${tabnumber}`
@@ -450,9 +457,8 @@ function sessionselectinit() {
                             }
                         );
                     } else {
-
-                        window.open(`MainMrkS.html#${params.target.value}`, "_blank")
-
+                        window.location.href=`MainMrkS.html#${params.target.value}`
+                        location.reload();
 
                     }
 

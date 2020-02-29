@@ -146,6 +146,11 @@ document.querySelector("#search").addEventListener("click", function (e) {
     })
 })
 
+
+
+
+
+/*
 ablakInit("test","500px","500px",true,function () {
     let table=document.createElement("table")
     table.class="display compact"
@@ -154,15 +159,9 @@ ablakInit("test","500px","500px",true,function () {
 
     let datatable = new ModulFiles("#datatable", 400)
 })
-ablakInit("test2","500px","500px",true,function () {
-    let table=document.createElement("table")
-    table.class="display compact"
-    table.id="datatable2"
-    document.querySelector("#test2").appendChild(table)
+*/
 
-    let datatable = new ModulFiles("#datatable2", 400)
 
-})
 let basicstyletables = `#datatable2 tbody th, #datatable2 tbody td, #datatable tbody th, #datatable tbody td{ padding: 0px 0px;}`
 var styleSheettables = document.createElement("style");
 styleSheettables.type = "text/css";

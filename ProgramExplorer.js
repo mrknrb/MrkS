@@ -52,6 +52,10 @@ document.querySelector("#datatablefrissites").addEventListener("click", function
     datatable.datatablefrissitobetolto()
 })
 
+document.querySelector("#datatablekereses").addEventListener("click", function (e) {
+    datatable.datatablefrissitobetolto(document.querySelector("#keresoszo").value)
+
+})
 //--------------------------------------------------------------------------------------------------------------------
 function stylebeallitasok() {
     let basicstyletables = "";

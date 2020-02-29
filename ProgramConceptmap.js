@@ -34,15 +34,7 @@ myDiagram =
 // when the document is modified, add a "*" to the title and enable the "Save" button
 myDiagram.addDiagramListener("Modified", function (e) {
     save()
-    var button = document.getElementById("SaveButton");
-    if (button) button.disabled = !myDiagram.isModified;
-    var idx = document.title.indexOf("*");
-    if (myDiagram.isModified) {
-        if (idx < 0) document.title += "*";
-    } else {
-        if (idx >= 0) document.title = document.title.substr(0, idx);
-    }
-});
+})
 myDiagram.addDiagramListener("BackgroundSingleClicked", function (e) {
 
     console.log(e)
@@ -140,7 +132,7 @@ myDiagram.nodeTemplateMap.add("Kek", // the default category
         GO(go.Panel, "Auto",
             GO(go.Shape, "Rectangle", {
                     minSize: new go.Size(60, 30),
-                    fill: "#4ec5ff",
+                    fill: "#94e6ff",
                     stroke: "#000000",
                     strokeWidth: 2
                 },
@@ -169,7 +161,7 @@ myDiagram.nodeTemplateMap.add("Zold",
         GO(go.Panel, "Auto",
             GO(go.Shape, "Rectangle", {
                     minSize: new go.Size(60, 30),
-                    fill: "#37ff34",
+                    fill: "#a7ff97",
                     stroke: "#000000",
                     strokeWidth: 2
                 },

@@ -1,4 +1,3 @@
-
 function eszkozdetektalo() {
     window.mobilecheck = function () {
         var check = false;
@@ -242,6 +241,11 @@ String.prototype.trunc =
     function (n) {
         return this.length > n ? this.substr(0, n - 1) + "..." : this;
     };
+String.prototype.truncnopont =
+    String.prototype.truncnopont ||
+    function (n) {
+        return this.length > n ? this.substr(0, n - 1) : this;
+    };
 
 function ranghattergenerator(rang, tipus) {
     if (tipus == "jegyzet") {
@@ -282,35 +286,55 @@ function elementhider(buttonselector, elementselector) {
 
 function pouchkategoriaszuro(kategoriak, callback) {
 
-
     let ido = Date.now()
     db.allDocs({
         include_docs: true,
     }).then(function (result) {
         let talalatok = []
+
+        function keresoszoszuro(element) {
+            if (kategoriak.keresoszo) {
+                let cim = ""
+                if(element.doc.cim){
+                    cim = element.doc.cim.toLowerCase()}
+                let megjegyzes = ""
+                if(element.doc.megjegyzes){
+                    megjegyzes =  element.doc.megjegyzes.toLowerCase()}
+
+
+                let keresoszo = kategoriak.keresoszo.toLowerCase()
+                if (cim.includes(keresoszo) || megjegyzes.includes(keresoszo)) {
+                    talalatok.push(element)
+                }
+            } else {
+                talalatok.push(element)
+            }
+        }
+
         result.rows.forEach(element => {
             if (element.doc.tipus == kategoriak.tipus || !kategoriak.tipus) {
                 if (kategoriak.kategoria) {
                     if (kategoriak.alkategoria) {
                         if (kategoriak.alalkategoria) {
                             if (element.doc.kategoria == kategoriak.kategoria && element.doc.alkategoria == kategoriak.alkategoria && element.doc.alalkategoria == kategoriak.alalkategoria) {
-                                talalatok.push(element)
+                                keresoszoszuro(element)
                             }
                         } else {
                             if (element.doc.kategoria == kategoriak.kategoria && element.doc.alkategoria == kategoriak.alkategoria) {
-                                talalatok.push(element)
+                                keresoszoszuro(element)
                             }
                         }
                     } else {
                         if (element.doc.kategoria == kategoriak.kategoria) {
-                            talalatok.push(element)
+                            keresoszoszuro(element)
                         }
                     }
                 } else {
-                    talalatok.push(element)
+                    keresoszoszuro(element)
                 }
             }
         })
+
 
         talalatok.sort(function (a, b) {
             if (!b.doc.datum) {
@@ -338,7 +362,7 @@ function pouchkategoriadropdown(kategoriak, kategoriatipus, callback) {
         let talalatok = []
         result.rows.forEach(element => {
 
-            if (kategoriatipus == "kategoria") {
+            if (kategoriatipus == "kategoria" && element.doc.kategoria) {
                 let bennevan = false
                 talalatok.forEach(talalat => {
                     if (talalat == element.doc.kategoria) {
@@ -349,7 +373,7 @@ function pouchkategoriadropdown(kategoriak, kategoriatipus, callback) {
                     talalatok.push(element.doc.kategoria)
                 }
             }
-            if (kategoriatipus == "alkategoria" && kategoriak.kategoria && kategoriak.kategoria == element.doc.kategoria) {
+            if (kategoriatipus == "alkategoria" && kategoriak.kategoria && kategoriak.kategoria == element.doc.kategoria && element.doc.alkategoria) {
 
                 let bennevan = false
                 talalatok.forEach(talalat => {
@@ -361,7 +385,7 @@ function pouchkategoriadropdown(kategoriak, kategoriatipus, callback) {
                     talalatok.push(element.doc.alkategoria)
                 }
             }
-            if (kategoriatipus == "alalkategoria" && kategoriak.kategoria && kategoriak.alkategoria && kategoriak.kategoria == element.doc.kategoria && kategoriak.alkategoria == element.doc.alkategoria) {
+            if (kategoriatipus == "alalkategoria" && kategoriak.kategoria && kategoriak.alkategoria && kategoriak.kategoria == element.doc.kategoria && kategoriak.alkategoria == element.doc.alkategoria && element.doc.alalkategoria) {
 
                 let bennevan = false
                 talalatok.forEach(talalat => {
@@ -373,7 +397,7 @@ function pouchkategoriadropdown(kategoriak, kategoriatipus, callback) {
                     talalatok.push(element.doc.alalkategoria)
                 }
             }
-            if (kategoriatipus == "tipus") {
+            if (kategoriatipus == "tipus" && element.doc.tipus) {
                 let bennevan = false
                 talalatok.forEach(talalat => {
                     if (talalat == element.doc.tipus) {
@@ -385,9 +409,10 @@ function pouchkategoriadropdown(kategoriak, kategoriatipus, callback) {
                 }
             }
         })
+        console.log(talalatok)
         talalatok.sort((a, b) => (a > b) - (a < b))
         console.log(Date.now() - ido)
-
+        console.log(talalatok)
         callback(talalatok)
     })
 
@@ -395,7 +420,7 @@ function pouchkategoriadropdown(kategoriak, kategoriatipus, callback) {
 }
 
 
-function ablakInit( ablakid,width,height,headerlegyen,callback) {
+function ablakInit(ablakid, width, height, headerlegyen, callback) {
 
     let ablak = document.createElement("div")
     ablak.style.width = width
@@ -408,11 +433,11 @@ function ablakInit( ablakid,width,height,headerlegyen,callback) {
     ablak.style.border = "1px solid #d3d3d3"
 
     ablak.id = ablakid
-    let headermagassag=""
-    if(headerlegyen){
-        headermagassag="20px"
-    }else{
-        headermagassag="0px"
+    let headermagassag = ""
+    if (headerlegyen) {
+        headermagassag = "20px"
+    } else {
+        headermagassag = "0px"
     }
     let header = document.createElement("div")
     header.style.width = "100%"
@@ -429,7 +454,7 @@ function ablakInit( ablakid,width,height,headerlegyen,callback) {
     let body = document.createElement("div")
     body.style.width = "100%"
     body.style.backgroundColor = "#eaecf1"
-    body.style.overflow="auto"
+    body.style.overflow = "auto"
     body.id = ablakid + "body"
 
     header.appendChild(bezarasgomb)
@@ -477,7 +502,8 @@ function ablakInit( ablakid,width,height,headerlegyen,callback) {
         document.onmouseup = null;
         document.onmousemove = null;
     }
-    bezarasgomb.addEventListener("click",function () {
+
+    bezarasgomb.addEventListener("click", function () {
 
         ablak.remove()
 
@@ -487,10 +513,11 @@ function ablakInit( ablakid,width,height,headerlegyen,callback) {
 
     callback()
 }
-function inputsuggestionoff(){
+
+function inputsuggestionoff() {
 
     document.querySelectorAll("input").forEach(function (inputs) {
-        inputs.autocomplete="off"
+        inputs.autocomplete = "off"
     })
 }
 
@@ -524,12 +551,13 @@ let ProgramsData = [
         startmentes: false
     }
 ]
+
 function filebetolto(fileid, filetipus) {
 
-let talalat=false
+    let talalat = false
     ProgramsData.forEach(function (program) {
         if (program.tipus === filetipus) {
-            talalat=true
+            talalat = true
             getActualSession(function (session) {
 
                 chrome.runtime.sendMessage(
@@ -545,19 +573,18 @@ let talalat=false
             })
         }
     })
-if(!talalat){
-    window.open(fileid, "_blank");
-}
+    if (!talalat) {
+        window.open(fileid, "_blank");
+    }
 
 }
 
-function loadfilesamewindow(fileid){
+function loadfilesamewindow(fileid) {
     db.get(fileid).then(function (file) {
-        if(file.tipus==window.frameElement.getAttribute("tipus")){
-            window.frameElement.setAttribute("fileid",fileid)
-            let src=window.frameElement.getAttribute("src")
-            window.frameElement.setAttribute("src",src)
-
+        if (file.tipus == window.frameElement.getAttribute("tipus")) {
+            window.frameElement.setAttribute("fileid", fileid)
+            let src = window.frameElement.getAttribute("src")
+            window.frameElement.setAttribute("src", src)
 
 
         }
