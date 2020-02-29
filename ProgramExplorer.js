@@ -52,10 +52,18 @@ document.querySelector("#datatablefrissites").addEventListener("click", function
     datatable.datatablefrissitobetolto()
 })
 
-document.querySelector("#datatablekereses").addEventListener("click", function (e) {
-    datatable.datatablefrissitobetolto(document.querySelector("#keresoszo").value)
+document.querySelector("#keresoszo").addEventListener("keyup", function () {
 
+    let megjegyzeskovetkezoido = Date.now()
+    self.megjegyzeselozoido = megjegyzeskovetkezoido
+    setTimeout(() => {
+        if (megjegyzeskovetkezoido - self.megjegyzeselozoido === 0) {
+
+            datatable.datatablefrissitobetolto(document.querySelector("#keresoszo").value)
+        }
+    }, 300)
 })
+
 //--------------------------------------------------------------------------------------------------------------------
 function stylebeallitasok() {
     let basicstyletables = "";

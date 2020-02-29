@@ -301,9 +301,24 @@ function pouchkategoriaszuro(kategoriak, callback) {
                 if(element.doc.megjegyzes){
                     megjegyzes =  element.doc.megjegyzes.toLowerCase()}
 
+                let kategoria = ""
+                if(element.doc.kategoria){
+                    kategoria =  element.doc.kategoria.toLowerCase()}
+
+                let alkategoria = ""
+                if(element.doc.alkategoria){
+                    alkategoria =  element.doc.alkategoria.toLowerCase()}
+
+                let alalkategoria = ""
+                if(element.doc.alalkategoria){
+                    alalkategoria =  element.doc.alalkategoria.toLowerCase()}
+
+                let tipus = ""
+                if(element.doc.tipus){
+                    tipus =  element.doc.tipus.toLowerCase()}
 
                 let keresoszo = kategoriak.keresoszo.toLowerCase()
-                if (cim.includes(keresoszo) || megjegyzes.includes(keresoszo)) {
+                if (cim.includes(keresoszo) || megjegyzes.includes(keresoszo)|| kategoria.includes(keresoszo)|| alkategoria.includes(keresoszo)|| alalkategoria.includes(keresoszo)||tipus.includes(keresoszo)) {
                     talalatok.push(element)
                 }
             } else {
