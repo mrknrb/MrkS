@@ -11,6 +11,7 @@ var db7 = new PouchDB("SessionsNet", {
 })
 getActualSession(function (session) {
     sessionid = session._id
+    document.querySelector("title").innerText=session.cim
 })
 if (eszkoz == "android") {
 

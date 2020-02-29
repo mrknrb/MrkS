@@ -43,10 +43,11 @@ myDiagram.addDiagramListener("Modified", function (e) {
         if (idx >= 0) document.title = document.title.substr(0, idx);
     }
 });
-myDiagram.addDiagramListener("BackgroundSingleClicked",  function(e){
+myDiagram.addDiagramListener("BackgroundSingleClicked", function (e) {
 
     console.log(e)
 })
+
 // helper definitions for node templates
 
 function nodeStyle() {
@@ -87,7 +88,7 @@ function makePort(name, align, spot, output, input) {
         toLinkable: input, // declare whether the user may draw links to here
         cursor: "pointer", // show a different cursor to indicate potential link point
         mouseEnter: function (e, port) { // the PORT argument will be this Shape
-            if (!e.diagram.isReadOnly) port.fill = "rgba(255,0,255,0.5)";
+            if (!e.diagram.isReadOnly) port.fill = "rgba(0,0,0,0.69)";
         },
         mouseLeave: function (e, port) {
             port.fill = "transparent";
@@ -97,8 +98,8 @@ function makePort(name, align, spot, output, input) {
 
 function textStyle() {
     return {
-        font: "bold 11pt Lato, Helvetica, Arial, sans-serif",
-        stroke: "#F8F8F8"
+        font: " 8pt Lato, Helvetica, Arial, sans-serif",
+        stroke: "#000000"
     }
 }
 
@@ -109,15 +110,18 @@ myDiagram.nodeTemplateMap.add("", // the default category
         // the main object is a Panel that surrounds a TextBlock with a rectangular Shape
         GO(go.Panel, "Auto",
             GO(go.Shape, "Rectangle", {
-                    fill: "#282c34",
-                    stroke: "#00A9C9",
-                    strokeWidth: 3.5
+                    minSize: new go.Size(60, 30),
+                    fill: "#c4dcff",
+                    stroke: "#000000",
+                    strokeWidth: 2
                 },
                 new go.Binding("figure", "figure")),
             GO(go.TextBlock, textStyle(), {
-                    margin: 8,
-                    maxSize: new go.Size(160, NaN),
+                    margin: 2,
+                    minSize: new go.Size(60, 30),
+                    maxSize: new go.Size(200, NaN),
                     wrap: go.TextBlock.WrapFit,
+                    textAlign: "center",
                     editable: true
                 },
                 new go.Binding("text").makeTwoWay())
@@ -129,67 +133,65 @@ myDiagram.nodeTemplateMap.add("", // the default category
         makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false)
     ));
 
-myDiagram.nodeTemplateMap.add("Conditional",
+//------------------------------------------------------------------------------------------------Kek
+myDiagram.nodeTemplateMap.add("Kek", // the default category
     GO(go.Node, "Table", nodeStyle(),
         // the main object is a Panel that surrounds a TextBlock with a rectangular Shape
         GO(go.Panel, "Auto",
-            GO(go.Shape, "Diamond", {
-                    fill: "#282c34",
-                    stroke: "#00A9C9",
-                    strokeWidth: 3.5
+            GO(go.Shape, "Rectangle", {
+                    minSize: new go.Size(60, 30),
+                    fill: "#4ec5ff",
+                    stroke: "#000000",
+                    strokeWidth: 2
                 },
                 new go.Binding("figure", "figure")),
             GO(go.TextBlock, textStyle(), {
-                    margin: 8,
-                    maxSize: new go.Size(160, NaN),
+                    margin: 2,
+                    minSize: new go.Size(60, 30),
+                    maxSize: new go.Size(200, NaN),
                     wrap: go.TextBlock.WrapFit,
+                    textAlign: "center",
                     editable: true
                 },
                 new go.Binding("text").makeTwoWay())
         ),
         // four named ports, one on each side:
-        makePort("T", go.Spot.Top, go.Spot.Top, false, true),
-        makePort("L", go.Spot.Left, go.Spot.Left, true, true),
-        makePort("R", go.Spot.Right, go.Spot.Right, true, true),
-        makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false)
+        makePort("T", go.Spot.Top, go.Spot.TopSide, false, true),
+        makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
+        makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
+        makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false)
     ));
 
-myDiagram.nodeTemplateMap.add("Start",
+//------------------------------------------------------------------------------------------------Zold
+myDiagram.nodeTemplateMap.add("Zold",
     GO(go.Node, "Table", nodeStyle(),
-        GO(go.Panel, "Spot",
-            GO(go.Shape, "Circle", {
-                desiredSize: new go.Size(70, 70),
-                fill: "#282c34",
-                stroke: "#09d3ac",
-                strokeWidth: 3.5
-            }),
-            GO(go.TextBlock, "Start", textStyle(),
-                new go.Binding("text"))
+        // the main object is a Panel that surrounds a TextBlock with a rectangular Shape
+        GO(go.Panel, "Auto",
+            GO(go.Shape, "Rectangle", {
+                    minSize: new go.Size(60, 30),
+                    fill: "#37ff34",
+                    stroke: "#000000",
+                    strokeWidth: 2
+                },
+                new go.Binding("figure", "figure")),
+            GO(go.TextBlock, textStyle(), {
+                    margin: 2,
+                    minSize: new go.Size(60, 30),
+                    maxSize: new go.Size(200, NaN),
+                    wrap: go.TextBlock.WrapFit,
+                    textAlign: "center",
+                    editable: true
+                },
+                new go.Binding("text").makeTwoWay())
         ),
-        // three named ports, one on each side except the top, all output only:
-        makePort("L", go.Spot.Left, go.Spot.Left, true, false),
-        makePort("R", go.Spot.Right, go.Spot.Right, true, false),
-        makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false)
+        // four named ports, one on each side:
+        makePort("T", go.Spot.Top, go.Spot.TopSide, false, true),
+        makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
+        makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
+        makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false)
     ));
 
-myDiagram.nodeTemplateMap.add("End",
-    GO(go.Node, "Table", nodeStyle(),
-        GO(go.Panel, "Spot",
-            GO(go.Shape, "Circle", {
-                desiredSize: new go.Size(60, 60),
-                fill: "#282c34",
-                stroke: "#DC3C00",
-                strokeWidth: 3.5
-            }),
-            GO(go.TextBlock, "End", textStyle(),
-                new go.Binding("text"))
-        ),
-        // three named ports, one on each side except the bottom, all input only:
-        makePort("T", go.Spot.Top, go.Spot.Top, false, true),
-        makePort("L", go.Spot.Left, go.Spot.Left, false, true),
-        makePort("R", go.Spot.Right, go.Spot.Right, false, true)
-    ));
-
+//------------------------------------------------------------------------------------------------Comment
 // taken from ../extensions/Figures.js:
 go.Shape.defineFigureGenerator("File", function (shape, w, h) {
     var geo = new go.Geometry();
@@ -212,8 +214,8 @@ go.Shape.defineFigureGenerator("File", function (shape, w, h) {
 myDiagram.nodeTemplateMap.add("Comment",
     GO(go.Node, "Auto", nodeStyle(),
         GO(go.Shape, "File", {
-            fill: "#282c34",
-            stroke: "#DEE0A3",
+            fill: "#bebf44",
+            stroke: "#000000",
             strokeWidth: 3
         }),
         GO(go.TextBlock, textStyle(), {
@@ -337,15 +339,14 @@ let details = new ModulDetails(detailsselectors, detailsbeallitasok)
 
 if (window.frameElement.getAttribute("fileid") != undefined) {
     db.get(window.frameElement.getAttribute("fileid")).then(function (doc) {
-        if (doc.tipus == "conceptmap" && doc.data != undefined&&doc.data.model != undefined) {
+        if (doc.tipus == "conceptmap" && doc.data != undefined && doc.data.model != undefined) {
             details.detailsfrissito(doc._id)
             conceptmapbetolto(doc);
         } else if (doc.tipus == "conceptmap") {
         }
     });
 }
-elementhider("#detailsboxopen","#detailsdiv")
-
+elementhider("#detailsboxopen", "#detailsdiv")
 
 
 function paletteinit() {
@@ -359,24 +360,13 @@ function paletteinit() {
                 nodeTemplateMap: myDiagram.nodeTemplateMap, // share the templates used by myDiagram
                 model: new go.GraphLinksModel([ // specify the contents of the Palette
                     {
-                        category: "Start",
-                        text: "Start"
-                    },
-                    {
-                        text: "Step"
-                    },
-                    {
-                        category: "Conditional",
-                        text: "???"
-                    },
-                    {
-                        category: "End",
-                        text: "End"
-                    },
-                    {
-                        category: "Comment",
-                        text: "Comment"
+                        category: "Zold",
+                        text: "Zold"
+                    }, {
+                        category: "Kek",
+                        text: "Kek"
                     }
+
                 ])
             });
 
@@ -384,7 +374,7 @@ function paletteinit() {
 
 
 function conceptmapbetolto(doc) {
-        myDiagram.model = go.Model.fromJson(doc.data.model);
+    myDiagram.model = go.Model.fromJson(doc.data.model);
 }
 
 function save() {

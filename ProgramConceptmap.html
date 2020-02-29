@@ -8,17 +8,25 @@
 <body style="margin-top: 0px;margin-left: 0px;margin-right:
     0px;margin-bottom: 0px;">
 
+<style>
+    textarea {
+        resize: none;
+    }
+
+</style>
+
+
+<div style="height: inherit;width:inherit">
     <button id="detailsboxopen" style="font-size: medium;font-weight: bold;">Details</button>
     <button id="savebutton" style="font-size: medium;font-weight: bold;">Save</button>
-    <div id="detailsdiv">
+    <div id="detailsdiv" style="display: none ">
     </div>
-    <script src="programelemek/detailsbetolto.js"></script>
     <link rel="stylesheet" href="programelemek/details.css">
-    <div id="myDiagramDiv" style="height:85vh;width:100vw; background-color: #DAE4E4">
+    <div id="myDiagramDiv" style="height:85vh;width:100vw; overflow: auto">
     </div>
-    <div id="myPaletteDiv" style="height:9vh;width:100vw; background-color:#282c34">
+    <div id="myPaletteDiv" style="height:9vh;width:100vw; background-color:rgba(0,0,0,0.35)">
     </div>
-
+</div>
 
 
     <p id="urlteljes" hidden></p>
