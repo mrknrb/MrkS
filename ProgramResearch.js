@@ -15,11 +15,25 @@ let detailsselectors = {
     divcontainer: "#detailsdiv",
 }
 let detailsbeallitasok = {
-    automatavalto: false,
+    automatavalto: true,
     divcontainerbebetoltes: true
 }
 let details = new ModulDetails(detailsselectors, detailsbeallitasok)
+document
+    .querySelector("#detailsbox")
+    .setAttribute(
+        "style",
+        " min-width: 385px;     width:100%;      margin:0;      padding:0 ;      min-width: 385px;      overflow-x: hidden;    overflow-y: auto;      height: 132px"
+    );
 
+document
+    .querySelector("#megjegyzesmezo")
+    .setAttribute("style", "height:120px;width:100%");
+
+document.querySelector("#detailssajatadatok").addEventListener("click", function (e) {
+
+    details.detailsfrissito(fileid)
+})
 if (fileid != undefined) {
 
     db.get(fileid).then(function (doc) {
@@ -70,7 +84,7 @@ document.querySelector("#ujkerdes").addEventListener("click", function (e) {
     db.get(fileid).then(function (doc) {
 
         console.log("uuuu", doc)
-        doc.data.kerdesek.push({kerdesid: guidGenerator(), kerdescim: kerdescim, datum: Date.now(), keresesek: []})
+        doc.data.kerdesek.unshift({kerdesid: guidGenerator(), kerdescim: kerdescim, datum: Date.now(), keresesek: []})
 
         tablefrissito(doc.data.kerdesek, "#kerdesektable")
 
@@ -106,8 +120,8 @@ function kerdesekbetolto(adatok) {
             targets: 0
         },
         {
-            width: "90%",
-            targets: [1]
+            width: "120px",
+            targets: 3
         }
     ]
 
@@ -117,7 +131,7 @@ function kerdesekbetolto(adatok) {
         $("#kerdesektable").DataTable({
             initComplete: function () {
             },
-            scrollY: 200,
+            scrollY: 180,
             searching: false,
             ordering: false,
             paging: false, //kell a scrollerhez
@@ -148,7 +162,9 @@ function kerdesekrowadatbeilleszto(row, data) {
     datum.innerText = new Intl.DateTimeFormat("default", {
         year: "numeric",
         month: "numeric",
-        day: "numeric"
+        day: "numeric",
+        hour:"numeric",
+        minute:"numeric"
     }).format(data.datum)
 
 
@@ -164,7 +180,7 @@ function kerdesekrowadatbeilleszto(row, data) {
                         doc.data.kerdesek[index].keresesek = []
                     }
                     let keresesek = doc.data.kerdesek[index].keresesek
-                    aktualiskerdesid=data.kerdesid
+                    aktualiskerdesid = data.kerdesid
                     tablefrissito(keresesek, "#keresesektable")
 
                     return db.put(doc);
@@ -244,7 +260,7 @@ function keresesekbetolto() {
         $("#keresesektable").DataTable({
             initComplete: function () {
             },
-            scrollY: 200,
+            scrollY: 180,
             searching: false,
             ordering: false,
             paging: false, //kell a scrollerhez
@@ -276,7 +292,9 @@ function keresesekrowadatbeilleszto(row, data) {
     datum.innerText = new Intl.DateTimeFormat("default", {
         year: "numeric",
         month: "numeric",
-        day: "numeric"
+        day: "numeric",
+        hour:"numeric",
+        minute:"numeric"
     }).format(data.datum)
 
 
@@ -288,9 +306,9 @@ function keresesekrowadatbeilleszto(row, data) {
 
             doc.data.kerdesek.forEach(function (element, kerdesindex) {
                 if (element.kerdesid === aktualiskerdesid) {
-                    element.keresesek.forEach(function (kereses,keresesindex) {
+                    element.keresesek.forEach(function (kereses, keresesindex) {
                         if (kereses.keresesid === data.keresesid) {
-                            aktualiskeresesid=data.keresesid
+                            aktualiskeresesid = data.keresesid
                             console.log(doc.data.kerdesek[kerdesindex].keresesek[keresesindex])
                             tablefrissito(doc.data.kerdesek[kerdesindex].keresesek[keresesindex].talalatok, "#talalatoktable")
 
@@ -306,14 +324,14 @@ function keresesekrowadatbeilleszto(row, data) {
         db.get(fileid).then(function (doc) {
             doc.data.kerdesek.forEach(function (element, kerdesindex) {
                 if (element.kerdesid === aktualiskerdesid) {
-                    element.keresesek.forEach(function (kereses,keresesindex) {
+                    element.keresesek.forEach(function (kereses, keresesindex) {
                         if (kereses.keresesid === data.keresesid) {
-                        doc.data.kerdesek[kerdesindex].keresesek.splice(keresesindex, 1);
-                        let biztosan = confirm("Biztosan Torlod?");
-                        if (biztosan) {
-                            return db.put(doc);
+                            doc.data.kerdesek[kerdesindex].keresesek.splice(keresesindex, 1);
+                            let biztosan = confirm("Biztosan Torlod?");
+                            if (biztosan) {
+                                return db.put(doc);
 
-                        }
+                            }
                         }
                     })
                     tablefrissito(doc.data.kerdesek[kerdesindex].keresesek, "#keresesektable")
@@ -359,13 +377,8 @@ function talalatokbetolto() {
             targets: 0
         },
         {
-            width: "50%",
+            width: "80%",
             targets: [2]
-        },
-        {
-            width: "50%",
-            targets: [3],
-            render: $.fn.dataTable.render.ellipsis(50)
         }
     ];
 
@@ -375,7 +388,7 @@ function talalatokbetolto() {
         $("#talalatoktable").DataTable({
             initComplete: function () {
             },
-            scrollY: 400,
+            scrollY: 300,
             searching: false,
             ordering: false,
             paging: false, //kell a scrollerhez
@@ -386,55 +399,108 @@ function talalatokbetolto() {
             columnDefs: columndefs,
             createdRow: function (row, data, dataIndex) {
                 //row.querySelectorAll("td")[1].innerText = "000";
-                console.log(data)
-                console.log(row)
                 talalatokrowadatbeilleszto(row, data)
             }
         });
     });
 }
-
 function talalatokrowadatbeilleszto(row, data) {
     let col = row.querySelectorAll("td");
     //col[0].innerHTML = icon;
+    if (data.votes) {
+        let votes = document.createElement("b")
+        votes.innerText = data.votes
+        col[1].appendChild(votes)
+    }
+    if (data.talalatcim) {
+        let talalatcim = document.createElement("b")
+        talalatcim.innerText = data.talalatcim
+        col[2].appendChild(talalatcim)
+    }
+    col[2].addEventListener("click", function (e) {
+        chrome.tabs.query(
+            {
+                active: true,
+                currentWindow: true
+            },
+            function (tabs) {
+                chrome.tabs.update(tabs[0].id,{url: data.talalaturl, active: true}, function (tab) {
 
-    let votes = document.createElement("b")
+                })
+            })
 
-    votes.innerText = data.votes
-    let cim = document.createElement("b")
-    cim.innerText = data.talalatcim
-    col[1].appendChild(votes)
-    col[2].appendChild(cim)
+    })
+    col[3].addEventListener("click", function (e) {
+
+        chrome.tabs.create({url: data.talalaturl}, function (tab) {
+
+        })
+
+    })
 }
 
 talalatokbetolto()
+let searchengine = "google.com"
+$("#searchselect").on('change', function () {
+    searchengine = this.value
+});
+let stackhtml = ""
+let googlehtml = ""
 
-
-function kereso(szo, tipus, callback) {
+function kereso(szo, callback) {
     let queryurl = ""
-    if (tipus == "stack") {
+    if (searchengine == "stack") {
         queryurl = "https://stackoverflow.com/search?q="
+        $.get(queryurl + szo, function (html) {
+
+            stackhtml = html
+            var elements = $(html).find("div.question-summary.search-result")
+            let talalatok = []
+            elements.each(function (e) {
+                //console.log(this.innerText)
+                // $(this).find("vote-count-post ")
+                let votes = $(this).find(".vote-count-post strong")[0].innerText
+                let talalatcim = $(this).find(".result-link a")[0].title
+                let talalaturl = "https://stackoverflow.com" + $(this).find(".result-link a").attr("data-searchsession")
+                let talalat = {votes: votes, talalatcim: talalatcim, talalaturl: talalaturl}
+
+                talalatok.push(talalat)
+            })
+            callback(talalatok)
+        });
+    } else if (searchengine == "google.com") {
+        queryurl = "https://www.google.hu/search?q="
+        $.get(queryurl + szo, function (html) {
+
+            googlehtml = html
+            var elements = $(html).find("div.g")
+            let talalatok = []
+            elements.each(function (e) {
+                //console.log(this.innerText)
+                // $(this).find("vote-count-post ")
+                let talalatcim = ""
+                if ($(this).find("h3")[0]) {
+                    talalatcim = $(this).find("h3")[0].innerText
+                }
+                let talalaturl = $(this).find("a")[0].href
+                // let talalatcim = $(this).find(".result-link a")[0].title
+                let talalat = {talalatcim, talalaturl}
+                talalatok.push(talalat)
+            })
+
+            console.log(talalatok)
+            callback(talalatok)
+        });
+
+
     }
 
-    $.get(queryurl + szo, function (html) {
 
-        var elements = $(html).find("div.question-summary.search-result")
-        let talalatok = []
-        elements.each(function (e) {
-            //console.log(this.innerText)
-            // $(this).find("vote-count-post ")
-            let votes = $(this).find(".vote-count-post strong")[0].innerText
-            let talalatcim = $(this).find(".result-link a")[0].title
-            let talalat = {votes: votes, talalatcim: talalatcim}
-            talalatok.push(talalat)
-        })
-        callback(talalatok)
-    });
 }
 
 document.querySelector("#search").addEventListener("click", function (e) {
-    let keresesszoveg= document.querySelector("#searchtext").value
-    kereso(keresesszoveg, "stack", function (talalatok) {
+    let keresesszoveg = document.querySelector("#searchtext").value
+    kereso(keresesszoveg, function (talalatok) {
 
         tablefrissito(talalatok, "#talalatoktable")
         db.get(fileid).then(function (doc) {
@@ -444,8 +510,13 @@ document.querySelector("#search").addEventListener("click", function (e) {
                     if (!element.keresesek) {
                         doc.data.kerdesek[index].keresesek = []
                     }
-                    doc.data.kerdesek[index].keresesek.push({keresesid:guidGenerator(),keresesszoveg:keresesszoveg,talalatok:talalatok,datum:Date.now()})
-                    let keresesek=doc.data.kerdesek[index].keresesek
+                    doc.data.kerdesek[index].keresesek.unshift({
+                        keresesid: guidGenerator(),
+                        keresesszoveg: keresesszoveg,
+                        talalatok: talalatok,
+                        datum: Date.now()
+                    })
+                    let keresesek = doc.data.kerdesek[index].keresesek
                     tablefrissito(keresesek, "#keresesektable")
 
                     return db.put(doc);
@@ -453,7 +524,6 @@ document.querySelector("#search").addEventListener("click", function (e) {
                 }
             })
         })
-
 
 
     })

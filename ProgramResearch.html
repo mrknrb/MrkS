@@ -6,8 +6,10 @@
 </head>
 <body>
 
-<button id="detailsboxopen" style="font-size: medium;font-weight: bold;">Details</button>
-<div id="detailsdiv" style="display: none ">
+<button id="detailsboxopen" style="font-size: medium;font-weight: bold;">DetailsOpen</button>
+
+<button id="detailssajatadatok" style="font-size: medium;font-weight: bold;">Saját adatok</button>
+<div id="detailsdiv" style="display: block ">
 </div>
 <link rel="stylesheet" href="programelemek/details.css">
 
@@ -24,6 +26,11 @@
 
 <input type="text" id="searchtext" style="height: 30px;width:300px">
 <input type="button" value="search" id="search" style="height: 30px">
+<select id="searchselect"style="outline:0px;min-width:150px;max-width: 150px;font-size: 21px;height:100%">
+    <option value="google.com">Google.com</option>
+    <option value="stack">StackOverflow</option>
+</select>
+
 <div id="talalatokdiv">
     <table id="talalatoktable" class="display compact"></table>
 

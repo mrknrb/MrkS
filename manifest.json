@@ -89,6 +89,9 @@
         "mac": "Command+Shift+Y"
       },
       "description": "previoustab"
+    },
+    "nexttab": {
+      "description": "nexttab"
     }
   },
   "permissions": [
