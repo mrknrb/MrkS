@@ -169,15 +169,22 @@ class ModulDetails {
 
         function seged(selector, adat, doc) {
 
+
+
+
+
             if (adat == "cim") {
 
-                if(Tab!=undefined){
-                document.querySelector(s.cim).value = Tab.title
+                if (Tab != undefined) {
+                    document.querySelector(s.cim).value = Tab.title
 
-                }else{
+                } else {
                     console.log(adat)
-                    document.querySelector(s.cim).value =""
+                    document.querySelector(s.cim).value = ""
                 }
+            } else if (adat == "tipus"&&Tab) {
+
+                document.querySelector(s.tipus).value = "link"
             } else {
                 document.querySelector(selector).value = ""
             }
@@ -230,7 +237,9 @@ class ModulDetails {
             adatbeilleszto(s.tipus, "tipus", doc)
             adatbeilleszto(s.datum, "datum", doc)
             if (document.querySelector(s.urllogo)) {
-                document.querySelector(s.urllogo).innerHTML = `<img src="https://www.google.com/s2/favicons?domain=${id2}" width="20" height="20" class="favicon">`
+                if(doc){
+                document.querySelector(s.urllogo).innerHTML = icongenerator(id2, doc.tipus)
+}else{ document.querySelector(s.urllogo).innerHTML = icongenerator(id2, "")}
             }
             if (document.querySelector(s.urlmezo)) {
                 console.log("url")
@@ -278,6 +287,7 @@ class ModulDetails {
                 let kategoriaseged = document.querySelector(s.kategoria)
                 let alkategoriaseged = document.querySelector(s.alkategoria)
                 let alalkategoriaseged = document.querySelector(s.alalkategoria)
+                let tipusseged = document.querySelector(s.tipus)
                 let adatok = {}
                 adatok._id = self.id
                 adatok[selectortype] = document.querySelector(selector).value
@@ -286,16 +296,26 @@ class ModulDetails {
                         adatok.cim = cimseged.value
                     }
                 }
+                if (kategoriaseged) {
+                    if (kategoriaseged.value) {
+                        adatok.kategoria = kategoriaseged.value
+                    }
+                }
+                if (alkategoriaseged) {
+                    if (alkategoriaseged.value) {
+                        adatok.alkategoria = alkategoriaseged.value
+                    }
+                }
+                if (alalkategoriaseged) {
+                    if (alalkategoriaseged.value) {
+                        adatok.alalkategoria = alalkategoriaseged.value
+                    }
+                }
+                if (tipusseged) {
+                if (tipusseged.value) {
+                    adatok.tipus = tipusseged.value
+                }}
 
-                if (kategoriaseged && kategoriaseged.value) {
-                    adatok.kategoria = kategoriaseged.value
-                }
-                if (alkategoriaseged && alkategoriaseged.value) {
-                    adatok.alkategoria = alkategoriaseged.value
-                }
-                if (alalkategoriaseged && alalkategoriaseged.value) {
-                    adatok.alalkategoria = alalkategoriaseged.value
-                }
                 adatok.datum = Date.now()
                 self.kategorianarancsszinezo()
                 db.put(adatok).catch(function (err) {
@@ -324,6 +344,7 @@ class ModulDetails {
                         let kategoriaseged = document.querySelector(s.kategoria)
                         let alkategoriaseged = document.querySelector(s.alkategoria)
                         let alalkategoriaseged = document.querySelector(s.alalkategoria)
+                        let tipusseged = document.querySelector(s.tipus)
                         let adatok = {}
                         adatok._id = self.id
                         adatok[selectortype] = document.querySelector(selector).value
@@ -332,15 +353,27 @@ class ModulDetails {
                                 adatok.cim = cimseged.value
                             }
                         }
-                        if (kategoriaseged && kategoriaseged.value) {
-                            adatok.kategoria = kategoriaseged.value
+
+                        if (kategoriaseged) {
+                            if (kategoriaseged.value) {
+                                adatok.kategoria = kategoriaseged.value
+                            }
                         }
-                        if (alkategoriaseged && alkategoriaseged.value) {
-                            adatok.alkategoria = alkategoriaseged.value
+                        if (alkategoriaseged) {
+                            if (alkategoriaseged.value) {
+                                adatok.alkategoria = alkategoriaseged.value
+                            }
                         }
-                        if (alalkategoriaseged && alalkategoriaseged.value) {
-                            adatok.alalkategoria = alalkategoriaseged.value
+                        if (alalkategoriaseged) {
+                            if (alalkategoriaseged.value) {
+                                adatok.alalkategoria = alalkategoriaseged.value
+                            }
                         }
+                        if (tipusseged) {
+                            if (tipusseged.value) {
+                                adatok.tipus = tipusseged.value
+                            }}
+
                         adatok.datum = Date.now()
                         console.log(adatok)
                         self.kategorianarancsszinezo()
@@ -398,7 +431,7 @@ class ModulDetails {
 
                 let kategoriak = {}
                 kategoriak.kategoria = document.querySelector(s.kategoria).value
-                kategoriak.alkategoria =document.querySelector(s.alkategoria).value
+                kategoriak.alkategoria = document.querySelector(s.alkategoria).value
                 kategoriak.alalkategoria = document.querySelector(s.alalkategoria).value
                 kategoriak.tipus = document.querySelector(s.tipus).value
 
@@ -416,7 +449,8 @@ class ModulDetails {
                 })
 
 
-            })}
+            })
+        }
 
 
         if (document.querySelector(s.kategoria) && document.querySelector(s.alkategoria) && document.querySelector(s.alalkategoria)) {
@@ -457,7 +491,7 @@ class ModulDetails {
 
                 let kategoriak = {}
                 kategoriak.kategoria = document.querySelector(s.kategoria).value
-                kategoriak.alkategoria =document.querySelector(s.alkategoria).value
+                kategoriak.alkategoria = document.querySelector(s.alkategoria).value
                 kategoriak.alalkategoria = document.querySelector(s.alalkategoria).value
                 kategoriak.tipus = document.querySelector(s.tipus).value
 
@@ -480,7 +514,7 @@ class ModulDetails {
 
                 let kategoriak = {}
                 kategoriak.kategoria = document.querySelector(s.kategoria).value
-                kategoriak.alkategoria =document.querySelector(s.alkategoria).value
+                kategoriak.alkategoria = document.querySelector(s.alkategoria).value
                 kategoriak.alalkategoria = document.querySelector(s.alalkategoria).value
                 kategoriak.tipus = document.querySelector(s.tipus).value
 
@@ -498,21 +532,19 @@ class ModulDetails {
                 })
 
 
-
-
             })
         }
     }
 
     tipuslistabetoltoinit() {
-        let self=this
+        let self = this
         let s = this.selectors
         if (document.querySelector(s.tipus)) {
             document.querySelector(s.tipus).addEventListener("mouseover", function () {
 
                 let kategoriak = {}
                 kategoriak.kategoria = document.querySelector(s.kategoria).value
-                kategoriak.alkategoria =document.querySelector(s.alkategoria).value
+                kategoriak.alkategoria = document.querySelector(s.alkategoria).value
                 kategoriak.alalkategoria = document.querySelector(s.alalkategoria).value
                 kategoriak.tipus = document.querySelector(s.tipus).value
 
@@ -528,9 +560,6 @@ class ModulDetails {
                         select.appendChild(el)
                     }
                 })
-
-
-
 
 
             })
@@ -550,19 +579,23 @@ class ModulDetails {
                     let jegyzetadatok = {}
                     jegyzetadatok._id = guidGenerator()
                     if (session != undefined) {
-                        if (session.kategoria != undefined&&session.kategoria != "") {
+                        if (session.kategoria != undefined && session.kategoria != "") {
                             jegyzetadatok.kategoria = session.kategoria
-                            document.querySelector("#kategoria").value = session.kategoria
+                            document.querySelector(s.kategoria).value = session.kategoria
                         }
-                        if (session.alkategoria != undefined&&session.alkategoria != "") {
+                        if (session.alkategoria != undefined && session.alkategoria != "") {
                             jegyzetadatok.alkategoria = session.alkategoria
-                            document.querySelector("#alkategoria").value = session.alkategoria
+                            document.querySelector(s.alkategoria).value = session.alkategoria
                         }
-                        if (session.alalkategoria != undefined&&session.alalkategoria != "") {
+                        if (session.alalkategoria != undefined && session.alalkategoria != "") {
                             jegyzetadatok.alalkategoria = session.alalkategoria
-                            document.querySelector("#alalkategoria").value = session.alalkategoria
+                            document.querySelector(s.alalkategoria).value = session.alalkategoria
                         }
+
                     }
+                    document.querySelector(s.tipus).value = "jegyzet"
+
+                    jegyzetadatok.tipus = "jegyzet"
                     jegyzetadatok.datum = Date.now()
                     self.kategorianarancsszinezo()
                     db.put(jegyzetadatok).then(function (doc) {
@@ -571,7 +604,6 @@ class ModulDetails {
 
 
                 })
-
 
 
             })
@@ -585,26 +617,24 @@ class ModulDetails {
             document.querySelector(s.buttontorles).addEventListener("click", function () {
 
 
-                    db.get(self.id).then(function (doc) {
-                        let biztosan = confirm("Biztosan Torlod?");
-                        if (biztosan) {
-                        return db.remove(doc) }
-                    })
-                    setTimeout(() => {
-                        chrome.tabs.query(
-                            {
-                                active: true,
-                                currentWindow: true
+                db.get(self.id).then(function (doc) {
+                    let biztosan = confirm("Biztosan Torlod?");
+                    if (biztosan) {
+                        return db.remove(doc)
+                    }
+                })
+                setTimeout(() => {
+                    chrome.tabs.query(
+                        {
+                            active: true,
+                            currentWindow: true
 
-                            },
-                            function (tabs) {
-                                self.detailsfrissito(tabs[0].url, tabs[0])
-                            }
-                        )
-                    }, 50)
-
-
-
+                        },
+                        function (tabs) {
+                            self.detailsfrissito(tabs[0].url, tabs[0])
+                        }
+                    )
+                }, 50)
 
 
             })

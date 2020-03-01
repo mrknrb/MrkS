@@ -605,7 +605,11 @@ function filebetolto(fileid, filetipus) {
         }
     })
     if (!talalat) {
-        window.open(fileid, "_blank");
+        if(filetipus=="jegyzet"){}
+        else{
+        window.open(fileid, "_blank");}
+
+
     }
 
 }
@@ -622,5 +626,27 @@ function loadfilesamewindow(fileid) {
     }).catch(function (err) {
 
     })
+
+}
+
+function icongenerator(id,tipus){
+    let szoveg=document.createElement("h3")
+    let icon=document.createElement("img")
+    icon.width=20
+    icon.height=20
+    icon.class="datafavicon"
+ if(tipus=="jegyzet"){
+    icon.src="resources/jegyzet.png"
+    return  icon.outerHTML
+}else if(tipus=="research"){
+     icon.src="resources/research.png"
+     return  icon.outerHTML
+}else if(tipus=="conceptmap"){
+    icon.src="resources/conceptmap.png"
+    return  icon.outerHTML
+}else{
+        icon.src="https://www.google.com/s2/favicons?domain="+id
+    return  icon.outerHTML
+    }
 
 }

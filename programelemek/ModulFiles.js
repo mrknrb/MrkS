@@ -1,10 +1,10 @@
 class ModulFiles {
-    constructor(tableselector, magassag,kategoriaszurodiv) {
+    constructor(tableselector, magassag, kategoriaszurodiv) {
         let self = this
         this.tableselector = tableselector
         this.databasemagassag = magassag
 
-        this.kategoriaszurodiv=kategoriaszurodiv
+        this.kategoriaszurodiv = kategoriaszurodiv
 
         this.datatablebetoltve = false
         this.kategoriaszuro = "";
@@ -28,6 +28,7 @@ class ModulFiles {
             self.datatablefrissitobetolto()
         })
     }
+
     datatablefrissitobetolto(keresoszo) {
         let self = this
 
@@ -36,8 +37,8 @@ class ModulFiles {
         kategoriak.alkategoria = self.alkategoriaszuro
         kategoriak.alalkategoria = self.alalkategoriaszuro
         kategoriak.tipus = self.tipusszuro
-        if(keresoszo){
-        kategoriak.keresoszo = keresoszo
+        if (keresoszo) {
+            kategoriak.keresoszo = keresoszo
         }
         pouchkategoriaszuro(kategoriak, function (result) {
 
@@ -56,6 +57,7 @@ class ModulFiles {
 
 
     }
+
     datatablebetolto(result) {
 
         let self = this
@@ -106,16 +108,16 @@ class ModulFiles {
             columndefs = [
                 {
                     width: 20,
-                    targets: 0
+                    targets: [0, 2]
                 },
                 {
-                    width: "50",
-                    targets: [1]
+                    width: "25%",
+                    targets: [1, 3]
                 },
                 {
-                    width: "50",
-                    targets: [3],
-                    render: $.fn.dataTable.render.ellipsis(50)
+                    width: "10%",
+                    targets: [4, 5, 6, 7],
+
                 }
             ];
         } else {
@@ -207,9 +209,9 @@ class ModulFiles {
 
                             //szuro variablebe mentés
                             var column = this;
-                            let appendelement=$(column.header())
-                            if(self.kategoriaszurodiv){
-                                appendelement=self.kategoriaszurodiv
+                            let appendelement = $(column.header())
+                            if (self.kategoriaszurodiv) {
+                                appendelement = self.kategoriaszurodiv
                             }
                             var select = $(
                                 `<select id="select${e}" class="adattablaselect" style="width: 35px;height:25px"><option value=""></option></select>`
@@ -255,6 +257,19 @@ class ModulFiles {
                                 }
                             });
                         });
+                    let basicstyletables = `${self.tableselector} td{ 
+                   max-width: 120px;
+white-space: nowrap;
+text-overflow: ellipsis;
+word-break: break-all;
+overflow: hidden;
+}`;
+
+                    var styleSheettables = document.createElement("style");
+                    styleSheettables.type = "text/css";
+                    styleSheettables.innerText = basicstyletables;
+                    document.head.appendChild(styleSheettables);
+
 
                 },
                 deferRender: true,
@@ -276,12 +291,18 @@ class ModulFiles {
                 columnDefs: columndefs,
                 createdRow: function (row, data, dataIndex) {
                     //row.querySelectorAll("td")[1].innerText = "000";
+                    row.querySelectorAll("td")[1].setAttribute(
+                        "style",
+                        "overflow:hidden;"
+                    );
+
                     self.adatfrissito2(row, data.doc);
                 }
             });
         });
 
     }
+
     kategoriadropdownfrissito() {
         let self = this
         let kategoriak = {}
@@ -293,9 +314,9 @@ class ModulFiles {
             var space = document.createElement("option");
             space.textContent = " "
             space.value = " "
-            let div=self.tableselector+"_wrapper"
-            if(self.kategoriaszurodiv){
-                div=self.kategoriaszurodiv
+            let div = self.tableselector + "_wrapper"
+            if (self.kategoriaszurodiv) {
+                div = self.kategoriaszurodiv
             }
             $(`${div} #select4`)
                 .find("option")
@@ -311,6 +332,7 @@ class ModulFiles {
         })
 
     }
+
     alkategoriadropdownfrissito() {
         let self = this
         let kategoriak = {}
@@ -322,9 +344,9 @@ class ModulFiles {
             var space = document.createElement("option");
             space.textContent = " "
             space.value = " "
-            let div=self.tableselector+"_wrapper"
-            if(self.kategoriaszurodiv){
-                div=self.kategoriaszurodiv
+            let div = self.tableselector + "_wrapper"
+            if (self.kategoriaszurodiv) {
+                div = self.kategoriaszurodiv
             }
             $(`${div} #select5`)
                 .find("option")
@@ -343,6 +365,7 @@ class ModulFiles {
 
 
     }
+
     alalkategoriadropdownfrissito() {
 
         let self = this
@@ -355,9 +378,9 @@ class ModulFiles {
             var space = document.createElement("option");
             space.textContent = " "
             space.value = " "
-            let div=self.tableselector+"_wrapper"
-            if(self.kategoriaszurodiv){
-                div=self.kategoriaszurodiv
+            let div = self.tableselector + "_wrapper"
+            if (self.kategoriaszurodiv) {
+                div = self.kategoriaszurodiv
             }
             $(`${div} #select6`)
                 .find("option")
@@ -375,6 +398,7 @@ class ModulFiles {
         })
 
     }
+
     tipusdropdownfrissito() {
         let self = this
         let kategoriak = {}
@@ -386,15 +410,15 @@ class ModulFiles {
             var space = document.createElement("option");
             space.textContent = " "
             space.value = " "
-            let div=self.tableselector+"_wrapper"
-            if(self.kategoriaszurodiv){
-                div=self.kategoriaszurodiv
+            let div = self.tableselector + "_wrapper"
+            if (self.kategoriaszurodiv) {
+                div = self.kategoriaszurodiv
             }
             $(`${div} #select7`)
                 .find("option")
                 .remove()
                 .end()
-            .append(space)
+                .append(space)
             result.forEach(function (eg, i) {
                 var el = document.createElement("option");
                 el.textContent = eg;
@@ -403,15 +427,17 @@ class ModulFiles {
             });
         })
     }
+
     adatfrissito2(row, element) {
-        let szoveghossz = 25
+        let szoveghossz = 70
         if (this.eszkoz == "tab") {
             szoveghossz = 70
         }
         let self = this
         if (element != undefined) {
-            let icon = `<img src="https://www.google.com/s2/favicons?domain=${element._id}" width="20" height="20" class="datafavicon">`;
 
+
+            let icon = icongenerator(element._id, element.tipus)
             let cim = "";
             if (element.cim !== undefined) {
                 cim = `<b style="font-weight:bold;line-height: 1" >${element.cim.trunc(
@@ -543,12 +569,14 @@ class ModulFiles {
             });
         }
     }
+
     rowclickevent(callback) {
 
         this.click = function (id) {
             callback(id)
         }
     }
+
     sessionkategoriamento() {
         let self = this
         getActualSession(function (session) {
@@ -566,7 +594,8 @@ class ModulFiles {
         })
 
     }
-    fileskereso(keresoszo){
+
+    fileskereso(keresoszo) {
 
         let self = this
         let kategoriak = {}
@@ -574,11 +603,6 @@ class ModulFiles {
         kategoriak.alkategoria = self.alkategoriaszuro
         kategoriak.alalkategoria = self.alalkategoriaszuro
         kategoriak.tipus = self.tipusszuro
-
-
-
-
-
 
 
     }
