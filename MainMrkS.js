@@ -223,10 +223,9 @@ function programstarter(adatok) {
                 db7
                     .get(session._id)
                     .then(function (doc) {
-                        console.log(doc)
+
                         let programtabid3 = jQuery(xx).attr("programtabid")
                         doc.programs.forEach(function (program, index) {
-                            console.log(programtabid3, program.programtabid)
                             if (programtabid3 == program.programtabid) {
                                 doc.programs.splice(index, 1);
                             }

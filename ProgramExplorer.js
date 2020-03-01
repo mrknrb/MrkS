@@ -39,7 +39,7 @@ let details = new ModulDetails(detailsselectors, detailsbeallitasok)
 //--------------------------------------------------------------------------------------------------------------------------Sessions
 let session = new ModulSessions("#tabstable", tabstablemagassag)
 //----------------------------------------------------------------------------------------------------------------------Database
-let datatable = new ModulFiles("#datatable", databasemagassag)
+let datatable = new ModulFiles("#datatable", databasemagassag,"#kategoriaszurodiv")
 
 datatable.rowclickevent(function (id) {
     details.detailsfrissito(id)

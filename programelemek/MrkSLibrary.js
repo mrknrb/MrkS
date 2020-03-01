@@ -14,13 +14,17 @@ function eszkozdetektalo() {
         })(navigator.userAgent || navigator.vendor || window.opera);
         return check;
     };
-
-    if (window.mobilecheck()) {
-        return "android";
-    } else if (window.innerWidth > 860) {
-        return "tab";
+    if (true) {// android mód kapcsoló
+        if (window.mobilecheck()) {
+            return "android";
+        } else if (window.innerWidth > 860) {
+            return "tab";
+        } else {
+            return "sidebar";
+        }
     } else {
-        return "sidebar";
+        console.log("Android mód!")
+        return "android";
     }
 }
 
@@ -271,8 +275,8 @@ let elementhideobject = {}
 
 function elementhider(buttonselector, elementselector) {
     document.querySelector(buttonselector).addEventListener("click", function (e) {
-        if( document.querySelector(elementselector).style.display=="none"){
-            elementhideobject[elementselector]=true
+        if (document.querySelector(elementselector).style.display == "none") {
+            elementhideobject[elementselector] = true
         }
 
 
@@ -300,30 +304,36 @@ function pouchkategoriaszuro(kategoriak, callback) {
         function keresoszoszuro(element) {
             if (kategoriak.keresoszo) {
                 let cim = ""
-                if(element.doc.cim){
-                    cim = element.doc.cim.toLowerCase()}
+                if (element.doc.cim) {
+                    cim = element.doc.cim.toLowerCase()
+                }
                 let megjegyzes = ""
-                if(element.doc.megjegyzes){
-                    megjegyzes =  element.doc.megjegyzes.toLowerCase()}
+                if (element.doc.megjegyzes) {
+                    megjegyzes = element.doc.megjegyzes.toLowerCase()
+                }
 
                 let kategoria = ""
-                if(element.doc.kategoria){
-                    kategoria =  element.doc.kategoria.toLowerCase()}
+                if (element.doc.kategoria) {
+                    kategoria = element.doc.kategoria.toLowerCase()
+                }
 
                 let alkategoria = ""
-                if(element.doc.alkategoria){
-                    alkategoria =  element.doc.alkategoria.toLowerCase()}
+                if (element.doc.alkategoria) {
+                    alkategoria = element.doc.alkategoria.toLowerCase()
+                }
 
                 let alalkategoria = ""
-                if(element.doc.alalkategoria){
-                    alalkategoria =  element.doc.alalkategoria.toLowerCase()}
+                if (element.doc.alalkategoria) {
+                    alalkategoria = element.doc.alalkategoria.toLowerCase()
+                }
 
                 let tipus = ""
-                if(element.doc.tipus){
-                    tipus =  element.doc.tipus.toLowerCase()}
+                if (element.doc.tipus) {
+                    tipus = element.doc.tipus.toLowerCase()
+                }
 
                 let keresoszo = kategoriak.keresoszo.toLowerCase()
-                if (cim.includes(keresoszo) || megjegyzes.includes(keresoszo)|| kategoria.includes(keresoszo)|| alkategoria.includes(keresoszo)|| alalkategoria.includes(keresoszo)||tipus.includes(keresoszo)) {
+                if (cim.includes(keresoszo) || megjegyzes.includes(keresoszo) || kategoria.includes(keresoszo) || alkategoria.includes(keresoszo) || alalkategoria.includes(keresoszo) || tipus.includes(keresoszo)) {
                     talalatok.push(element)
                 }
             } else {
@@ -430,6 +440,7 @@ function pouchkategoriadropdown(kategoriak, kategoriatipus, callback) {
             }
         })
         console.log(talalatok)
+        talalatok.push("")
         talalatok.sort((a, b) => (a > b) - (a < b))
         console.log(Date.now() - ido)
         console.log(talalatok)
@@ -545,7 +556,7 @@ let ProgramsData = [
     {
         tipus: "conceptmap",
         logo: "C",
-        htmlpath: "./ProgramConceptMap.html",
+        htmlpath: "./ProgramConceptmap.html",
         buttonid: "ConceptMapButton",
         startmentes: true
     },

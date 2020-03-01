@@ -1,9 +1,10 @@
 class ModulFiles {
-    constructor(tableselector, magassag) {
+    constructor(tableselector, magassag,kategoriaszurodiv) {
         let self = this
         this.tableselector = tableselector
         this.databasemagassag = magassag
 
+        this.kategoriaszurodiv=kategoriaszurodiv
 
         this.datatablebetoltve = false
         this.kategoriaszuro = "";
@@ -66,39 +67,39 @@ class ModulFiles {
             //oldalsáv mód
             columns = [
                 {
-                    title: "I",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Cim",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "R",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Megjegyzes",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Kategoria",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "AlKat",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "AlalKat",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Tip",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Datumok",
+                    title: "",
                     defaultContent: ""
                 }
             ];
@@ -117,8 +118,6 @@ class ModulFiles {
                     render: $.fn.dataTable.render.ellipsis(50)
                 }
             ];
-            szuro = [4, 5, 6, 7];
-            order = [[8, "desc"]];
         } else {
             //tab mód
             /*
@@ -129,51 +128,51 @@ class ModulFiles {
                 */
             columns = [
                 {
-                    title: "I",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Cim",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "R",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Megjegyzes",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Kategoria",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "AlKategoria",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "AlalKat",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Tip",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Allapot",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Alk Áll",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "BefDatum",
+                    title: "",
                     defaultContent: ""
                 },
                 {
-                    title: "Datumok",
+                    title: "",
                     defaultContent: ""
                 }
             ];
@@ -208,10 +207,15 @@ class ModulFiles {
 
                             //szuro variablebe mentés
                             var column = this;
+                            let appendelement=$(column.header())
+                            if(self.kategoriaszurodiv){
+                                appendelement=self.kategoriaszurodiv
+                            }
                             var select = $(
-                                `<select id="select${e}" class="adattablaselect" style="width: 35px"><option value=""></option></select>`
+                                `<select id="select${e}" class="adattablaselect" style="width: 35px;height:25px"><option value=""></option></select>`
                             )
-                                .appendTo($(column.header()))
+
+                                .appendTo(appendelement)
                                 .on("change", function () {
                                     //Cannot read property 'replace' of null
                                     var val = $.fn.dataTable.util.escapeRegex($(this).val());
@@ -289,7 +293,11 @@ class ModulFiles {
             var space = document.createElement("option");
             space.textContent = " "
             space.value = " "
-            $(`${self.tableselector}_wrapper #select4`)
+            let div=self.tableselector+"_wrapper"
+            if(self.kategoriaszurodiv){
+                div=self.kategoriaszurodiv
+            }
+            $(`${div} #select4`)
                 .find("option")
                 .remove()
                 .end()
@@ -298,7 +306,7 @@ class ModulFiles {
                 var el = document.createElement("option");
                 el.textContent = eg;
                 el.value = eg;
-                document.querySelector(`${self.tableselector}_wrapper #select4`).appendChild(el);
+                document.querySelector(`${div} #select4`).appendChild(el);
             });
         })
 
@@ -314,7 +322,11 @@ class ModulFiles {
             var space = document.createElement("option");
             space.textContent = " "
             space.value = " "
-            $(`${self.tableselector}_wrapper #select5`)
+            let div=self.tableselector+"_wrapper"
+            if(self.kategoriaszurodiv){
+                div=self.kategoriaszurodiv
+            }
+            $(`${div} #select5`)
                 .find("option")
                 .remove()
                 .end()
@@ -323,7 +335,7 @@ class ModulFiles {
                 var el = document.createElement("option");
                 el.textContent = eg;
                 el.value = eg;
-                document.querySelector(`${self.tableselector}_wrapper #select5`).appendChild(el);
+                document.querySelector(`${div} #select5`).appendChild(el);
             });
 
 
@@ -343,7 +355,11 @@ class ModulFiles {
             var space = document.createElement("option");
             space.textContent = " "
             space.value = " "
-            $(`${self.tableselector}_wrapper #select6`)
+            let div=self.tableselector+"_wrapper"
+            if(self.kategoriaszurodiv){
+                div=self.kategoriaszurodiv
+            }
+            $(`${div} #select6`)
                 .find("option")
                 .remove()
                 .end()
@@ -352,7 +368,7 @@ class ModulFiles {
                 var el = document.createElement("option");
                 el.textContent = eg;
                 el.value = eg;
-                document.querySelector(`${self.tableselector}_wrapper #select6`).appendChild(el);
+                document.querySelector(`${div} #select6`).appendChild(el);
             });
 
 
@@ -370,7 +386,11 @@ class ModulFiles {
             var space = document.createElement("option");
             space.textContent = " "
             space.value = " "
-            $(`${self.tableselector}_wrapper #select7`)
+            let div=self.tableselector+"_wrapper"
+            if(self.kategoriaszurodiv){
+                div=self.kategoriaszurodiv
+            }
+            $(`${div} #select7`)
                 .find("option")
                 .remove()
                 .end()
@@ -379,7 +399,7 @@ class ModulFiles {
                 var el = document.createElement("option");
                 el.textContent = eg;
                 el.value = eg;
-                document.querySelector(`${self.tableselector}_wrapper #select7`).appendChild(el);
+                document.querySelector(`${div} #select7`).appendChild(el);
             });
         })
     }
