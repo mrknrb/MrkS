@@ -1,7 +1,6 @@
 ﻿let tabcount = 0
 let jelenlegitab = ""
 let sessionid = ""
-let eszkoz = eszkozdetektalo()
 
 var db = new PouchDB("NodesNet", {
     auto_compaction: true
@@ -484,8 +483,7 @@ function sessionselectfrissitoinit() {
             //üres option berak
             db7
                 .allDocs({
-                    include_docs: true,
-                    attachments: true
+                    include_docs: true
                 })
                 .then(function (result) {
                     function szuro(row, win) {

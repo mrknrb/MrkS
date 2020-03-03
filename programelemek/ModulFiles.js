@@ -46,6 +46,7 @@ class ModulFiles {
             if (self.datatablebetoltve == false) {
                 self.datatablebetolto(result);
             } else {
+
                 $(self.tableselector)
                     .dataTable()
                     .fnClearTable();
@@ -57,7 +58,6 @@ class ModulFiles {
 
 
     }
-
     datatablebetolto(result) {
 
         let self = this
@@ -282,7 +282,7 @@ overflow: hidden;
                 searching: false,
                 ordering: false,
                 paging: true, //kell a scrollerhez
-                // "pageLength": 50,
+                 pageLength: 50,
                 info: false,
                 retrieve: true, //az elején előjövő bug ellen lehet, hogy jó most tesztelem  https://datatables.net/manual/tech-notes/3
 
@@ -290,11 +290,7 @@ overflow: hidden;
                 columns: columns,
                 columnDefs: columndefs,
                 createdRow: function (row, data, dataIndex) {
-                    //row.querySelectorAll("td")[1].innerText = "000";
-                    row.querySelectorAll("td")[1].setAttribute(
-                        "style",
-                        "overflow:hidden;"
-                    );
+
 
                     self.adatfrissito2(row, data.doc);
                 }

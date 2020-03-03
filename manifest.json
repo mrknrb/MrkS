@@ -45,6 +45,12 @@
       "css": []
     },
     {
+      "js": ["modulok/jquery-3.1.0.min.js", "contentscripts/contentmubilist.js"],
+      "matches": ["https://mubi.com/lists/*","https://mubi.com/awards-and-festivals/*"],
+      "css": [],
+      "all_frames": true
+    },
+    {
       "js": ["modulok/jquery-3.1.0.min.js", "contentscripts/reddit.js"],
       "matches": [
         "https://i.reddit.com/*",

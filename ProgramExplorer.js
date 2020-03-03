@@ -10,7 +10,6 @@ let db7 = new PouchDB("SessionsNet", {
 
 let tabstablemagassag = 348;
 let databasemagassag = 348;
-let eszkoz = eszkozdetektalo()
 
 function stylebeallitasok1() {
     if (eszkoz == "sidebar") {

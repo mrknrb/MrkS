@@ -1,3 +1,4 @@
+
 function eszkozdetektalo() {
     window.mobilecheck = function () {
         var check = false;
@@ -27,7 +28,7 @@ function eszkozdetektalo() {
         return "android";
     }
 }
-
+let eszkoz = eszkozdetektalo()
 function scrollbareltunteto() {
     let basicstyle = `
         body::-webkit-scrollbar {
@@ -85,8 +86,7 @@ function getHostName(url) {
 
 function osszesadatlementese(db, db7) {
     db.allDocs({
-        include_docs: true,
-        attachments: true
+        include_docs: true
     }).then(function (result) {
         let osszesadat1 = [];
         console.log("result:", result);
@@ -98,8 +98,7 @@ function osszesadatlementese(db, db7) {
 
         db7
             .allDocs({
-                include_docs: true,
-                attachments: true
+                include_docs: true
             })
             .then(function (result) {
                 let osszesadat3 = [];
@@ -579,6 +578,13 @@ let ProgramsData = [
         logo: "N",
         htmlpath: "./ProgramNaptar.html",
         buttonid: "NaptarButton",
+        startmentes: false
+    },
+    {
+        tipus: "mubi",
+        logo: "B",
+        htmlpath: "./ProgramMubi.html",
+        buttonid: "MubiButton",
         startmentes: false
     }
 ]
