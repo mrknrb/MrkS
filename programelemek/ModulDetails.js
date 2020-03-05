@@ -21,7 +21,7 @@ class ModulDetails {
         this.beallitasok.htmlpath = "programelemek/details.html"
         this.beallitasok.automatavalto = beallitasok.automatavalto
         this.beallitasok.divcontainerbebetoltes = beallitasok.divcontainerbebetoltes
-
+        this.beallitasok.manualtipus = beallitasok.manualtipus
 
         if (this.beallitasok.divcontainerbebetoltes === true) {
             this.selectors.divcontainer = selectors.divcontainer
@@ -43,8 +43,9 @@ class ModulDetails {
             this.selectors.alkategoriadata = "#alkategorialista"
             this.selectors.alalkategoriadata = "#alalkategorialista"
             this.selectors.buttontorles = "#torlesgomb"
-
-
+            this.selectors.attachfilesinput = "#attachfilesinput"
+            this.selectors.attachedfileslist = "#attachedfileslist"
+            this.selectors.attachfilescommand = "#attachfilescommand"
             this.dombetolto()
             console.log("ok")
         } else {
@@ -82,6 +83,7 @@ class ModulDetails {
         //todo az új jegyzetet csináld meg
         this.jegyzetcreateinit()
         this.torlesgombinit()
+        this.fajlfeltoltesinit()
     }
 
 
@@ -170,9 +172,6 @@ class ModulDetails {
         function seged(selector, adat, doc) {
 
 
-
-
-
             if (adat == "cim") {
 
                 if (Tab != undefined) {
@@ -182,10 +181,17 @@ class ModulDetails {
                     console.log(adat)
                     document.querySelector(s.cim).value = ""
                 }
-            } else if (adat == "tipus"&&Tab) {
+            } else if (adat == "tipus" && self.beallitasok.manualtipus) {
+
+                document.querySelector(s.tipus).value = self.beallitasok.manualtipus
+
+
+            } else if (adat == "tipus" && Tab) {
 
                 document.querySelector(s.tipus).value = "link"
-            } else {
+
+
+            } else{
                 document.querySelector(selector).value = ""
             }
         }
@@ -237,14 +243,21 @@ class ModulDetails {
             adatbeilleszto(s.tipus, "tipus", doc)
             adatbeilleszto(s.datum, "datum", doc)
             if (document.querySelector(s.urllogo)) {
-                if(doc){
-                document.querySelector(s.urllogo).innerHTML = icongenerator(id2, doc.tipus)
-}else{ document.querySelector(s.urllogo).innerHTML = icongenerator(id2, "")}
+                if (doc) {
+                    document.querySelector(s.urllogo).innerHTML = icongenerator(id2, doc.tipus)
+                } else {
+                    document.querySelector(s.urllogo).innerHTML = icongenerator(id2, "")
+                }
             }
             if (document.querySelector(s.urlmezo)) {
                 console.log("url")
                 document.querySelector(s.urlmezo).value = id2
             }
+            document.querySelector(s.attachfilesinput).value=""
+
+            document.querySelector(s.attachedfileslist).innerHTML=""
+            document.querySelector(s.attachfilescommand).value=""
+
 
 
             if (document.querySelector(s.kategoria) && document.querySelector(s.alkategoria) && document.querySelector(s.alalkategoria)) {
@@ -312,9 +325,10 @@ class ModulDetails {
                     }
                 }
                 if (tipusseged) {
-                if (tipusseged.value) {
-                    adatok.tipus = tipusseged.value
-                }}
+                    if (tipusseged.value) {
+                        adatok.tipus = tipusseged.value
+                    }
+                }
 
                 adatok.datum = Date.now()
                 self.kategorianarancsszinezo()
@@ -372,7 +386,8 @@ class ModulDetails {
                         if (tipusseged) {
                             if (tipusseged.value) {
                                 adatok.tipus = tipusseged.value
-                            }}
+                            }
+                        }
 
                         adatok.datum = Date.now()
                         console.log(adatok)
@@ -450,42 +465,6 @@ class ModulDetails {
 
 
             })
-        }
-
-
-        if (document.querySelector(s.kategoria) && document.querySelector(s.alkategoria) && document.querySelector(s.alalkategoria)) {
-            /*
-            document.querySelector(s.kategoria).addEventListener("mouseover", function () {
-
-                let kategoriaosszes = []
-                db.find({
-                    selector: {
-                        kategoria: {
-                            $exists: true
-                        }
-                    },
-                    fields: ["kategoria"]
-                })
-                    .then(function (result) {
-                        result.docs.forEach(element => {
-                            kategoriaosszes.push(element.kategoria)
-                        })
-                        let kategoriaarray = kategoriaosszes.filter(function (item, pos) {
-                            return kategoriaosszes.indexOf(item) == pos
-                        })
-                        var select = document.querySelector(s.kategoriadata)
-                        $(s.kategoriadata).empty()
-                        for (var i = 0; i < kategoriaarray.length; i++) {
-                            var opt = kategoriaarray[i]
-                            var el = document.createElement("option")
-                            el.textContent = opt
-                            el.value = opt
-                            select.appendChild(el)
-                        }
-                    })
-            })
-*/
-
             document.querySelector(s.alkategoria).addEventListener("mouseover", function () {
 
 
@@ -641,4 +620,170 @@ class ModulDetails {
         }
 
     }
+
+    fajlfeltoltesinit() {
+
+        function ures(){
+            attachfilesinput.value=""
+            attachfilescommand.value=""}
+
+        let self = this
+        let s = this.selectors
+        let attachname = "att"
+        let attachfilesinput = document.querySelector(s.attachfilesinput)
+        let attachfilescommand = document.querySelector(s.attachfilescommand)
+        let feltoltes = document.createElement("input")
+        feltoltes.type = "file"
+        feltoltes.addEventListener("change", function (e) {
+            function importFun(e) {
+                var files = e.target.files,
+                    reader = new FileReader()
+                reader.onload = _imp
+                reader.readAsText(files[0])
+            }
+
+            importFun(e)
+
+            function _imp() {
+                let importdata = this.result
+
+                db.get(self.id, {attachments: true}).then(function (doc) {
+                    if (doc._attachments == undefined) {
+                        doc._attachments = {}
+                        doc._attachments[attachname] = {}
+                        doc._attachments[attachname].content_type = "text/plain"
+                        doc._attachments[attachname].data = Base64.encode(importdata)
+
+                    } else {
+
+                        doc._attachments[attachname] = {}
+                        doc._attachments[attachname].content_type = "text/plain"
+                        doc._attachments[attachname].data = Base64.encode(importdata)
+
+                    }
+                    console.log(doc)
+                    return db.put(doc);
+                }).then(function (d) {
+
+                    ures()
+                }).catch(function (err) {
+                    alert(err)
+                })
+                //here is your imported data, and from here you should know what to do with it (save it to some storage, etc.)
+                // console.log(_myImportedData);
+                // feltoltes.value = "" //make sure to clear input value after every import
+            }
+        }, false)
+        attachfilescommand.addEventListener("change", function (e) {
+
+            attachname = attachfilesinput.value
+            if (e.target.value == "new") {
+                if (attachfilesinput.value) {
+
+                    db.get(self.id, {attachments: true}).then(function (doc) {
+                        if (!doc._attachments){
+                            feltoltes.click()
+
+                        }else if (!doc._attachments[attachname]) {
+                            feltoltes.click()
+                        } else {
+                            let biztosan = confirm("Foglalt fájlnév! Felülírod?");
+                            if (biztosan) {
+                                feltoltes.click()
+
+                            }
+
+                        }
+                    })
+
+
+                } else {
+                    alert("Írj be egy fájlnevet!")
+                }
+            } else if (e.target.value == "delete") {
+                db.get(self.id, {attachments: true}).then(function (doc) {
+                    if (!doc._attachments){
+                        alert("Attachment nem található!")
+                        ures()
+                    }else if (doc._attachments[attachname]) {
+                        let biztosan = confirm("Biztosan törölni akarod?");
+                        if (biztosan) {
+                            delete doc._attachments[attachname]
+                            ures()
+                            return db.put(doc);
+                        }
+                    } else {
+                        alert("Attachment nem található!")
+
+                    }
+                    ures()
+                })
+
+
+            } else if (e.target.value == "console") {
+                db.get(self.id, {attachments: true}).then(function (doc) {
+                    if (!doc._attachments){
+                        alert("Attachment nem található!")
+                        ures()
+                    }else if (doc._attachments[attachname]) {
+
+                        console.log(doc._attachments[attachname])
+                    } else {
+                        alert("Attachment nem található!")
+                    }
+                    ures()
+                })
+
+            } else if (e.target.value == "download") {
+                db.get(self.id, {attachments: true}).then(function (doc) {
+                    if (!doc._attachments){
+                        alert("Attachment nem található!")
+                        ures()
+                    }else if (doc._attachments[attachname]) {
+
+                        var _myArray =atob(doc._attachments[attachname].data)
+                        var vLink = document.createElement("a"),
+                            vBlob = new Blob([_myArray], {
+                                type: "octet/stream"
+                            }),
+                            vName = "AttachmentFile.txt",
+                            vUrl = window.URL.createObjectURL(vBlob);
+                        vLink.setAttribute("href", vUrl);
+                        vLink.setAttribute("download", vName);
+                        vLink.click();
+                        console.log(doc._attachments[attachname])
+                        ures()
+                    } else {
+                        alert("Attachment nem található!")
+                        ures()
+                    }
+
+                })
+
+            }
+
+        })
+        attachfilesinput.addEventListener("mouseover", function (e) {
+
+            db.get(self.id, {attachments: true}).then(function (doc) {
+
+
+                var select = document.querySelector(s.attachedfileslist)
+                $(s.attachedfileslist).empty()
+                for (let attachment in  doc._attachments) {
+
+                    var opt = attachment
+                    var el = document.createElement("option")
+                    el.textContent = opt
+                    el.value = opt
+                    select.appendChild(el)
+
+                    // propertyName is what you want
+                    // you can get the value like this: myObject[propertyName]
+                }
+
+            })
+        })
+    }
+
 }

@@ -330,8 +330,8 @@ let detailsbeallitasok = {
 let details = new ModulDetails(detailsselectors, detailsbeallitasok)
 
 if (window.frameElement.getAttribute("fileid") != undefined) {
-    db.get(window.frameElement.getAttribute("fileid")).then(function (doc) {
-        if (doc.tipus == "conceptmap" && doc.data != undefined && doc.data.model != undefined) {
+    db.get(window.frameElement.getAttribute("fileid"),{attachments: true}).then(function (doc) {
+        if (doc.tipus == "conceptmap" && doc._attachments.att.data != undefined && JSON.parse(atob(doc._attachments.att.data)) != undefined) {
             details.detailsfrissito(doc._id)
             conceptmapbetolto(doc);
         } else if (doc.tipus == "conceptmap") {
@@ -366,16 +366,26 @@ function paletteinit() {
 
 
 function conceptmapbetolto(doc) {
-    myDiagram.model = go.Model.fromJson(doc.data.model);
+    myDiagram.model = go.Model.fromJson(JSON.parse(atob(doc._attachments.att.data)).model);
 }
-
 function save() {
     myDiagram.isModified = false;
-    db.get(window.frameElement.getAttribute("fileid")).then(function (doc) {
-        if (doc.data == undefined) {
-            doc.data = {}
+    db.get(window.frameElement.getAttribute("fileid"),{attachments: true}).then(function (doc) {
+
+        if (doc._attachments == undefined) {
+            let data={}
+            data.model=myDiagram.model.toJson()
+            doc._attachments={}
+            doc._attachments.att={}
+            doc._attachments.att.content_type= "text/plain"
+            doc._attachments.att.data= btoa(JSON.stringify(data))
+
+        }else{
+            let data={}
+      data.model =myDiagram.model.toJson()
+
+            doc._attachments.att.data= btoa(JSON.stringify(data))
         }
-        doc.data.model = myDiagram.model.toJson();
         return db.put(doc);
     })
 }

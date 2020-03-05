@@ -14,7 +14,20 @@
         <div id="urllogo" style="float:left"></div>
         <input id="urlmezo" type="text"
           style="  background-color: rgba(255, 255, 255, 0);color:rgb(156, 156, 156);
-            border: 0cm; text-align:left;font-size: 12px;height:20px;width:85%; box-sizing:border-box;-moz-box-sizing:border-box">
+            border: 0cm; text-align:left;font-size: 12px;height:20px;width:60%; box-sizing:border-box;-moz-box-sizing:border-box">
+        <input id=attachfilesinput list="attachedfileslist" style="height:20px;color:rgb(190, 148, 92);text-align:left;font-weight: bold;font-size: 12px;width:75px;  -webkit-appearance: none;
+              appearance: none;
+              padding: 0px">
+        <datalist id="attachedfileslist">
+        </datalist>
+        <select id="attachfilescommand" style="max-width:25px;font-size: 12px;height:20px">
+          <option value="delete">delete</option>
+          <option value="download">download</option>
+          <option value="console">console</option>
+          <option value="new">new</option>
+          <option selected="selected" value=""></option>
+        </select>
+
         <button id="jegyzetgomb" style="height:23px; width:26px;
              background-color: rgba(255, 255, 255, 0.5);
             border: none;
@@ -89,6 +102,7 @@
         </select>
         <input type="text" id="datum"
           style="color:rgb(0, 0, 0);text-align:left;font-weight: bold;font-size: 15px;width: 90px "></input>
+
       </td>
     </tr>
     <tr>
