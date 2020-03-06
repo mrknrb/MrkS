@@ -36,54 +36,40 @@ document.querySelector("#detailssajatadatok").addEventListener("click", function
 })
 if (fileid != undefined) {
     db.get(fileid).then(function (doc) {
-
-
-        console.log(doc)
         if (doc.tipus == "research") {
             details.detailsfrissito(doc._id)
             if (doc.data === undefined) {
                 doc.data = {}
-            } else {
-                if (doc.data.aktualiskerdesid) {
-                    aktualiskerdesid = doc.data.aktualiskerdesid
-                    doc.data.kerdesek.forEach(function (element, index) {
-                        if (element.kerdesid === aktualiskerdesid) {
-                            if (!element.keresesek) {
-                                doc.data.kerdesek[index].keresesek = []
-                            }
-                            let keresesek = doc.data.kerdesek[index].keresesek
-                            keresesekbetolto(keresesek)
-                        }
-                    })
-                } else {
-                    keresesekbetolto()
-                }
-                if (doc.data.aktualiskeresesid) {
-
-                    aktualiskeresesid = doc.data.aktualiskeresesid
-
-                    doc.data.kerdesek.forEach(function (element, kerdesindex) {
-                        if (element.kerdesid === aktualiskerdesid) {
-
-                            element.keresesek.forEach(function (kereses, keresesindex) {
-                                if (kereses.keresesid === aktualiskeresesid) {
-                                    let talalatok = doc.data.kerdesek[kerdesindex].keresesek[keresesindex].talalatok
-                                    talalatokbetolto(talalatok)
-                                }
-                            })
-                        }
-                    })
-                } else {
-                    talalatokbetolto()
-                }
-
             }
             if (doc.data.kerdesek === undefined) {
                 doc.data.kerdesek = []
             }
-            kerdesekbetolto(doc.data.kerdesek)
-            return db.put(doc);
+            if (doc.data.talalatok === undefined) {
+                doc.data.talalatok = []
+            }
+            if (doc.data.aktualiskerdesid) {
+                aktualiskerdesid = doc.data.aktualiskerdesid
+                doc.data.kerdesek.forEach(function (element, index) {
+                    if (element.kerdesid === aktualiskerdesid) {
+                        if (!element.keresesek) {
+                            doc.data.kerdesek[index].keresesek = []
+                        }
+                        let keresesek = doc.data.kerdesek[index].keresesek
+                        keresesekbetolto(keresesek)
+                    }
+                })
+            } else {
+                keresesekbetolto()
+            }
+
         }
+
+
+        kerdesekbetolto(doc.data.kerdesek)
+        talalatokbetolto()
+        return db.put(doc);
+
+
     })
 }
 elementhider("#detailsboxopen", "#detailsdiv")
@@ -326,7 +312,7 @@ function keresesekrowadatbeilleszto(row, data) {
         minute: "numeric"
     }).format(data.datum)
 
-
+    col[0].innerText = data.keresesengine
     col[2].appendChild(keresesszoveg)
     col[3].appendChild(datum)
     col[2].addEventListener("click", function (e) {
@@ -338,7 +324,11 @@ function keresesekrowadatbeilleszto(row, data) {
                             aktualiskeresesid = data.keresesid
                             doc.data.aktualiskeresesid = data.keresesid
                             tablefrissito(doc.data.kerdesek[kerdesindex].keresesek, "#keresesektable")
-                            tablefrissito(doc.data.kerdesek[kerdesindex].keresesek[keresesindex].talalatok, "#talalatoktable")
+
+                            kereso(data.keresesszoveg, data.keresesengine, function (talalatok) {
+                                tablefrissito(talalatok, "#talalatoktable")
+
+                            })
                             return db.put(doc);
                         }
                     })
@@ -438,6 +428,9 @@ let elozocol
 
 function talalatokrowadatbeilleszto(row, data) {
     let col = row.querySelectorAll("td");
+
+//console.log(data)
+    //  console.log(data.allapot)
     if (data.allapot == "megnyitott") {
 
         row.style.backgroundColor = "PINK"
@@ -457,29 +450,6 @@ function talalatokrowadatbeilleszto(row, data) {
         col[2].appendChild(talalatcim)
     }
 
-    function talalatmodosito(modositandoadat, ertek) {
-        db.get(fileid).then(function (doc) {
-            doc.data.kerdesek.forEach(function (element) {
-                if (element.kerdesid === aktualiskerdesid) {
-
-                    element.keresesek.forEach(function (element2) {
-                        if (element2.keresesid === aktualiskeresesid) {
-                            console.log(element2)
-                            element2.talalatok.forEach(function (element3) {
-                                if (element3.talalatid === data.talalatid) {
-                                    element3[modositandoadat] = ertek
-
-
-                                    return db.put(doc);
-                                }
-                            })
-                        }
-                    })
-                }
-            })
-        })
-    }
-
     col[2].addEventListener("click", function (e) {
 
         if (eszkoz == "sidebar") {
@@ -494,8 +464,24 @@ function talalatokrowadatbeilleszto(row, data) {
         } else {
             chrome.tabs.create({url: data.talalaturl})
         }
+        db.get(fileid).then(function (doc) {
+            let megvan = false
+            doc.data.talalatok.forEach(function (element, index) {
+                    if (element.talalaturl === data.talalaturl) {
+                        megvan = true
+
+                    }
+                }
+            )
+            if (!megvan) {
+                data.allapot = "megnyitott"
+                doc.data.talalatok.unshift(data)
+                return db.put(doc)
+            }
+        })
+
+
         if (data.allapot != "fontos") {
-            talalatmodosito("allapot", "megnyitott")
             data.allapot = "megnyitott"
             row.style.backgroundColor = "PINK"
         }
@@ -510,15 +496,24 @@ function talalatokrowadatbeilleszto(row, data) {
 
     })
     col[3].addEventListener("click", function (e) {
-        if (data.allapot == "fontos") {
-            talalatmodosito("allapot", "megnyitott")
-            data.allapot = "megnyitott"
-            row.style.backgroundColor = "PINK"
-        } else {
-            data.allapot = "fontos"
-            talalatmodosito("allapot", "fontos")
-            row.style.backgroundColor = "GREEN"
-        }
+        db.get(fileid).then(function (doc) {
+
+            doc.data.talalatok.forEach(function (element, index) {
+                    if (element.talalaturl === data.talalaturl) {
+                        if (element.allapot == "fontos") {
+                            element.allapot = "megnyitott"
+                            row.style.backgroundColor = "PINK"
+                        } else {
+                            element.allapot = "fontos"
+                            row.style.backgroundColor = "GREEN"
+                        }
+                        return db.put(doc)
+                    }
+                }
+            )
+
+        })
+
     })
 }
 
@@ -540,63 +535,101 @@ $("#searchselect").on('change', function () {
 let stackhtml = ""
 let googlehtml = ""
 
-function kereso(szo, callback) {
-    let queryurl = ""
-    if (searchengine == "stack") {
-        queryurl = "https://stackoverflow.com/search?q="
-        $.get(queryurl + szo, function (html) {
+function kereso(szo, keresesengine, callback) {
+    function mentettetekbenkereso(doc, talalaturl) {
+        let allapot = ""
+        doc.data.talalatok.forEach(function (element) {
 
-            stackhtml = html
-            var elements = $(html).find("div.question-summary.search-result")
-            let talalatok = []
-            elements.each(function (e) {
-                //console.log(this.innerText)
-                // $(this).find("vote-count-post ")
-                let votes = $(this).find(".vote-count-post strong")[0].innerText
-                let talalatcim = $(this).find(".result-link a")[0].title
-                let talalaturl = "https://stackoverflow.com" + $(this).find(".result-link a").attr("data-searchsession")
-                let talalatid = guidGenerator()
-                let talalat = {talalatid, votes, talalatcim, talalaturl}
 
-                talalatok.push(talalat)
-            })
-            callback(talalatok)
-        });
-    } else if (searchengine == "google.com") {
-        queryurl = "https://www.google.hu/search?q="
-        $.get(queryurl + szo, function (html) {
-            googlehtml = html
-            var elements = $(html).find("div.g")
-            let talalatok = []
-            elements.each(function (e) {
-                //console.log(this.innerText)
-                // $(this).find("vote-count-post ")
-                let talalatcim = ""
-                if ($(this).find("h3")[0]) {
-                    talalatcim = $(this).find("h3")[0].innerText
+            if (element.talalaturl == talalaturl) {
+                console.log(talalaturl)
+
+                if (element.allapot == "megnyitott") {
+                    allapot = "megnyitott"
+                } else if (element.allapot == "fontos") {
+                    allapot = "fontos"
                 }
-                let talalaturl = $(this).find("a")[0].href
-                // let talalatcim = $(this).find(".result-link a")[0].title
-                let talalatid = guidGenerator()
-                let talalat = {talalatid, talalatcim, talalaturl}
-
-                talalatok.push(talalat)
-            })
-            callback(talalatok)
-        });
-    }else if(searchengine == "mubi"){
-        let url = document.querySelector("#url").value
-        document.querySelector("#iframe").src = url
-        
 
 
+            }
+        })
 
+        return allapot
     }
+
+    db.get(fileid).then(function (doc) {
+        let queryurl = ""
+        if (keresesengine == "stack") {
+            queryurl = "https://stackoverflow.com/search?q="
+            $.get(queryurl + szo, function (html) {
+                stackhtml = html
+                var elements = $(html).find("div.question-summary.search-result")
+                let talalatok = []
+
+                elements.each(function (e) {
+                    //console.log(this.innerText)
+                    // $(this).find("vote-count-post ")
+                    let votes = $(this).find(".vote-count-post strong")[0].innerText
+                    let talalatcim = $(this).find(".result-link a")[0].title
+                    let talalaturl = "https://stackoverflow.com" + $(this).find(".result-link a").attr("data-searchsession")
+                    let allapot = mentettetekbenkereso(doc, talalaturl)
+                    console.log(allapot)
+                    let talalat = {votes, talalatcim, talalaturl, allapot}
+
+                    talalatok.push(talalat)
+
+                })
+                callback(talalatok)
+            });
+        } else if (keresesengine == "google.com") {
+            queryurl = "https://www.google.hu/search?q="
+            $.get(queryurl + szo, function (html) {
+                googlehtml = html
+                var elements = $(html).find("div.g")
+                let talalatok = []
+                elements.each(function (e) {
+                    //console.log(this.innerText)
+                    // $(this).find("vote-count-post ")
+                    let talalatcim = ""
+                    if ($(this).find("h3")[0]) {
+                        talalatcim = $(this).find("h3")[0].innerText
+                    }
+
+                    let talalaturl = $(this).find("a")[0].href
+                    let allapot = mentettetekbenkereso(doc, talalaturl)
+                    console.log(allapot)
+                    // let talalatcim = $(this).find(".result-link a")[0].title
+                    let talalat = {talalatcim, talalaturl, allapot}
+
+                    talalatok.push(talalat)
+                })
+                callback(talalatok)
+            });
+        } else if (keresesengine == "mubi") {
+
+            document.querySelector("#iframe").src = szo
+            let talalatok = []
+            window.addEventListener("message", function (message) {
+                if (message.data.uzenettipus == "filmslist") {
+                    talalatok = message.data.data
+                    console.log("contentjsuzenet", message)
+                }
+                talalatok.forEach(function (element) {
+
+                    element.allapot = mentettetekbenkereso(doc, element.talalaturl)
+                })
+
+                callback(talalatok)
+
+            })
+
+        }
+    })
 }
 
 document.querySelector("#search").addEventListener("click", function (e) {
     let keresesszoveg = document.querySelector("#searchtext").value
-    kereso(keresesszoveg, function (talalatok) {
+    kereso(keresesszoveg, searchengine, function (talalatok) {
         tablefrissito(talalatok, "#talalatoktable")
         db.get(fileid).then(function (doc) {
             doc.data.kerdesek.forEach(function (element, index) {
@@ -610,7 +643,7 @@ document.querySelector("#search").addEventListener("click", function (e) {
                     doc.data.kerdesek[index].keresesek.unshift({
                         keresesid: id,
                         keresesszoveg: keresesszoveg,
-                        talalatok: talalatok,
+                        keresesengine: searchengine,
                         datum: Date.now()
                     })
                     let keresesek = doc.data.kerdesek[index].keresesek

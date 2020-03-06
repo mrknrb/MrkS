@@ -581,10 +581,10 @@ let ProgramsData = [
         startmentes: false
     },
     {
-        tipus: "mubi",
-        logo: "M",
-        htmlpath: "./ProgramMubi.html",
-        buttonid: "MubiButton",
+        tipus: "browser",
+        logo: "B",
+        htmlpath: "./ProgramBrowser.html",
+        buttonid: "BrowserButton",
         startmentes: false
     }
 ]
@@ -810,3 +810,11 @@ var Base64 = {
 
 }
 
+function blobcreate(data){
+   return new Blob([JSON.stringify(data, null, 2)], {type : 'application/json'});
+}
+async function blobdecode(data,callback){
+   let data2= await data.text();
+
+    callback(JSON.parse(data2))
+}

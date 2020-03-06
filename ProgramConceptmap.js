@@ -69,8 +69,8 @@ function makePort(name, align, spot, output, input) {
     return GO(go.Shape, {
         fill: "transparent", // changed to a color in the mouseEnter event handler
         strokeWidth: 0, // no stroke
-        width: horizontal ? NaN : 8, // if not stretching horizontally, just 8 wide
-        height: !horizontal ? NaN : 8, // if not stretching vertically, just 8 tall
+        width: horizontal ? NaN : 12, // if not stretching horizontally, just 8 wide
+        height: !horizontal ? NaN : 12, // if not stretching vertically, just 8 tall
         alignment: align, // align the port on the main Shape
         stretch: (horizontal ? go.GraphObject.Horizontal : go.GraphObject.Vertical),
         portId: name, // declare this object to be a "port"
@@ -330,8 +330,8 @@ let detailsbeallitasok = {
 let details = new ModulDetails(detailsselectors, detailsbeallitasok)
 
 if (window.frameElement.getAttribute("fileid") != undefined) {
-    db.get(window.frameElement.getAttribute("fileid"),{attachments: true}).then(function (doc) {
-        if (doc.tipus == "conceptmap" && doc._attachments.att.data != undefined && JSON.parse(atob(doc._attachments.att.data)) != undefined) {
+    db.get(window.frameElement.getAttribute("fileid"), {attachments: true,binary: true}).then(function (doc) {
+        if (doc.tipus == "conceptmap"  ) {
             details.detailsfrissito(doc._id)
             conceptmapbetolto(doc);
         } else if (doc.tipus == "conceptmap") {
@@ -364,27 +364,35 @@ function paletteinit() {
 
 }
 
+let tesztmentes = {}
 
 function conceptmapbetolto(doc) {
-    myDiagram.model = go.Model.fromJson(JSON.parse(atob(doc._attachments.att.data)).model);
+    console.log("docdata",doc._attachments.att.data)
+    blobdecode(doc._attachments.att.data,function (data) {
+        console.log("data",data)
+        myDiagram.model =go.Model.fromJson(data.model)
+    })
+
+
 }
+
 function save() {
     myDiagram.isModified = false;
-    db.get(window.frameElement.getAttribute("fileid"),{attachments: true}).then(function (doc) {
+    db.get(window.frameElement.getAttribute("fileid"), {attachments: true,binary: true}).then(function (doc) {
 
         if (doc._attachments == undefined) {
-            let data={}
-            data.model=myDiagram.model.toJson()
-            doc._attachments={}
-            doc._attachments.att={}
-            doc._attachments.att.content_type= "text/plain"
-            doc._attachments.att.data= btoa(JSON.stringify(data))
+            let data = {}
+            data.model = myDiagram.model.toJson()
+            doc._attachments = {}
+            doc._attachments.att = {}
+            doc._attachments.att.content_type = "text/plain"
+            doc._attachments.att.data = blobcreate(data)
 
-        }else{
-            let data={}
-      data.model =myDiagram.model.toJson()
-
-            doc._attachments.att.data= btoa(JSON.stringify(data))
+        } else {
+            let data = {}
+            data.model = myDiagram.model.toJson()
+            tesztmentes = myDiagram.model.toJson()
+            doc._attachments.att.data = blobcreate(data)
         }
         return db.put(doc);
     })

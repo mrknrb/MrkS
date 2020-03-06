@@ -110,6 +110,10 @@ function stylebeallitasok() {
         document
             .querySelector("#megjegyzesmezo")
             .setAttribute("style", "height:120px;width:100%");
+        document
+            .querySelector("#tabstablediv")
+            .setAttribute("style", "display:none");
+
         basicstyletables = `#datatable tbody th, #datatable tbody td, #tabstable tbody th, #tabstable tbody td{ padding: 8px 10px;}`;
     }
     var styleSheettables = document.createElement("style");

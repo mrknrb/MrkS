@@ -191,7 +191,7 @@ class ModulDetails {
                 document.querySelector(s.tipus).value = "link"
 
 
-            } else{
+            } else {
                 document.querySelector(selector).value = ""
             }
         }
@@ -231,7 +231,6 @@ class ModulDetails {
 
         function beillesztoseged(doc) {
             self.id = id2
-            console.log("doc", doc)
             adatbeilleszto(s.cim, "cim", doc)
             adatbeilleszto(s.megjegyzes, "megjegyzes", doc)
             adatbeilleszto(s.rang, "rang", doc)
@@ -250,14 +249,12 @@ class ModulDetails {
                 }
             }
             if (document.querySelector(s.urlmezo)) {
-                console.log("url")
                 document.querySelector(s.urlmezo).value = id2
             }
-            document.querySelector(s.attachfilesinput).value=""
+            document.querySelector(s.attachfilesinput).value = ""
 
-            document.querySelector(s.attachedfileslist).innerHTML=""
-            document.querySelector(s.attachfilescommand).value=""
-
+            document.querySelector(s.attachedfileslist).innerHTML = ""
+            document.querySelector(s.attachfilescommand).value = ""
 
 
             if (document.querySelector(s.kategoria) && document.querySelector(s.alkategoria) && document.querySelector(s.alalkategoria)) {
@@ -623,9 +620,10 @@ class ModulDetails {
 
     fajlfeltoltesinit() {
 
-        function ures(){
-            attachfilesinput.value=""
-            attachfilescommand.value=""}
+        function ures() {
+            attachfilesinput.value = ""
+            attachfilescommand.value = ""
+        }
 
         let self = this
         let s = this.selectors
@@ -647,18 +645,18 @@ class ModulDetails {
             function _imp() {
                 let importdata = this.result
 
-                db.get(self.id, {attachments: true}).then(function (doc) {
+                db.get(self.id, {attachments: true, binary: true}).then(function (doc) {
                     if (doc._attachments == undefined) {
                         doc._attachments = {}
                         doc._attachments[attachname] = {}
                         doc._attachments[attachname].content_type = "text/plain"
-                        doc._attachments[attachname].data = Base64.encode(importdata)
+                        doc._attachments[attachname].data = blobcreate(importdata)
 
                     } else {
 
                         doc._attachments[attachname] = {}
                         doc._attachments[attachname].content_type = "text/plain"
-                        doc._attachments[attachname].data = Base64.encode(importdata)
+                        doc._attachments[attachname].data = blobcreate(importdata)
 
                     }
                     console.log(doc)
@@ -680,11 +678,11 @@ class ModulDetails {
             if (e.target.value == "new") {
                 if (attachfilesinput.value) {
 
-                    db.get(self.id, {attachments: true}).then(function (doc) {
-                        if (!doc._attachments){
+                    db.get(self.id, {attachments: true, binary: true}).then(function (doc) {
+                        if (!doc._attachments) {
                             feltoltes.click()
 
-                        }else if (!doc._attachments[attachname]) {
+                        } else if (!doc._attachments[attachname]) {
                             feltoltes.click()
                         } else {
                             let biztosan = confirm("Foglalt fájlnév! Felülírod?");
@@ -701,11 +699,11 @@ class ModulDetails {
                     alert("Írj be egy fájlnevet!")
                 }
             } else if (e.target.value == "delete") {
-                db.get(self.id, {attachments: true}).then(function (doc) {
-                    if (!doc._attachments){
+                db.get(self.id, {attachments: true, binary: true}).then(function (doc) {
+                    if (!doc._attachments) {
                         alert("Attachment nem található!")
                         ures()
-                    }else if (doc._attachments[attachname]) {
+                    } else if (doc._attachments[attachname]) {
                         let biztosan = confirm("Biztosan törölni akarod?");
                         if (biztosan) {
                             delete doc._attachments[attachname]
@@ -721,11 +719,11 @@ class ModulDetails {
 
 
             } else if (e.target.value == "console") {
-                db.get(self.id, {attachments: true}).then(function (doc) {
-                    if (!doc._attachments){
+                db.get(self.id, {attachments: true, binary: true}).then(function (doc) {
+                    if (!doc._attachments) {
                         alert("Attachment nem található!")
                         ures()
-                    }else if (doc._attachments[attachname]) {
+                    } else if (doc._attachments[attachname]) {
 
                         console.log(doc._attachments[attachname])
                     } else {
@@ -735,25 +733,29 @@ class ModulDetails {
                 })
 
             } else if (e.target.value == "download") {
-                db.get(self.id, {attachments: true}).then(function (doc) {
-                    if (!doc._attachments){
+                db.get(self.id, {attachments: true, binary: true}).then(function (doc) {
+                    if (!doc._attachments) {
                         alert("Attachment nem található!")
                         ures()
-                    }else if (doc._attachments[attachname]) {
+                    } else if (doc._attachments[attachname]) {
+                        blobdecode(doc._attachments[attachname].data, function (data) {
+                            var _myArray = data
+                            var vLink = document.createElement("a"),
+                                vBlob = new Blob([_myArray], {
+                                    type: "octet/stream"
+                                }),
+                                vName = attachname+".txt",
+                                vUrl = window.URL.createObjectURL(vBlob);
+                            vLink.setAttribute("href", vUrl);
+                            vLink.setAttribute("download", vName);
+                            vLink.click();
+                            console.log(doc._attachments[attachname])
+                            ures()
+                        })
 
-                        var _myArray =atob(doc._attachments[attachname].data)
-                        var vLink = document.createElement("a"),
-                            vBlob = new Blob([_myArray], {
-                                type: "octet/stream"
-                            }),
-                            vName = "AttachmentFile.txt",
-                            vUrl = window.URL.createObjectURL(vBlob);
-                        vLink.setAttribute("href", vUrl);
-                        vLink.setAttribute("download", vName);
-                        vLink.click();
-                        console.log(doc._attachments[attachname])
-                        ures()
+
                     } else {
+
                         alert("Attachment nem található!")
                         ures()
                     }
