@@ -10,7 +10,7 @@ var db7 = new PouchDB("SessionsNet", {
 })
 getActualSession(function (session) {
     sessionid = session._id
-    document.querySelector("title").innerText=session.cim
+    document.querySelector("title").innerText = session.cim
 })
 if (eszkoz == "android") {
 
@@ -35,6 +35,8 @@ if (eszkoz == "android") {
 
     start2();
 }
+let megnyitotttabek = {}
+
 //OK---------------------------------------------------------------------------------------------------------
 function programstarter(adatok) {
     /**adatok:{fileid,tipus,programtabid}*/
@@ -45,7 +47,8 @@ function programstarter(adatok) {
     if (adatok.programtabid == undefined) {
         programtabid2 = guidGenerator()
     }
-    function programmento(tipus,fileid) {
+
+    function programmento(tipus, fileid) {
 
         getActualSession(function (session) {
             db7
@@ -53,12 +56,14 @@ function programstarter(adatok) {
                 .then(function (doc) {
                     let adatok2 = {}
                     adatok2.tipus = tipus
-                    if(adatok.fileid){
-                    adatok2.fileid = adatok.fileid
-                    }else{ adatok2.fileid = fileid}
+                    if (adatok.fileid) {
+                        adatok2.fileid = adatok.fileid
+                    } else {
+                        adatok2.fileid = fileid
+                    }
                     adatok2.programtabid = programtabid2
 
-                    console.log("adatok2",adatok)
+                    console.log("adatok2", adatok)
                     if (doc.programs == undefined) {
                         doc.programs = []
                     }
@@ -83,7 +88,7 @@ function programstarter(adatok) {
                     if (adatok.programtabid == undefined) {
                         programmento(program.tipus)
                     }
-                    programbetolto(program,doc)
+                    programbetolto(program, doc)
 
                 }
             })
@@ -105,13 +110,12 @@ function programstarter(adatok) {
                         })
 
 
-
                     }).catch(function (error) {
                     console.log(error)
                 })
 
 
-        })
+            })
         })
     } else if (adatok.tipus != undefined) {
         //a tipussal nyit egy új programot
@@ -137,7 +141,7 @@ function programstarter(adatok) {
                         }
                         db.put(adatok2).then(function (e) {
                             if (adatok.programtabid == undefined) {
-                                programmento(adatok.tipus,adatok2._id)
+                                programmento(adatok.tipus, adatok2._id)
                             }
                             programbetolto(program)
 
@@ -161,20 +165,21 @@ function programstarter(adatok) {
     }
 
 //OK-----------------------------------------------------------------------------------------
-    function programbetolto(program,doc) {
+    function programbetolto(program, doc) {
         let iframehtml = `<iframe src="${program.htmlpath}" tipus="${adatok.tipus}" sessionid="${sessionid}" fileid="${adatok.fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
 
         tabcount++
         let tabnumber = tabcount
         let tab = document.createElement("li")
-        let cim=""
-        if(doc){
-            if(doc.cim){
-           cim=doc.cim.truncnopont(9)
+        let cim = ""
+        if (doc) {
+            if (doc.cim) {
+                cim = doc.cim.truncnopont(9)
             }
         }
 
         tab.innerHTML = `<a class="tabbuttons" id="tabbutton${tabnumber}" href="#tab${tabnumber}" fileid="${adatok.fileid}" style="height:20px;width:80px;overflow: hidden">${program.logo} ${cim}</a><a id="tabbezarobutton${tabnumber}" programtabid="${programtabid2}"class="tabbezarobuttons" href="#tab${tabnumber}" style="height: 20px; width:20px; vertical-align: top;text-align: center;font-weight:900">×</a>`
+
         document.querySelector(".tab-links").appendChild(tab)
         let page = document.createElement("div")
         page.id = `tab${tabnumber}`
@@ -183,8 +188,20 @@ function programstarter(adatok) {
 
         document.querySelector(".tab-content").appendChild(page)
 
-        document.querySelector(`#tab${tabnumber}`).innerHTML = iframehtml
 
+            document.querySelector(`#tab${tabnumber}`).innerHTML = iframehtml
+
+
+        //todo elkezdtem megcsinálni, hogy a tabek ne essenek szét, ha nem az előtérben vannak.
+        /*
+        tab.addEventListener("click", function (e) {
+            if(!megnyitotttabek[`tab${tabnumber}`]){
+
+                megnyitotttabek[`tab${tabnumber}`]=true
+            }
+
+        })
+        */
         jQuery(".tabs " + `#tab${tabnumber}`)
             .show()
             .siblings()
@@ -217,6 +234,7 @@ function programstarter(adatok) {
 //OK^--------------------------------------------------------------------------------------------------------A torlo meg van csinálva elvileg
         jQuery(".tabs .tab-links .tabbezarobuttons").on("click", function (e) {
             let xx = this
+            megnyitotttabek[`tab${tabnumber}`]=false
             getActualSession(function (session) {
 
                 db7
@@ -419,11 +437,11 @@ function sessioncolorinit(session) {
 function programsrestart(session) {
     if (session._id != "jegyz0e9ad149-49a1-76e7-c1d8-f37bf0d0956b") {
 
-        console.log("session",session)
+        console.log("session", session)
         if (session.programs != undefined) {
             session.programs.forEach(function (programadatok) {
 
-                console.log("programadatok",programadatok)
+                console.log("programadatok", programadatok)
                 programstarter(programadatok)
             })
         } else {
@@ -455,7 +473,7 @@ function sessionselectinit() {
                             }
                         );
                     } else {
-                        window.location.href=`MainMrkS.html#${params.target.value}`
+                        window.location.href = `MainMrkS.html#${params.target.value}`
                         location.reload();
 
                     }
@@ -585,3 +603,7 @@ function Init() {
 Init()
 
 
+window.addEventListener('error', (event) => {
+    log.textContent = log.textContent + `${event.type}: ${event.message}\n`;
+    console.log(event)
+});

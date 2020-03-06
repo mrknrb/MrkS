@@ -596,7 +596,14 @@ function filebetolto(fileid, filetipus) {
         if (program.tipus === filetipus) {
             talalat = true
             getActualSession(function (session) {
-
+/*
+                window.parent.postMessage({
+                    kerestipus: "ujprogram",
+                    tipus: filetipus,
+                    fileid: fileid,
+                    sessionid: session._id
+                }, "*");
+                */
                 chrome.runtime.sendMessage(
                     {
                         kerestipus: "ujprogram",
@@ -610,6 +617,8 @@ function filebetolto(fileid, filetipus) {
             })
         }
     })
+
+
     if (!talalat) {
         if(filetipus=="jegyzet"){}
         else{

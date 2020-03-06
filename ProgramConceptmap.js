@@ -23,15 +23,14 @@ let db7 = new PouchDB("SessionsNet", {
 /**----------------------------------------------------------------------------------------------------------------------Graph init*/
 var GO = go.GraphObject.make;
 myDiagram =
-    GO(go.Diagram, "myDiagramDiv", // must name or refer to the DIV HTML element
+    GO(go.Diagram, "myDiagramDiv",
         {
-            "LinkDrawn": showLinkLabel, // this DiagramEvent listener is defined below
+            "LinkDrawn": showLinkLabel,
             "LinkRelinked": showLinkLabel,
-            "undoManager.isEnabled": true // enable undo & redo
+            "undoManager.isEnabled": true,
+            "draggingTool.isGridSnapEnabled": true,
         });
 
-
-// when the document is modified, add a "*" to the title and enable the "Save" button
 myDiagram.addDiagramListener("Modified", function (e) {
     save()
 })
@@ -40,28 +39,15 @@ myDiagram.addDiagramListener("BackgroundSingleClicked", function (e) {
     console.log(e)
 })
 
-// helper definitions for node templates
-
 function nodeStyle() {
     return [
-        // The Node.location comes from the "loc" property of the node data,
-        // converted by the Point.parse static method.
-        // If the Node.location is changed, it updates the "loc" property of the node data,
-        // converting back using the Point.stringify static method.
         new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
         {
-            // the Node.location is at the center of each node
             locationSpot: go.Spot.Center
         }
     ];
 }
 
-// Define a function for creating a "port" that is normally transparent.
-// The "name" is used as the GraphObject.portId,
-// the "align" is used to determine where to position the port relative to the body of the node,
-// the "spot" is used to control how links connect with the port and whether the port
-// stretches along the side of the node,
-// and the boolean "output" and "input" arguments control whether the user can draw links from or to the port.
 function makePort(name, align, spot, output, input) {
     var horizontal = align.equals(go.Spot.Top) || align.equals(go.Spot.Bottom);
     // the port is basically just a transparent rectangle that stretches along the side of the node,
@@ -95,131 +81,83 @@ function textStyle() {
     }
 }
 
-// define the Node templates for regular nodes
 
-myDiagram.nodeTemplateMap.add("", // the default category
-    GO(go.Node, "Table", nodeStyle(),
-        // the main object is a Panel that surrounds a TextBlock with a rectangular Shape
-        GO(go.Panel, "Auto",
-            GO(go.Shape, "Rectangle", {
-                    minSize: new go.Size(60, 30),
-                    fill: "#c4dcff",
-                    stroke: "#000000",
-                    strokeWidth: 2
-                },
-                new go.Binding("figure", "figure")),
-            GO(go.TextBlock, textStyle(), {
-                    margin: 2,
-                    minSize: new go.Size(60, 30),
-                    maxSize: new go.Size(200, NaN),
-                    wrap: go.TextBlock.WrapFit,
-                    textAlign: "center",
-                    editable: true
-                },
-                new go.Binding("text").makeTwoWay())
-        ),
-        // four named ports, one on each side:
-        makePort("T", go.Spot.Top, go.Spot.TopSide, false, true),
-        makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
-        makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
-        makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false)
-    ));
+let nodetemps = [{
+    nev: "",
+    szin: "#e1e1e1"
+},
 
-//------------------------------------------------------------------------------------------------Kek
-myDiagram.nodeTemplateMap.add("Kek", // the default category
-    GO(go.Node, "Table", nodeStyle(),
-        // the main object is a Panel that surrounds a TextBlock with a rectangular Shape
-        GO(go.Panel, "Auto",
-            GO(go.Shape, "Rectangle", {
-                    minSize: new go.Size(60, 30),
-                    fill: "#94e6ff",
-                    stroke: "#000000",
-                    strokeWidth: 2
-                },
-                new go.Binding("figure", "figure")),
-            GO(go.TextBlock, textStyle(), {
-                    margin: 2,
-                    minSize: new go.Size(60, 30),
-                    maxSize: new go.Size(200, NaN),
-                    wrap: go.TextBlock.WrapFit,
-                    textAlign: "center",
-                    editable: true
-                },
-                new go.Binding("text").makeTwoWay())
-        ),
-        // four named ports, one on each side:
-        makePort("T", go.Spot.Top, go.Spot.TopSide, false, true),
-        makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
-        makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
-        makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false)
-    ));
+    {
+        nev: "Kek",
+        szin: "#5f8ad3"
+    },
+    {
+        nev: "Zold",
+        szin: "#a4b88d"
+    },
+    {
+        nev: "Lila",
+        szin: "#918dc2"
+    },
+    {
+        nev: "Narancs",
+        szin: "#f3a863"
+    },
+    {
+        nev: "Citrom",
+        szin: "#f2cd4d"
+    },
+    {
+        nev: "Piros",
+        szin: "#e06366"
+    },
+    {
+        nev: "Barna",
+        szin: "#e2725b"
+    }
+]
 
-//------------------------------------------------------------------------------------------------Zold
-myDiagram.nodeTemplateMap.add("Zold",
-    GO(go.Node, "Table", nodeStyle(),
-        // the main object is a Panel that surrounds a TextBlock with a rectangular Shape
-        GO(go.Panel, "Auto",
-            GO(go.Shape, "Rectangle", {
-                    minSize: new go.Size(60, 30),
-                    fill: "#a7ff97",
-                    stroke: "#000000",
-                    strokeWidth: 2
-                },
-                new go.Binding("figure", "figure")),
-            GO(go.TextBlock, textStyle(), {
-                    margin: 2,
-                    minSize: new go.Size(60, 30),
-                    maxSize: new go.Size(200, NaN),
-                    wrap: go.TextBlock.WrapFit,
-                    textAlign: "center",
-                    editable: true
-                },
-                new go.Binding("text").makeTwoWay())
-        ),
-        // four named ports, one on each side:
-        makePort("T", go.Spot.Top, go.Spot.TopSide, false, true),
-        makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
-        makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
-        makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false)
-    ));
+function nodesbetolto() {
+    let graphlinkmodel = []
+    nodetemps.forEach(function (node) {
 
-//------------------------------------------------------------------------------------------------Comment
-// taken from ../extensions/Figures.js:
-go.Shape.defineFigureGenerator("File", function (shape, w, h) {
-    var geo = new go.Geometry();
-    var fig = new go.PathFigure(0, 0, true); // starting point
-    geo.add(fig);
-    fig.add(new go.PathSegment(go.PathSegment.Line, .75 * w, 0));
-    fig.add(new go.PathSegment(go.PathSegment.Line, w, .25 * h));
-    fig.add(new go.PathSegment(go.PathSegment.Line, w, h));
-    fig.add(new go.PathSegment(go.PathSegment.Line, 0, h).close());
-    var fig2 = new go.PathFigure(.75 * w, 0, false);
-    geo.add(fig2);
-    // The Fold
-    fig2.add(new go.PathSegment(go.PathSegment.Line, .75 * w, .25 * h));
-    fig2.add(new go.PathSegment(go.PathSegment.Line, w, .25 * h));
-    geo.spot1 = new go.Spot(0, .25);
-    geo.spot2 = go.Spot.BottomRight;
-    return geo;
-});
+        myDiagram.nodeTemplateMap.add(node.nev,
+            GO(go.Node, "Table", nodeStyle(),
+                // the main object is a Panel that surrounds a TextBlock with a rectangular Shape
+                GO(go.Panel, "Auto",
+                    GO(go.Shape, "Rectangle", {
+                            minSize: new go.Size(60, 30),
+                            fill: node.szin,
+                            stroke: "#303030",
+                            strokeWidth: 2.5
+                        },
+                        new go.Binding("figure", "figure")),
+                    GO(go.TextBlock, textStyle(), {
+                            margin: 2,
+                            minSize: new go.Size(60, 30),
+                            maxSize: new go.Size(200, NaN),
+                            wrap: go.TextBlock.WrapFit,
+                            textAlign: "center",
+                            editable: true
+                        },
+                        new go.Binding("text").makeTwoWay())
+                ),
+                // four named ports, one on each side:
+                makePort("T", go.Spot.Top, go.Spot.TopSide, true, true),
+                makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
+                makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
+                makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, true)
+            ));
 
-myDiagram.nodeTemplateMap.add("Comment",
-    GO(go.Node, "Auto", nodeStyle(),
-        GO(go.Shape, "File", {
-            fill: "#bebf44",
-            stroke: "#000000",
-            strokeWidth: 3
-        }),
-        GO(go.TextBlock, textStyle(), {
-                margin: 8,
-                maxSize: new go.Size(200, NaN),
-                wrap: go.TextBlock.WrapFit,
-                textAlign: "center",
-                editable: true
-            },
-            new go.Binding("text").makeTwoWay())
-        // no ports, because no links are allowed to connect with a comment
-    ));
+        graphlinkmodel.push({category: node.nev})
+    })
+
+
+    paletteinit(graphlinkmodel)
+}
+
+nodesbetolto()
+
 
 
 // replace the default Link template in the linkTemplateMap
@@ -227,7 +165,6 @@ myDiagram.linkTemplate =
     GO(go.Link, // the whole link panel
         {
             routing: go.Link.AvoidsNodes,
-            curve: go.Link.JumpOver,
             corner: 5,
             toShortLength: 4,
             relinkableFrom: true,
@@ -254,17 +191,17 @@ myDiagram.linkTemplate =
         GO(go.Shape, // the link path shape
             {
                 isPanelMain: true,
-                stroke: "gray",
-                strokeWidth: 2
+                stroke: "#303030",
+                strokeWidth: 3
             },
             new go.Binding("stroke", "isSelected", function (sel) {
-                return sel ? "dodgerblue" : "gray";
+                return sel ? "dodgerblue" : "#303030";
             }).ofObject()),
         GO(go.Shape, // the arrowhead
             {
-                toArrow: "standard",
+                toArrow: "Triangle",
                 strokeWidth: 0,
-                fill: "gray"
+                fill: "#303030"
             }),
         GO(go.Panel, "Auto", // the link label, normally not visible
             {
@@ -330,18 +267,19 @@ let detailsbeallitasok = {
 let details = new ModulDetails(detailsselectors, detailsbeallitasok)
 
 if (window.frameElement.getAttribute("fileid") != undefined) {
-    db.get(window.frameElement.getAttribute("fileid"), {attachments: true,binary: true}).then(function (doc) {
-        if (doc.tipus == "conceptmap"  ) {
+    db.get(window.frameElement.getAttribute("fileid"), {attachments: true, binary: true}).then(function (doc) {
+        if (doc.tipus == "conceptmap") {
             details.detailsfrissito(doc._id)
             conceptmapbetolto(doc);
         } else if (doc.tipus == "conceptmap") {
+
         }
     });
 }
 elementhider("#detailsboxopen", "#detailsdiv")
 
 
-function paletteinit() {
+function paletteinit(graphlinkmodel) {
     myPalette =
         GO(go.Palette, "myPaletteDiv", // must name or refer to the DIV HTML element
             {
@@ -350,16 +288,7 @@ function paletteinit() {
                 "InitialAnimationStarting": animateFadeDown, // Instead, animate with this function
 
                 nodeTemplateMap: myDiagram.nodeTemplateMap, // share the templates used by myDiagram
-                model: new go.GraphLinksModel([ // specify the contents of the Palette
-                    {
-                        category: "Zold",
-                        text: "Zold"
-                    }, {
-                        category: "Kek",
-                        text: "Kek"
-                    }
-
-                ])
+                model: new go.GraphLinksModel(graphlinkmodel)
             });
 
 }
@@ -367,22 +296,32 @@ function paletteinit() {
 let tesztmentes = {}
 
 function conceptmapbetolto(doc) {
-    console.log("docdata",doc._attachments.att.data)
-    blobdecode(doc._attachments.att.data,function (data) {
-        console.log("data",data)
-        myDiagram.model =go.Model.fromJson(data.model)
-    })
-
+    console.log("docdata", doc._attachments.att.data)
+    if (doc._attachments.att.data) {
+        blobdecode(doc._attachments.att.data, function (data) {
+            console.log("data", data)
+            myDiagram.model = go.Model.fromJson(data.model)
+        })
+    } else {
+        let diagram = {
+            "class": "go.GraphLinksModel",
+            "linkFromPortIdProperty": "fromPort",
+            "linkToPortIdProperty": "toPort"
+        }
+        myDiagram.model = go.Model.fromJson(diagram)
+    }
 
 }
 
 function save() {
     myDiagram.isModified = false;
-    db.get(window.frameElement.getAttribute("fileid"), {attachments: true,binary: true}).then(function (doc) {
+    db.get(window.frameElement.getAttribute("fileid"), {attachments: true, binary: true}).then(function (doc) {
 
         if (doc._attachments == undefined) {
             let data = {}
-            data.model = myDiagram.model.toJson()
+            data.model = JSON.parse(myDiagram.model.toJson())
+            data.model.linkFromPortIdProperty = "fromPort"
+            data.model.linkToPortIdProperty = "toPort"
             doc._attachments = {}
             doc._attachments.att = {}
             doc._attachments.att.content_type = "text/plain"
@@ -390,7 +329,11 @@ function save() {
 
         } else {
             let data = {}
-            data.model = myDiagram.model.toJson()
+            data.model = JSON.parse(myDiagram.model.toJson())
+            if (data.model.linkFromPortIdProperty != "fromPort") {
+                data.model.linkFromPortIdProperty = "fromPort"
+                data.model.linkToPortIdProperty = "toPort"
+            }
             tesztmentes = myDiagram.model.toJson()
             doc._attachments.att.data = blobcreate(data)
         }
@@ -410,7 +353,6 @@ document.querySelector('#savebutton').addEventListener('click', function (e) {
 })
 //---------------------------------------------------------------------------------------------------------------SAVE
 
-paletteinit()
 
 let diagram = {
     "class": "go.GraphLinksModel",
