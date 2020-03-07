@@ -34,27 +34,31 @@ document.querySelector("#detailssajatadatok").addEventListener("click", function
 
     details.detailsfrissito(fileid)
 })
+
 if (fileid != undefined) {
-    db.get(fileid).then(function (doc) {
-        if (doc.tipus == "research") {
-            details.detailsfrissito(doc._id)
-            if (doc.data === undefined) {
-                doc.data = {}
+
+    let attman =new AttachmentManager({fileid, tipus: "research"})
+    details.detailsfrissito(fileid)
+    attman.betoltes(function (att) {
+
+
+        if (att !== "error") {
+            let att2 = att
+            if (att == "nincsattachment") {
+                att2 = {}
+                att2.kerdesek = []
+                att2.talalatok = []
+                attman.mentes(att2)
             }
-            if (doc.data.kerdesek === undefined) {
-                doc.data.kerdesek = []
-            }
-            if (doc.data.talalatok === undefined) {
-                doc.data.talalatok = []
-            }
-            if (doc.data.aktualiskerdesid) {
-                aktualiskerdesid = doc.data.aktualiskerdesid
-                doc.data.kerdesek.forEach(function (element, index) {
+
+            if (att.aktualiskerdesid) {
+                aktualiskerdesid = att.aktualiskerdesid
+                att.kerdesek.forEach(function (element, index) {
                     if (element.kerdesid === aktualiskerdesid) {
                         if (!element.keresesek) {
-                            doc.data.kerdesek[index].keresesek = []
+                            att.kerdesek[index].keresesek = []
                         }
-                        let keresesek = doc.data.kerdesek[index].keresesek
+                        let keresesek = att.kerdesek[index].keresesek
                         keresesekbetolto(keresesek)
                     }
                 })
@@ -62,15 +66,14 @@ if (fileid != undefined) {
                 keresesekbetolto()
             }
 
+            kerdesekbetolto(att2.kerdesek)
+            talalatokbetolto()
+
+
         }
-
-
-        kerdesekbetolto(doc.data.kerdesek)
-        talalatokbetolto()
-        return db.put(doc);
-
-
     })
+
+
 }
 elementhider("#detailsboxopen", "#detailsdiv")
 //------------------------------------------------------------------------------detailsbox
@@ -97,17 +100,20 @@ function tablefrissito(adatok, selector) {
 //------------------------------------------------------------------------------kerdesektable
 
 document.querySelector("#ujkerdes").addEventListener("click", function (e) {
+
     let kerdescim = document.querySelector("#kerdescim").value
 
-    db.get(fileid).then(function (doc) {
 
-        console.log("uuuu", doc)
-        doc.data.kerdesek.unshift({kerdesid: guidGenerator(), kerdescim: kerdescim, datum: Date.now(), keresesek: []})
+    let attman =new AttachmentManager({fileid, tipus: "research"})
+    attman.betoltes(function (att) {
 
-        tablefrissito(doc.data.kerdesek, "#kerdesektable")
+        if (att !== "error" || att !== "nincsattachment") {
+            let att2 = att
+            att2.kerdesek.unshift({kerdesid: guidGenerator(), kerdescim: kerdescim, datum: Date.now(), keresesek: []})
 
-        return db.put(doc)
-
+            tablefrissito(att2.kerdesek, "#kerdesektable")
+            attman.mentes(att2)
+        }
     })
 
 })
@@ -193,42 +199,54 @@ function kerdesekrowadatbeilleszto(row, data) {
     col[1].appendChild(kerdescim)
     col[3].appendChild(datum)
     col[1].addEventListener("click", function (e) {
-        db.get(fileid).then(function (doc) {
-            doc.data.kerdesek.forEach(function (element, index) {
-                if (element.kerdesid === data.kerdesid) {
-                    if (!element.keresesek) {
-                        doc.data.kerdesek[index].keresesek = []
+
+        let attman =new AttachmentManager({fileid, tipus: "research"})
+        attman.betoltes(function (att) {
+
+            if (att !== "error" || att !== "nincsattachment") {
+                let att2 = att
+                att2.kerdesek.forEach(function (element, index) {
+                    if (element.kerdesid === data.kerdesid) {
+                        if (!element.keresesek) {
+                            att2.kerdesek[index].keresesek = []
+                        }
+                        let keresesek = att2.kerdesek[index].keresesek
+                        att2.aktualiskerdesid = data.kerdesid
+                        aktualiskerdesid = data.kerdesid
+                        tablefrissito(att2.kerdesek, "#kerdesektable")
+                        tablefrissito(keresesek, "#keresesektable")
+                        tablefrissito([], "#talalatoktable")
+
+                        attman.mentes(att2)
                     }
-                    let keresesek = doc.data.kerdesek[index].keresesek
-                    doc.data.aktualiskerdesid = data.kerdesid
-                    aktualiskerdesid = data.kerdesid
-                    tablefrissito(doc.data.kerdesek, "#kerdesektable")
-                    tablefrissito(keresesek, "#keresesektable")
-                    tablefrissito([], "#talalatoktable")
-                    return db.put(doc);
-                }
-            })
+                })
+
+            }
         })
+
 
     })
     col[3].addEventListener("click", function (e) {
-        db.get(fileid).then(function (doc) {
-            doc.data.kerdesek.forEach(function (element, index) {
-                console.log(index)
-                console.log(element.kerdesid)
-                if (element.kerdesid === data.kerdesid) {
-                    let biztosan = confirm("Biztosan Torlod?");
-                    if (biztosan) {
-                        doc.data.kerdesek.splice(index, 1);
-                        return db.put(doc);
+
+        let attman =new AttachmentManager({fileid, tipus: "research"})
+        attman.betoltes(function (att) {
+
+            if (att !== "error" || att !== "nincsattachment") {
+                let att2 = att
+                att2.kerdesek.forEach(function (element, index) {
+                    if (element.kerdesid === data.kerdesid) {
+                        let biztosan = confirm("Biztosan Torlod?");
+                        if (biztosan) {
+                            att2.kerdesek.splice(index, 1);
+
+                            attman.mentes(att2)
+                        }
                     }
-                }
-            })
-            tablefrissito(doc.data.kerdesek, "#kerdesektable")
+                })
+                tablefrissito(att2.kerdesek, "#kerdesektable")
+            }
         })
     })
-
-
 }
 
 //------------------------------------------------------------------------------kerdesektable
@@ -286,8 +304,8 @@ function keresesekbetolto(data = []) {
                 console.log(row)
                 keresesekrowadatbeilleszto(row, data)
             }
-        });
-    });
+        })
+    })
 }
 
 function keresesekrowadatbeilleszto(row, data) {
@@ -316,48 +334,64 @@ function keresesekrowadatbeilleszto(row, data) {
     col[2].appendChild(keresesszoveg)
     col[3].appendChild(datum)
     col[2].addEventListener("click", function (e) {
-        db.get(fileid).then(function (doc) {
-            doc.data.kerdesek.forEach(function (element, kerdesindex) {
-                if (element.kerdesid === aktualiskerdesid) {
-                    element.keresesek.forEach(function (kereses, keresesindex) {
-                        if (kereses.keresesid === data.keresesid) {
-                            aktualiskeresesid = data.keresesid
-                            doc.data.aktualiskeresesid = data.keresesid
-                            tablefrissito(doc.data.kerdesek[kerdesindex].keresesek, "#keresesektable")
 
-                            kereso(data.keresesszoveg, data.keresesengine, function (talalatok) {
-                                tablefrissito(talalatok, "#talalatoktable")
+        let attman =new AttachmentManager({fileid, tipus: "research"})
+        attman.betoltes(function (att) {
 
-                            })
-                            return db.put(doc);
-                        }
-                    })
-                }
-            })
+            if (att !== "error" || att !== "nincsattachment") {
+                let att2 = att
+                att2.kerdesek.forEach(function (element, kerdesindex) {
+                    if (element.kerdesid === aktualiskerdesid) {
+                        element.keresesek.forEach(function (kereses, keresesindex) {
+                            if (kereses.keresesid === data.keresesid) {
+                                aktualiskeresesid = data.keresesid
+                                att2.aktualiskeresesid = data.keresesid
+                                tablefrissito(att2.kerdesek[kerdesindex].keresesek, "#keresesektable")
+
+                                kereso(data.keresesszoveg, data.keresesengine, function (talalatok) {
+                                    tablefrissito(talalatok, "#talalatoktable")
+
+                                })
+
+                                attman.mentes(att2)
+                            }
+                        })
+                    }
+                })
+            }
         })
+
 
     })
     col[3].addEventListener("click", function (e) {
+        let attman =new AttachmentManager({fileid, tipus: "research"})
+        attman.betoltes(function (att) {
 
-        db.get(fileid).then(function (doc) {
-            doc.data.kerdesek.forEach(function (element, kerdesindex) {
-                if (element.kerdesid === aktualiskerdesid) {
-                    element.keresesek.forEach(function (kereses, keresesindex) {
-                        if (kereses.keresesid === data.keresesid) {
-                            let biztosan = confirm("Biztosan Torlod?");
-                            if (biztosan) {
+            if (att !== "error" || att !== "nincsattachment") {
+                let att2 = att
 
-                                doc.data.kerdesek[kerdesindex].keresesek.splice(keresesindex, 1);
-                                return db.put(doc);
+                att2.kerdesek.forEach(function (element, kerdesindex) {
+                    if (element.kerdesid === aktualiskerdesid) {
+                        element.keresesek.forEach(function (kereses, keresesindex) {
+                            if (kereses.keresesid === data.keresesid) {
+                                let biztosan = confirm("Biztosan Torlod?");
+                                if (biztosan) {
 
+                                    att2.kerdesek[kerdesindex].keresesek.splice(keresesindex, 1);
+
+                                    attman.mentes(att2)
+
+                                }
                             }
-                        }
-                    })
-                    tablefrissito(doc.data.kerdesek[kerdesindex].keresesek, "#keresesektable")
-                }
-            })
+                        })
+                        tablefrissito(att2.kerdesek[kerdesindex].keresesek, "#keresesektable")
+                    }
+                })
 
-        });
+
+            }
+        })
+
     })
 }
 
@@ -464,19 +498,25 @@ function talalatokrowadatbeilleszto(row, data) {
         } else {
             chrome.tabs.create({url: data.talalaturl})
         }
-        db.get(fileid).then(function (doc) {
-            let megvan = false
-            doc.data.talalatok.forEach(function (element, index) {
-                    if (element.talalaturl === data.talalaturl) {
-                        megvan = true
+        let attman =new AttachmentManager({fileid, tipus: "research"})
+        attman.betoltes(function (att) {
+            if (att !== "error" || att !== "nincsattachment") {
+                let att2 = att
+                let megvan = false
+                att2.talalatok.forEach(function (element) {
+                        if (element.talalaturl === data.talalaturl) {
+                            megvan = true
 
+                        }
                     }
+                )
+                if (!megvan) {
+                    data.allapot = "megnyitott"
+                    att2.talalatok.unshift(data)
+                    attman.mentes(att2)
                 }
-            )
-            if (!megvan) {
-                data.allapot = "megnyitott"
-                doc.data.talalatok.unshift(data)
-                return db.put(doc)
+
+
             }
         })
 
@@ -496,23 +536,29 @@ function talalatokrowadatbeilleszto(row, data) {
 
     })
     col[3].addEventListener("click", function (e) {
-        db.get(fileid).then(function (doc) {
-
-            doc.data.talalatok.forEach(function (element, index) {
-                    if (element.talalaturl === data.talalaturl) {
-                        if (element.allapot == "fontos") {
-                            element.allapot = "megnyitott"
-                            row.style.backgroundColor = "PINK"
-                        } else {
-                            element.allapot = "fontos"
-                            row.style.backgroundColor = "GREEN"
+        let attman =new AttachmentManager({fileid, tipus: "research"})
+        attman.betoltes(function (att) {
+            if (att !== "error" || att !== "nincsattachment") {
+                let att2 = att
+                att2.talalatok.forEach(function (element) {
+                        if (element.talalaturl === data.talalaturl) {
+                            if (element.allapot == "fontos") {
+                                element.allapot = "megnyitott"
+                                row.style.backgroundColor = "PINK"
+                            } else {
+                                element.allapot = "fontos"
+                                row.style.backgroundColor = "GREEN"
+                            }
+                            attman.mentes(att2)
                         }
-                        return db.put(doc)
                     }
-                }
-            )
-
+                )
+            }
         })
+
+
+
+
 
     })
 }
@@ -536,9 +582,9 @@ let stackhtml = ""
 let googlehtml = ""
 
 function kereso(szo, keresesengine, callback) {
-    function mentettetekbenkereso(doc, talalaturl) {
+    function mentettetekbenkereso(att, talalaturl) {
         let allapot = ""
-        doc.data.talalatok.forEach(function (element) {
+        att.talalatok.forEach(function (element) {
 
 
             if (element.talalaturl == talalaturl) {
@@ -556,8 +602,8 @@ function kereso(szo, keresesengine, callback) {
 
         return allapot
     }
-
-    db.get(fileid).then(function (doc) {
+    let attman =new AttachmentManager({fileid, tipus: "research"})
+    attman.betoltes(function (att) {
         let queryurl = ""
         if (keresesengine == "stack") {
             queryurl = "https://stackoverflow.com/search?q="
@@ -572,7 +618,7 @@ function kereso(szo, keresesengine, callback) {
                     let votes = $(this).find(".vote-count-post strong")[0].innerText
                     let talalatcim = $(this).find(".result-link a")[0].title
                     let talalaturl = "https://stackoverflow.com" + $(this).find(".result-link a").attr("data-searchsession")
-                    let allapot = mentettetekbenkereso(doc, talalaturl)
+                    let allapot = mentettetekbenkereso(att, talalaturl)
                     console.log(allapot)
                     let talalat = {votes, talalatcim, talalaturl, allapot}
 
@@ -596,7 +642,7 @@ function kereso(szo, keresesengine, callback) {
                     }
 
                     let talalaturl = $(this).find("a")[0].href
-                    let allapot = mentettetekbenkereso(doc, talalaturl)
+                    let allapot = mentettetekbenkereso(att, talalaturl)
                     console.log(allapot)
                     // let talalatcim = $(this).find(".result-link a")[0].title
                     let talalat = {talalatcim, talalaturl, allapot}
@@ -616,7 +662,7 @@ function kereso(szo, keresesengine, callback) {
                 }
                 talalatok.forEach(function (element) {
 
-                    element.allapot = mentettetekbenkereso(doc, element.talalaturl)
+                    element.allapot = mentettetekbenkereso(att, element.talalaturl)
                 })
 
                 callback(talalatok)
@@ -631,27 +677,33 @@ document.querySelector("#search").addEventListener("click", function (e) {
     let keresesszoveg = document.querySelector("#searchtext").value
     kereso(keresesszoveg, searchengine, function (talalatok) {
         tablefrissito(talalatok, "#talalatoktable")
-        db.get(fileid).then(function (doc) {
-            doc.data.kerdesek.forEach(function (element, index) {
-                if (element.kerdesid === aktualiskerdesid) {
-                    if (!element.keresesek) {
-                        doc.data.kerdesek[index].keresesek = []
+
+        let attman =new AttachmentManager({fileid, tipus: "research"})
+        attman.betoltes(function (att) {
+            if (att !== "error" || att !== "nincsattachment") {
+                let att2 = att
+                att2.kerdesek.forEach(function (element, index) {
+                    if (element.kerdesid === aktualiskerdesid) {
+                        if (!element.keresesek) {
+                            att2.kerdesek[index].keresesek = []
+                        }
+                        let id = guidGenerator()
+                        aktualiskeresesid = id
+                        att2.aktualiskeresesid = id
+                        att2.kerdesek[index].keresesek.unshift({
+                            keresesid: id,
+                            keresesszoveg: keresesszoveg,
+                            keresesengine: searchengine,
+                            datum: Date.now()
+                        })
+                        let keresesek = att2.kerdesek[index].keresesek
+                        tablefrissito(keresesek, "#keresesektable")
+                        attman.mentes(att2)
                     }
-                    let id = guidGenerator()
-                    aktualiskeresesid = id
-                    doc.data.aktualiskeresesid = id
-                    doc.data.kerdesek[index].keresesek.unshift({
-                        keresesid: id,
-                        keresesszoveg: keresesszoveg,
-                        keresesengine: searchengine,
-                        datum: Date.now()
-                    })
-                    let keresesek = doc.data.kerdesek[index].keresesek
-                    tablefrissito(keresesek, "#keresesektable")
-                    return db.put(doc);
-                }
-            })
+                })
+            }
         })
+
     })
 })
 

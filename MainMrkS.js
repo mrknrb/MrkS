@@ -347,16 +347,8 @@ programOpenerInit()
 window.addEventListener("message", function (message) {
     if (message.data.kerestipus == "ujprogram") {
             programstarter({fileid: message.data.fileid})
-    }else if(message.data.kerestipus == "erroruzenet"){
-
-        let mes
-        mes=  message.data
-        if(document.querySelector("iframe[tipus=debugger]")){
-      document.querySelector("iframe[tipus=debugger]").contentWindow.postMessage(mes, "*");
-        }
-
-console.log(mes)
     }
+
 })
 /*
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {

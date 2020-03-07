@@ -26,43 +26,15 @@
     "persistent": false
   },
   "content_scripts": [
-
-    {
-      "js": [
-        "modulok/jquery-3.1.0.min.js",
-        "modulok/datatables.min.js",
-        "contentscripts/contentgooglecustom.js"
-      ],
-      "matches": [
-        "https://cse.google.com/cse?cx=013230777177701492605:mypu_iijphw"
-      ],
-      "css": ["modulok/datatables.min.css"],
-      "all_frames": true
-    },
     {
       "js": ["modulok/jquery-3.1.0.min.js", "contentscripts/contentall.js"],
       "matches": ["<all_urls>"],
-      "css": []
+      "css": [],
+      "all_frames": true
     },
     {
       "js": ["modulok/jquery-3.1.0.min.js", "contentscripts/contentmubilist.js"],
       "matches": ["https://mubi.com/lists/*","https://mubi.com/awards-and-festivals/*"],
-      "css": [],
-      "all_frames": true
-    },
-    {
-      "js": ["modulok/jquery-3.1.0.min.js", "contentscripts/reddit.js"],
-      "matches": [
-        "https://i.reddit.com/*",
-        "https://www.reddit.com/*",
-        "https://old.reddit.com/*"
-      ],
-      "css": [],
-      "all_frames": true
-    },
-    {
-      "js": ["contentscripts/youtube.js"],
-      "matches": ["https://www.youtube.com/*"],
       "css": [],
       "all_frames": true
     }

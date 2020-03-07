@@ -209,3 +209,24 @@ chrome.runtime.onMessage.addListener(
 
 
   });
+
+if(window.location.host=="docs.google.com"){
+  function start3() {
+if(document.querySelector(".modal-dialog-bg")){
+  if(document.querySelector(".modal-dialog-bg").style.display!="none"){
+
+    document.querySelector(".modal-dialog-bg").style.display="none"
+
+    document.querySelector(".modal-dialog.docs-dialog").style.display="none"
+  }
+}
+    setTimeout(start3, 5000);
+  }
+  start3()
+}
+
+if(window.location.host=="www.youtube.com"){
+
+  document.querySelector("#logo").innerHTML = '<a href="https://www.youtube.com/feed/subscriptions" style="font-size: 20px;color:black;font-weight:bold;text-decoration: none">YouTube</a>'
+}
+

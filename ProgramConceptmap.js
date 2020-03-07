@@ -20,26 +20,92 @@ let db7 = new PouchDB("SessionsNet", {
     auto_compaction: true
 })
 
-
 /**----------------------------------------------------------------------------------------------------------------------Graph init*/
 var GO = go.GraphObject.make;
-myDiagram =
-    GO(go.Diagram, "myDiagramDiv",
-        {
-            "LinkDrawn": showLinkLabel,
-            "LinkRelinked": showLinkLabel,
-            "undoManager.isEnabled": true,
-            "draggingTool.isGridSnapEnabled": true,
-        });
+let myDiagram={}
+function diagraminit() {
 
-myDiagram.addDiagramListener("Modified", function (e) {
-    save()
-})
-myDiagram.addDiagramListener("BackgroundSingleClicked", function (e) {
+    myDiagram =
+        GO(go.Diagram, "myDiagramDiv",
+            {
+                "LinkDrawn": showLinkLabel,
+                "LinkRelinked": showLinkLabel,
+                "undoManager.isEnabled": true,
+                "draggingTool.isGridSnapEnabled": true,
+            });
 
-    console.log(e)
-})
+    nodesbetolto()
 
+// replace the default Link template in the linkTemplateMap
+    myDiagram.linkTemplate =
+        GO(go.Link, // the whole link panel
+            {
+                routing: go.Link.AvoidsNodes,
+                corner: 5,
+                toShortLength: 4,
+                relinkableFrom: true,
+                relinkableTo: true,
+                reshapable: true,
+                resegmentable: true,
+                // mouse-overs subtly highlight links:
+                mouseEnter: function (e, link) {
+                    link.findObject("HIGHLIGHT").stroke = "rgba(30,144,255,0.2)";
+                },
+                mouseLeave: function (e, link) {
+                    link.findObject("HIGHLIGHT").stroke = "transparent";
+                },
+                selectionAdorned: false
+            },
+            new go.Binding("points").makeTwoWay(),
+            GO(go.Shape, // the highlight shape, normally transparent
+                {
+                    isPanelMain: true,
+                    strokeWidth: 8,
+                    stroke: "transparent",
+                    name: "HIGHLIGHT"
+                }),
+            GO(go.Shape, // the link path shape
+                {
+                    isPanelMain: true,
+                    stroke: "#303030",
+                    strokeWidth: 3
+                },
+                new go.Binding("stroke", "isSelected", function (sel) {
+                    return sel ? "dodgerblue" : "#303030";
+                }).ofObject()),
+            GO(go.Shape, // the arrowhead
+                {
+                    toArrow: "Triangle",
+                    strokeWidth: 0,
+                    fill: "#303030"
+                }),
+            GO(go.Panel, "Auto", // the link label, normally not visible
+                {
+                    visible: false,
+                    name: "LABEL",
+                    segmentIndex: 2,
+                    segmentFraction: 0.5
+                },
+                new go.Binding("visible", "visible").makeTwoWay(),
+                GO(go.Shape, "RoundedRectangle", // the label shape
+                    {
+                        fill: "#F8F8F8",
+                        strokeWidth: 0
+                    }),
+                GO(go.TextBlock, "Yes", // the label
+                    {
+                        textAlign: "center",
+                        font: "10pt helvetica, arial, sans-serif",
+                        stroke: "#333333",
+                        editable: true
+                    },
+                    new go.Binding("text").makeTwoWay())
+            )
+        );
+
+    myDiagram.toolManager.linkingTool.temporaryLink.routing = go.Link.Orthogonal;
+    myDiagram.toolManager.relinkingTool.temporaryLink.routing = go.Link.Orthogonal;
+}
 function nodeStyle() {
     return [
         new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
@@ -157,76 +223,8 @@ function nodesbetolto() {
     paletteinit(graphlinkmodel)
 }
 
-nodesbetolto()
 
 
-
-// replace the default Link template in the linkTemplateMap
-myDiagram.linkTemplate =
-    GO(go.Link, // the whole link panel
-        {
-            routing: go.Link.AvoidsNodes,
-            corner: 5,
-            toShortLength: 4,
-            relinkableFrom: true,
-            relinkableTo: true,
-            reshapable: true,
-            resegmentable: true,
-            // mouse-overs subtly highlight links:
-            mouseEnter: function (e, link) {
-                link.findObject("HIGHLIGHT").stroke = "rgba(30,144,255,0.2)";
-            },
-            mouseLeave: function (e, link) {
-                link.findObject("HIGHLIGHT").stroke = "transparent";
-            },
-            selectionAdorned: false
-        },
-        new go.Binding("points").makeTwoWay(),
-        GO(go.Shape, // the highlight shape, normally transparent
-            {
-                isPanelMain: true,
-                strokeWidth: 8,
-                stroke: "transparent",
-                name: "HIGHLIGHT"
-            }),
-        GO(go.Shape, // the link path shape
-            {
-                isPanelMain: true,
-                stroke: "#303030",
-                strokeWidth: 3
-            },
-            new go.Binding("stroke", "isSelected", function (sel) {
-                return sel ? "dodgerblue" : "#303030";
-            }).ofObject()),
-        GO(go.Shape, // the arrowhead
-            {
-                toArrow: "Triangle",
-                strokeWidth: 0,
-                fill: "#303030"
-            }),
-        GO(go.Panel, "Auto", // the link label, normally not visible
-            {
-                visible: false,
-                name: "LABEL",
-                segmentIndex: 2,
-                segmentFraction: 0.5
-            },
-            new go.Binding("visible", "visible").makeTwoWay(),
-            GO(go.Shape, "RoundedRectangle", // the label shape
-                {
-                    fill: "#F8F8F8",
-                    strokeWidth: 0
-                }),
-            GO(go.TextBlock, "Yes", // the label
-                {
-                    textAlign: "center",
-                    font: "10pt helvetica, arial, sans-serif",
-                    stroke: "#333333",
-                    editable: true
-                },
-                new go.Binding("text").makeTwoWay())
-        )
-    );
 
 // Make link labels visible if coming out of a "conditional" node.
 // This listener is called by the "LinkDrawn" and "LinkRelinked" DiagramEvents.
@@ -236,8 +234,6 @@ function showLinkLabel(e) {
 }
 
 // temporary links used by LinkingTool and RelinkingTool are also orthogonal:
-myDiagram.toolManager.linkingTool.temporaryLink.routing = go.Link.Orthogonal;
-myDiagram.toolManager.relinkingTool.temporaryLink.routing = go.Link.Orthogonal;
 
 // initialize the Palette that is on the left side of the page
 
@@ -267,16 +263,38 @@ let detailsbeallitasok = {
 }
 let details = new ModulDetails(detailsselectors, detailsbeallitasok)
 
-if (window.frameElement.getAttribute("fileid") != undefined) {
-    db.get(window.frameElement.getAttribute("fileid"), {attachments: true, binary: true}).then(function (doc) {
-        if (doc.tipus == "conceptmap") {
-            details.detailsfrissito(doc._id)
-            conceptmapbetolto(doc);
-        } else if (doc.tipus == "conceptmap") {
+let fileid = window.frameElement.getAttribute("fileid")
 
+let attman = new AttachmentManager({fileid: fileid, tipus: "conceptmap"})
+
+details.detailsfrissito(fileid)
+attman.betoltes(function (att) {
+    if (att === "nincsattachment") {
+        let diagram = {
+            "class": "go.GraphLinksModel",
+            "linkFromPortIdProperty": "fromPort",
+            "linkToPortIdProperty": "toPort"
         }
-    });
-}
+        diagraminit()
+
+        setTimeout(() => {
+            start3()
+        }, 10000);
+        myDiagram.model = go.Model.fromJson(diagram)
+    } else if(att === "error"){
+
+    }
+    else{
+        diagraminit()
+
+        setTimeout(() => {
+            start3()
+        }, 10000);
+
+
+        myDiagram.model = go.Model.fromJson(att.model)
+    }
+})
 elementhider("#detailsboxopen", "#detailsdiv")
 
 
@@ -294,53 +312,19 @@ function paletteinit(graphlinkmodel) {
 
 }
 
-let tesztmentes = {}
 
-function conceptmapbetolto(doc) {
-    console.log("docdata", doc._attachments.att.data)
-
-    consolelogdebugger("eddig jo")
-    if (doc._attachments.att.data) {
-        blobdecode(doc._attachments.att.data, function (data) {
-            console.log("data", data)
-            myDiagram.model = go.Model.fromJson(data.model)
-        })
-    } else {
-        let diagram = {
-            "class": "go.GraphLinksModel",
-            "linkFromPortIdProperty": "fromPort",
-            "linkToPortIdProperty": "toPort"
-        }
-        myDiagram.model = go.Model.fromJson(diagram)
-    }
-}
 
 function save() {
     myDiagram.isModified = false;
-    db.get(window.frameElement.getAttribute("fileid"), {attachments: true, binary: true}).then(function (doc) {
 
-        if (doc._attachments == undefined) {
-            let data = {}
-            data.model = JSON.parse(myDiagram.model.toJson())
-            data.model.linkFromPortIdProperty = "fromPort"
-            data.model.linkToPortIdProperty = "toPort"
-            doc._attachments = {}
-            doc._attachments.att = {}
-            doc._attachments.att.content_type = "text/plain"
-            doc._attachments.att.data = blobcreate(data)
-
-        } else {
             let data = {}
             data.model = JSON.parse(myDiagram.model.toJson())
             if (data.model.linkFromPortIdProperty != "fromPort") {
                 data.model.linkFromPortIdProperty = "fromPort"
                 data.model.linkToPortIdProperty = "toPort"
             }
-            tesztmentes = myDiagram.model.toJson()
-            doc._attachments.att.data = blobcreate(data)
-        }
-        return db.put(doc);
-    })
+            attman.mentes(data)
+
 }
 
 function start3() {
@@ -349,7 +333,6 @@ function start3() {
     setTimeout(start3, 10000);
 }
 
-start3()
 document.querySelector('#savebutton').addEventListener('click', function (e) {
     save()
 })

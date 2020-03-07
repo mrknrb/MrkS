@@ -1,4 +1,3 @@
-
 function eszkozdetektalo() {
     window.mobilecheck = function () {
         var check = false;
@@ -28,7 +27,9 @@ function eszkozdetektalo() {
         return "android";
     }
 }
+
 let eszkoz = eszkozdetektalo()
+
 function scrollbareltunteto() {
     let basicstyle = `
         body::-webkit-scrollbar {
@@ -586,13 +587,6 @@ let ProgramsData = [
         htmlpath: "./ProgramBrowser.html",
         buttonid: "BrowserButton",
         startmentes: false
-    },
-    {
-        tipus: "debugger",
-        logo: "D",
-        htmlpath: "./ProgramDebugger.html",
-        buttonid: "DebuggerButton",
-        startmentes: false
     }
 ]
 
@@ -610,26 +604,27 @@ function filebetolto(fileid, filetipus) {
                     fileid: fileid,
                     sessionid: session._id
                 }, "*");
-             /*
-                chrome.runtime.sendMessage(
-                    {
-                        kerestipus: "ujprogram",
-                        tipus: filetipus,
-                        fileid: fileid,
-                        sessionid: session._id
-                    },
-                    function (response) {
-                    }
-                );*/
+                /*
+                   chrome.runtime.sendMessage(
+                       {
+                           kerestipus: "ujprogram",
+                           tipus: filetipus,
+                           fileid: fileid,
+                           sessionid: session._id
+                       },
+                       function (response) {
+                       }
+                   );*/
             })
         }
     })
 
 
     if (!talalat) {
-        if(filetipus=="jegyzet"){}
-        else{
-        window.open(fileid, "_blank");}
+        if (filetipus == "jegyzet") {
+        } else {
+            window.open(fileid, "_blank");
+        }
 
 
     }
@@ -651,199 +646,185 @@ function loadfilesamewindow(fileid) {
 
 }
 
-function icongenerator(id,tipus){
-    let szoveg=document.createElement("h3")
-    let icon=document.createElement("img")
-    icon.width=20
-    icon.height=20
-    icon.class="datafavicon"
- if(tipus=="jegyzet"){
-    icon.src="resources/jegyzet.png"
-    return  icon.outerHTML
-}else if(tipus=="research"){
-     icon.src="resources/research.png"
-     return  icon.outerHTML
-}else if(tipus=="conceptmap"){
-    icon.src="resources/conceptmap.png"
-    return  icon.outerHTML
-}else{
-        icon.src="https://www.google.com/s2/favicons?domain="+id
-    return  icon.outerHTML
+function icongenerator(id, tipus) {
+    let szoveg = document.createElement("h3")
+    let icon = document.createElement("img")
+    icon.width = 20
+    icon.height = 20
+    icon.class = "datafavicon"
+    if (tipus == "jegyzet") {
+        icon.src = "resources/jegyzet.png"
+        return icon.outerHTML
+    } else if (tipus == "research") {
+        icon.src = "resources/research.png"
+        return icon.outerHTML
+    } else if (tipus == "conceptmap") {
+        icon.src = "resources/conceptmap.png"
+        return icon.outerHTML
+    } else {
+        icon.src = "https://www.google.com/s2/favicons?domain=" + id
+        return icon.outerHTML
     }
 
 }
 
 
-var Base64 = {
-
-    // private property
-    _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
-
-    // public method for encoding
-    , encode: function (input)
-    {
-        var output = "";
-        var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-        var i = 0;
-
-        input = Base64._utf8_encode(input);
-
-        while (i < input.length)
-        {
-            chr1 = input.charCodeAt(i++);
-            chr2 = input.charCodeAt(i++);
-            chr3 = input.charCodeAt(i++);
-
-            enc1 = chr1 >> 2;
-            enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-            enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-            enc4 = chr3 & 63;
-
-            if (isNaN(chr2))
-            {
-                enc3 = enc4 = 64;
-            }
-            else if (isNaN(chr3))
-            {
-                enc4 = 64;
-            }
-
-            output = output +
-                this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
-                this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-        } // Whend
-
-        return output;
-    } // End Function encode
-
-
-    // public method for decoding
-    ,decode: function (input)
-    {
-        var output = "";
-        var chr1, chr2, chr3;
-        var enc1, enc2, enc3, enc4;
-        var i = 0;
-
-        input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-        while (i < input.length)
-        {
-            enc1 = this._keyStr.indexOf(input.charAt(i++));
-            enc2 = this._keyStr.indexOf(input.charAt(i++));
-            enc3 = this._keyStr.indexOf(input.charAt(i++));
-            enc4 = this._keyStr.indexOf(input.charAt(i++));
-
-            chr1 = (enc1 << 2) | (enc2 >> 4);
-            chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-            chr3 = ((enc3 & 3) << 6) | enc4;
-
-            output = output + String.fromCharCode(chr1);
-
-            if (enc3 != 64)
-            {
-                output = output + String.fromCharCode(chr2);
-            }
-
-            if (enc4 != 64)
-            {
-                output = output + String.fromCharCode(chr3);
-            }
-
-        } // Whend
-
-        output = Base64._utf8_decode(output);
-
-        return output;
-    } // End Function decode
-
-
-    // private method for UTF-8 encoding
-    ,_utf8_encode: function (string)
-    {
-        var utftext = "";
-        string = string.replace(/\r\n/g, "\n");
-
-        for (var n = 0; n < string.length; n++)
-        {
-            var c = string.charCodeAt(n);
-
-            if (c < 128)
-            {
-                utftext += String.fromCharCode(c);
-            }
-            else if ((c > 127) && (c < 2048))
-            {
-                utftext += String.fromCharCode((c >> 6) | 192);
-                utftext += String.fromCharCode((c & 63) | 128);
-            }
-            else
-            {
-                utftext += String.fromCharCode((c >> 12) | 224);
-                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-                utftext += String.fromCharCode((c & 63) | 128);
-            }
-
-        } // Next n
-
-        return utftext;
-    } // End Function _utf8_encode
-
-    // private method for UTF-8 decoding
-    ,_utf8_decode: function (utftext)
-    {
-        var string = "";
-        var i = 0;
-        var c, c1, c2, c3;
-        c = c1 = c2 = 0;
-
-        while (i < utftext.length)
-        {
-            c = utftext.charCodeAt(i);
-
-            if (c < 128)
-            {
-                string += String.fromCharCode(c);
-                i++;
-            }
-            else if ((c > 191) && (c < 224))
-            {
-                c2 = utftext.charCodeAt(i + 1);
-                string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-                i += 2;
-            }
-            else
-            {
-                c2 = utftext.charCodeAt(i + 1);
-                c3 = utftext.charCodeAt(i + 2);
-                string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-                i += 3;
-            }
-
-        } // Whend
-
-        return string;
-    } // End Function _utf8_decode
-
+function blobcreate(data) {
+    return new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
 }
 
-function blobcreate(data){
-   return new Blob([JSON.stringify(data, null, 2)], {type : 'application/json'});
-}
-async function blobdecode(data,callback){
+async function blobdecode(data, callback) {
     const data2 = await new Response(data).text()
 
     callback(JSON.parse(data2))
 }
 
-window.addEventListener('error', (event) => {
-    window.parent.postMessage({
-        kerestipus: "erroruzenet",
-        uzenet:  `${event.type}: ${event.message}`
-    }, "*");
-});
-function consolelogdebugger(uzenet){
-    window.parent.postMessage({
-        kerestipus: "erroruzenet",
-        uzenet:  JSON.stringify(uzenet)
-    }, "*");
+
+class AttachmentManager {
+    constructor(adatok) {
+        this.fileid = adatok.fileid
+        this.tipus = adatok.tipus
+        this.biztonsagi = true
+        this.biztonsagi = adatok.biztonsagi
+        this.ellenorzes = true
+        this.ellenorzes = adatok.ellenorzes
+        if (adatok.attachmentname) {
+            this.attachmentname = adatok.attachmentname
+        }
+        this.fajlbetoltve = false
+    }
+
+    async betoltes(callback) {
+        let self = this
+        let attachname = "att"
+        if (self.attachmentname) {
+            attachname = self.attachmentname
+        }
+        db.get(self.fileid, {attachments: true, binary: true}).then(function (doc) {
+
+            console.log(doc)
+            if (doc) {
+                if (doc.tipus == self.tipus||self.tipus===false) {
+                    if (doc._attachments) {
+                        if (doc._attachments[attachname]) {
+                            if (doc._attachments[attachname].data) {
+                                self.fajlbetoltve = true
+                                blobdecode(doc._attachments[attachname].data, function (att) {
+                                    callback(att)
+                                })
+                            } else {
+                                self.fajlbetoltve = true
+                                callback("nincsattachment")
+                            }
+                        } else {
+                            self.fajlbetoltve = true
+                            callback("nincsattachment")
+                        }
+                    } else {
+                        self.fajlbetoltve = true
+                        callback("nincsattachment")
+                    }
+                } else {
+                    alert("Nem ilyen típusú a dokumentum!")
+                    callback("error")
+                }
+            } else {
+                alert("Nincs doc!")
+                callback("error")
+            }
+        }).catch(function (err) {
+        })
+
+    }
+
+    mentes(data) {
+        let self = this
+        let attachname = "att"
+        if (self.attachmentname) {
+            attachname = self.attachmentname
+        }
+        db.get(self.fileid, {attachments: true, binary: true}).then(function (doc) {
+            if (doc.tipus == self.tipus||self.tipus===false) {
+                let nincsatt = false
+                if (!doc._attachments) {
+                    doc._attachments = {}
+                    nincsatt = true
+
+                }
+                if (!doc.attachmentsdocs) {
+                    doc.attachmentsdocs = {}
+                    doc.attachmentsdocs[attachname]={}
+
+                }
+                if (!doc._attachments[attachname]) {
+                    doc._attachments[attachname] = {}
+                    nincsatt = true
+                }
+                if (!doc._attachments[attachname].data) {
+                    nincsatt = true
+                }
+                if (!doc._attachments[attachname].content_type) {
+                    doc._attachments[attachname].content_type = "text/plain"
+                }
+
+                if (self.fajlbetoltve == true || nincsatt == true || self.ellenorzes == true) {
+                    if (doc.attachmentsdocs[attachname].biztmentesdatum || self.biztonsagi) {
+                        if (doc.attachmentsdocs[attachname].biztmentesdatum+86400000  < Date.now()) {
+                            doc.attachmentsdocs[attachname].biztmentesdatum = Date.now()
+                            if (doc._attachments[attachname + "bizt1"]) {
+                                doc._attachments[attachname + "bizt2"] = {}
+                                doc._attachments[attachname + "bizt2"].content_type = "text/plain"
+                                doc._attachments[attachname + "bizt2"].data = doc._attachments[attachname + "bizt1"].data
+                                doc._attachments[attachname + "bizt1"].data = doc._attachments[attachname].data
+                            } else {
+
+                                doc._attachments[attachname + "bizt1"] = {}
+                                doc._attachments[attachname + "bizt1"].content_type = "text/plain"
+                                doc._attachments[attachname + "bizt1"].data = doc._attachments[attachname].data
+                            }
+                        }
+                    } else {
+                        doc.attachmentsdocs[attachname].biztmentesdatum = Date.now()
+                    }
+
+                    doc._attachments[attachname].data = blobcreate(data)
+                    return db.put(doc)
+                } else {
+                    alert("Nem lett betöltve a fájl, pedig nem üres, így módosítani sem lehet.")
+                }
+            } else {
+                alert("Nem ilyen típusú a dokumentum!")
+            }
+
+        }).catch(function (err) {
+
+        })
+
+
+    }
 }
+
+//-------------------------------------------AttachmentManager   Sablon
+/*
+let attman =new AttachmentManager({fileid, tipus: "research"})
+attman.betoltes(function (att) {
+    if (att !== "error"){
+        let att2 = att
+        if (att == "nincsattachment") {
+            att2 = {}
+        }
+
+        attman.mentes(att2)
+    }
+})
+*/
+
+/*
+let attman =new AttachmentManager({fileid, tipus: "research"})
+attman.betoltes(function (att) {
+    if (att !== "error" || att !== "nincsattachment") {
+        let att2 = att
+
+    }
+})
+*/

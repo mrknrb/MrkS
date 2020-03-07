@@ -840,47 +840,25 @@ class ModulDetails {
 
 
             } else if (e.target.value == "console") {
-                db.get(self.id, {attachments: true, binary: true}).then(function (doc) {
-                    if (!doc._attachments) {
-                        alert("Attachment nem található!")
-                        ures()
-                    } else if (doc._attachments[attachname]) {
-
-                        console.log(doc._attachments[attachname])
-                    } else {
-                        alert("Attachment nem található!")
-                    }
+                let attman= new AttachmentManager({fileid:self.id,tipus:false,attachmentname:attachname})
+                attman.betoltes(function (att) {
+                    console.log(att)
                     ures()
                 })
-
             } else if (e.target.value == "download") {
-                db.get(self.id, {attachments: true, binary: true}).then(function (doc) {
-                    if (!doc._attachments) {
-                        alert("Attachment nem található!")
-                        ures()
-                    } else if (doc._attachments[attachname]) {
-                        blobdecode(doc._attachments[attachname].data, function (data) {
-                            var _myArray = data
-                            var vLink = document.createElement("a"),
-                                vBlob = new Blob([_myArray], {
-                                    type: "octet/stream"
-                                }),
-                                vName = attachname+".txt",
-                                vUrl = window.URL.createObjectURL(vBlob);
-                            vLink.setAttribute("href", vUrl);
-                            vLink.setAttribute("download", vName);
-                            vLink.click();
-                            console.log(doc._attachments[attachname])
-                            ures()
-                        })
-
-
-                    } else {
-
-                        alert("Attachment nem található!")
-                        ures()
-                    }
-
+                let attman= new AttachmentManager({fileid:self.id,tipus:false,attachmentname:attachname})
+                attman.betoltes(function (att) {
+                        var _myArray = JSON.stringify(att)
+                        var vLink = document.createElement("a"),
+                            vBlob = new Blob([_myArray], {
+                                type: "octet/stream"
+                            }),
+                            vName = attachname+".txt",
+                            vUrl = window.URL.createObjectURL(vBlob);
+                        vLink.setAttribute("href", vUrl);
+                        vLink.setAttribute("download", vName);
+                        vLink.click();
+                    ures()
                 })
 
             }
