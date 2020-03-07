@@ -12,6 +12,7 @@ ablakInit("palette", "500px", "500px", false, function () {
 })
 */
 
+
 let db = new PouchDB("NodesNet", {
     auto_compaction: true
 })
@@ -297,6 +298,8 @@ let tesztmentes = {}
 
 function conceptmapbetolto(doc) {
     console.log("docdata", doc._attachments.att.data)
+
+    consolelogdebugger("eddig jo")
     if (doc._attachments.att.data) {
         blobdecode(doc._attachments.att.data, function (data) {
             console.log("data", data)
@@ -310,7 +313,6 @@ function conceptmapbetolto(doc) {
         }
         myDiagram.model = go.Model.fromJson(diagram)
     }
-
 }
 
 function save() {

@@ -1,3 +1,121 @@
+let detailshtml=`<div id="detailsbox" style="min-width: 385px; margin:0; padding:0;">
+    <table class="tg" id="felsotabla" style="width:100%">
+    <tr style="height:20px">
+    <td class="tg-0lax">
+    <button id="torlesgomb" style="height:23px; width:26px;
+background-color: rgba(255, 255, 255, 0.5);
+border: none;
+color: black;
+font-weight: bold;
+font-size: 23px;
+text-align: center">x</button>
+</td>
+<td class="tg-0lax">
+    <div id="urllogo" style="float:left"></div>
+    <input id="urlmezo" type="text"
+style="  background-color: rgba(255, 255, 255, 0);color:rgb(156, 156, 156);
+border: 0cm; text-align:left;font-size: 12px;height:20px;width:60%; box-sizing:border-box;-moz-box-sizing:border-box">
+<input id=attachfilesinput list="attachedfileslist" style="height:20px;color:rgb(190, 148, 92);text-align:left;font-weight: bold;font-size: 12px;width:75px;  -webkit-appearance: none;
+appearance: none;
+padding: 0px">
+<datalist id="attachedfileslist">
+    </datalist>
+    <select id="attachfilescommand" style="max-width:25px;font-size: 12px;height:20px">
+    <option value="delete">delete</option>
+    <option value="download">download</option>
+    <option value="console">console</option>
+    <option value="new">new</option>
+    <option selected="selected" value=""></option>
+    </select>
+
+    <button id="jegyzetgomb" style="height:23px; width:26px;
+background-color: rgba(255, 255, 255, 0.5);
+border: none;
+color: black;
+font-weight: bold;
+font-size: 23px;float: right;
+text-align: center">+</button>
+</td>
+</tr>
+<tr>
+<td class="tg-0lax" style="word-wrap: break-word; width: 20px">
+    <select id="rang" style="color:rgb(0, 0, 255);text-align:center;font-weight: bold;font-size: 22px">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option selected="selected" value=""></option>
+    </select>
+    </td>
+    <td class="tg-0lax">
+    <input id="urlcim" type="text"
+style="  background-color: rgba(255, 255, 255, 0);
+border: 0cm; text-align:left;font-weight: bold;font-size: 14px;height:25px;width:100%; box-sizing:border-box;-moz-box-sizing:border-box">
+</td>
+</tr>
+<tr >
+<td class="tg-s268" colspan="2">
+    <input id=kategoria list="kategorialista" style="color:rgb(190, 148, 92);text-align:left;font-weight: bold;font-size: 14px;width:100px;  -webkit-appearance: none;
+appearance: none;
+padding: 0px">
+<datalist id="kategorialista">
+    </datalist>
+    <input id=alkategoria list="alkategorialista" style="color:rgb(190, 148, 92);text-align:left;font-weight: bold;font-size: 14px;width:100px; -webkit-appearance: none;
+    -moz-appearance: none;
+appearance: none;
+padding: 0px">
+<datalist id="alkategorialista">
+    </datalist>
+    <input id=alalkategoria list="alalkategorialista" style="color:rgb(190, 148, 92);text-align:left;font-weight: bold;font-size: 14px;width:100px; -webkit-appearance: none;
+    -moz-appearance: none;
+appearance: none;
+padding: 0px">
+<datalist id="alalkategorialista">
+    </datalist>
+    </td>
+    </tr>
+    <tr>
+    <td class="tg-s268" colspan="2">
+    <input id=tipus list="tipuslista"
+style="color:rgb(59, 141, 56);text-align:left;font-weight: bold;font-size: 14px;width:65px; box-sizing:border-box;-moz-box-sizing:border-box">
+    <datalist id="tipuslista">
+    </datalist>
+    <select id="allapot" style="color:rgb(0, 0, 0);text-align:center;font-weight: bold;font-size: 15px;width:65px">
+    <option value="kiemelt">Kiemelt</option>
+    <option value="archivalt">Archivalt</option>
+    <option value="offos">Offos</option>
+    <option hidden value="uj">Uj</option>
+    <option hidden value="inaktiv">Inaktiv</option>
+    <option hidden value="regi">Regi</option>
+    <option selected="selected" value=""></option>
+    </select>
+    <select id="alkotasallapot"
+style="color:rgb(0, 0, 0);text-align:center;font-weight: bold;font-size: 15px;width:65px">
+    <option value="befejezve&jegyz">Befej&jegyz</option>
+    <option value="befejezve">Befejezve</option>
+    <option value="folyamatban">Folyamatban</option>
+    <option value="letöltve">Letöltve</option>
+    <option value="könyvtár">Könyvtár</option>
+    <option value="beszerezni">Beszerezni</option>
+    <option selected="selected" value=""></option>
+    </select>
+    <input type="text" id="datum"
+style="color:rgb(0, 0, 0);text-align:left;font-weight: bold;font-size: 15px;width: 90px "></input>
+
+    </td>
+    </tr>
+    <tr>
+    <td class="tg-s268" colspan="2"><textarea id="megjegyzesmezo"
+style="width:100%; box-sizing:border-box;-moz-box-sizing:border-box"></textarea>
+    </td>
+    </tr>
+    </table>
+
+    </div>`
+
+
+
 class ModulDetails {
     constructor(selectors, beallitasok) {
         /*
@@ -71,7 +189,7 @@ class ModulDetails {
 
 
         }
-        if (this.beallitasok.automatavalto == true) {
+        if (this.beallitasok.automatavalto == true&&eszkoz=="sidebar") {
             this.tabbetoltindulas()//--------------------------ok
             this.tabschangeeventlistener()//--------------------------ok
         }
@@ -89,8 +207,9 @@ class ModulDetails {
 
     dombetolto() {
         let self = this
-
-        function readTextFile(file) {
+        document.querySelector(self.selectors.divcontainer).innerHTML =detailshtml
+/*
+            function readTextFile(file) {
             var rawFile = new XMLHttpRequest()
             rawFile.open("GET", file, false)
             rawFile.onreadystatechange = function () {
@@ -105,6 +224,8 @@ class ModulDetails {
         }
 
         readTextFile(this.beallitasok.htmlpath)
+        */
+
     }
 
 //-------------------------------------------------------------------------------------------------------------------OK

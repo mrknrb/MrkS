@@ -271,6 +271,7 @@ class ModulSessions {
     };
 
     sessiontabsdata(callback) {
+        if(eszkoz!="android"){
         getActualSession(function (session) {
             chrome.windows.getCurrent(
                 {
@@ -319,6 +320,7 @@ class ModulSessions {
 
                 })
         })
+        }
     }
 
     tabstablefrissito() {

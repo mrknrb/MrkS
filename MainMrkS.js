@@ -8,6 +8,9 @@ var db = new PouchDB("NodesNet", {
 var db7 = new PouchDB("SessionsNet", {
     auto_compaction: true
 })
+
+
+
 getActualSession(function (session) {
     sessionid = session._id
     document.querySelector("title").innerText = session.cim
@@ -341,6 +344,21 @@ function programOpenerInit() {
 programOpenerInit()
 
 //OK---------------------------------------------------------------------------------------------------------
+window.addEventListener("message", function (message) {
+    if (message.data.kerestipus == "ujprogram") {
+            programstarter({fileid: message.data.fileid})
+    }else if(message.data.kerestipus == "erroruzenet"){
+
+        let mes
+        mes=  message.data
+        if(document.querySelector("iframe[tipus=debugger]")){
+      document.querySelector("iframe[tipus=debugger]").contentWindow.postMessage(mes, "*");
+        }
+
+console.log(mes)
+    }
+})
+/*
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
     if (request.sessionid == sessionid)
@@ -349,6 +367,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             programstarter({fileid: request.fileid})
         }
 })
+*/
 //OK---------------------------------------------------------------------------------------------------------
 document.getElementById("opentab").addEventListener("click", function () {
 
@@ -602,8 +621,3 @@ function Init() {
 
 Init()
 
-
-window.addEventListener('error', (event) => {
-    log.textContent = log.textContent + `${event.type}: ${event.message}\n`;
-    console.log(event)
-});

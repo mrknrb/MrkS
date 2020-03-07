@@ -586,6 +586,13 @@ let ProgramsData = [
         htmlpath: "./ProgramBrowser.html",
         buttonid: "BrowserButton",
         startmentes: false
+    },
+    {
+        tipus: "debugger",
+        logo: "D",
+        htmlpath: "./ProgramDebugger.html",
+        buttonid: "DebuggerButton",
+        startmentes: false
     }
 ]
 
@@ -596,14 +603,14 @@ function filebetolto(fileid, filetipus) {
         if (program.tipus === filetipus) {
             talalat = true
             getActualSession(function (session) {
-/*
+
                 window.parent.postMessage({
                     kerestipus: "ujprogram",
                     tipus: filetipus,
                     fileid: fileid,
                     sessionid: session._id
                 }, "*");
-                */
+             /*
                 chrome.runtime.sendMessage(
                     {
                         kerestipus: "ujprogram",
@@ -613,7 +620,7 @@ function filebetolto(fileid, filetipus) {
                     },
                     function (response) {
                     }
-                );
+                );*/
             })
         }
     })
@@ -823,7 +830,20 @@ function blobcreate(data){
    return new Blob([JSON.stringify(data, null, 2)], {type : 'application/json'});
 }
 async function blobdecode(data,callback){
-   let data2= await data.text();
+    const data2 = await new Response(data).text()
 
     callback(JSON.parse(data2))
+}
+
+window.addEventListener('error', (event) => {
+    window.parent.postMessage({
+        kerestipus: "erroruzenet",
+        uzenet:  `${event.type}: ${event.message}`
+    }, "*");
+});
+function consolelogdebugger(uzenet){
+    window.parent.postMessage({
+        kerestipus: "erroruzenet",
+        uzenet:  JSON.stringify(uzenet)
+    }, "*");
 }
