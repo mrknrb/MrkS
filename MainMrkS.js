@@ -330,12 +330,19 @@ window.onclick = function (event) {
 function programOpenerInit() {
     let myDropdown = document.querySelector("#myDropdown")
     ProgramsData.forEach(function (program) {
+
+        let div = document.createElement("div")
         let a = document.createElement("a")
+        div.appendChild(a)
         a.id = program.buttonid
+        a.style.backgroundColor="Transparent"
+        a.style.fontSize="12"
+        a.style.padding="4px"
+        a.style.userSelect="none"
         a.setAttribute("tipus", program.tipus)
         a.innerText = program.tipus
-        myDropdown.appendChild(a)
-        a.addEventListener("click", function (a2) {
+        myDropdown.appendChild(div)
+        div.addEventListener("click", function (a2) {
             programstarter({tipus: a.getAttribute("tipus")})
         })
     })

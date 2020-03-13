@@ -14,7 +14,10 @@ text-align: center">x</button>
     <div id="urllogo" style="float:left"></div>
     <input id="urlmezo" type="text"
 style="  background-color: rgba(255, 255, 255, 0);color:rgb(156, 156, 156);
-border: 0cm; text-align:left;font-size: 12px;height:20px;width:60%; box-sizing:border-box;-moz-box-sizing:border-box">
+border: 0cm; text-align:left;font-size: 12px;height:20px;width:55%; box-sizing:border-box;-moz-box-sizing:border-box">
+<div style="float:right">
+
+
 <input id=attachfilesinput list="attachedfileslist" style="height:20px;color:rgb(190, 148, 92);text-align:left;font-weight: bold;font-size: 12px;width:75px;  -webkit-appearance: none;
 appearance: none;
 padding: 0px">
@@ -35,6 +38,7 @@ color: black;
 font-weight: bold;
 font-size: 23px;float: right;
 text-align: center">+</button>
+</div>
 </td>
 </tr>
 <tr>

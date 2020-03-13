@@ -575,13 +575,6 @@ let ProgramsData = [
         startmentes: true
     },
     {
-        tipus: "naptar",
-        logo: "N",
-        htmlpath: "./ProgramNaptar.html",
-        buttonid: "NaptarButton",
-        startmentes: false
-    },
-    {
         tipus: "browser",
         logo: "B",
         htmlpath: "./ProgramBrowser.html",
@@ -828,3 +821,90 @@ attman.betoltes(function (att) {
     }
 })
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+let dbteszt = new PouchDB("dbteszt", {
+    auto_compaction: true
+})
+
+
+function docgeneratorteszt(darab) {
+    let docarray=[]
+    let i;
+    for (i = 0; i < darab; i++) {
+        let doc={}
+        doc._id=guidGenerator()
+        doc.megjegyzes=guidGenerator()
+        doc.cim=guidGenerator()
+        doc.link=guidGenerator()
+        docarray.push(doc)
+    }
+return docarray
+}
+
+
+
+function alldocsspeedteszt(tipus,data) {
+    let ido1=Date.now()
+    if(tipus=="semmi"){
+
+        dbteszt.allDocs().then(function (result) {
+            console.log("betoltesido",Date.now()-ido1)
+console.log(result)
+        })
+        }
+    else if(tipus=="docs"){
+    dbteszt.allDocs({
+        include_docs: true
+    }).then(function (result) {
+        console.log("betoltesido",Date.now()-ido1)
+        console.log(result)
+
+    })}    else if(tipus=="get"){
+        dbteszt.get(data, {include_docs: true}).then(function (result) {
+            console.log("betoltesido",Date.now()-ido1)
+            console.log(result)
+
+        })
+
+    }else if(tipus=="docslimit"){
+        dbteszt.allDocs({
+            include_docs: true,limit:data
+        }).then(function (result) {
+            console.log("betoltesido",Date.now()-ido1)
+            console.log(result)
+
+        })}
+}
+
+
+
+
+
+
+
+let mrksdb=chrome.extension.getBackgroundPage()
+
+
+
+
+
+
+
+
+
+
+
+
+
