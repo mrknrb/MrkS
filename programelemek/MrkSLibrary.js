@@ -1,3 +1,11 @@
+
+
+
+let mrksdb=chrome.extension.getBackgroundPage()
+
+
+
+
 function eszkozdetektalo() {
     window.mobilecheck = function () {
         var check = false;
@@ -296,9 +304,7 @@ function elementhider(buttonselector, elementselector) {
 function pouchkategoriaszuro(kategoriak, callback) {
 
     let ido = Date.now()
-    db.allDocs({
-        include_docs: true,
-    }).then(function (result) {
+    mrksdb.mrksalldocs(function(result){
         let talalatok = []
 
         function keresoszoszuro(element) {
@@ -341,7 +347,7 @@ function pouchkategoriaszuro(kategoriak, callback) {
             }
         }
 
-        result.rows.forEach(element => {
+        result.forEach(element => {
             if (element.doc.tipus == kategoriak.tipus || !kategoriak.tipus) {
                 if (kategoriak.kategoria) {
                     if (kategoriak.alkategoria) {
@@ -889,12 +895,6 @@ console.log(result)
 }
 
 
-
-
-
-
-
-let mrksdb=chrome.extension.getBackgroundPage()
 
 
 

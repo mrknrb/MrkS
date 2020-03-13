@@ -661,7 +661,7 @@ function mrksfrissitesteljes(callback) {
 }
 function start7() {
     mrksfrissitesteljes(function () {
-        
+
     })
     setTimeout(start7, 10000);
 }
@@ -670,10 +670,10 @@ function start7() {
 start7();
 
 //-------------------------------------------------------------------------------------------------------------
-function mrksalldocs() {
+function mrksalldocs(callback) {
     let rows = mrksdatabasedata.db.rows
     rows.concat(mrksdatabasedata.db2.rows);
-    return rows
+    callback(rows)
 }
 
 
