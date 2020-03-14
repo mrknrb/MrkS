@@ -677,23 +677,27 @@ function mrksalldocs(callback) {
 }
 
 
-function mrksalldocsdb() {
-    return mrksdatabasedata.db.rows
+function mrksalldocsdb(callback) {
+
+    let rows = mrksdatabasedata.db.rows
+    callback(rows)
 }
 
 
-function mrksalldocsdb2() {
-    return mrksdatabasedata.db2.rows
+function mrksalldocsdb2(callback) {
+
+    let rows = mrksdatabasedata.db2.rows
+    callback(rows)
 }
 
 //-------------------------------------------------------------------------------------------------------------
 
 
-function mrksget(fileid, db2, callback) {
+function mrksget(fileid, db2is, callback) {
     db.get(fileid).then(function (doc) {
         callback(doc, "db")
     }).catch(function (err) {
-        if (err.message == "missing" && db2 == true) {
+        if (err.message == "missing" && db2is == true) {
             db2.get(fileid).then(function (doc) {
                 callback(doc, "db2")
             }).catch(function (err) {
@@ -701,29 +705,39 @@ function mrksget(fileid, db2, callback) {
                     callback("missing")
                 }
             })
-        } else {
-            callback("missing")
         }
     })
 }
 
 
-function mrksupdate(doc, db) {
-    if (db == "db") {
+function mrksupdate(doc, dbm) {
+    if (dbm == "db") {
         db.put(doc).catch(function (err) {
             console.log(err);
         });
-    } else if (db == "db2") {
+    } else if (dbm == "db2") {
         db2.put(doc).catch(function (err) {
             console.log(err);
         });
     }
 }
 
+/**használat "ha nincs benne a db-ben és, ha benne van" esetén
+
+mrksget("fg", true, function(doc,db){
+    if(doc=="missing"){
+        //db vagy db2?
+        db.put(adatok)
+
+    }   else{
+        mrksupdate(doc, db)
+
+    }
+
+})
 
 
-
-
+*/
 
 
 

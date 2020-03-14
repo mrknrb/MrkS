@@ -1,6 +1,3 @@
-
-
-
 let mrksdb=chrome.extension.getBackgroundPage()
 
 
@@ -304,7 +301,7 @@ function elementhider(buttonselector, elementselector) {
 function pouchkategoriaszuro(kategoriak, callback) {
 
     let ido = Date.now()
-    mrksdb.mrksalldocs(function(result){
+    mrksdb.mrksalldocsdb(function(result){
         let talalatok = []
 
         function keresoszoszuro(element) {
@@ -392,11 +389,10 @@ function pouchkategoriadropdown(kategoriak, kategoriatipus, callback) {
 
     console.log(kategoriak)
     let ido = Date.now()
-    db.allDocs({
-        include_docs: true,
-    }).then(function (result) {
+
+    mrksdb.mrksalldocsdb(function(result){
         let talalatok = []
-        result.rows.forEach(element => {
+        result.forEach(element => {
 
             if (kategoriatipus == "kategoria" && element.doc.kategoria) {
                 let bennevan = false

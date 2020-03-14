@@ -60,7 +60,7 @@ document.querySelector("#keresoszo").addEventListener("keyup", function () {
 
             datatable.datatablefrissitobetolto(document.querySelector("#keresoszo").value)
         }
-    }, 100)
+    }, 50)
 })
 
 //--------------------------------------------------------------------------------------------------------------------

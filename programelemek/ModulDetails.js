@@ -514,6 +514,28 @@ class ModulDetails {
                         adatok.datum = Date.now()
                         console.log(adatok)
                         self.kategorianarancsszinezo()
+
+
+
+                        mrksdb.mrksget(adatok._id, true, function(doc,dbm){
+                            console.log(doc)
+                            if(doc=="missing"){
+                                //db vagy db2?
+                                db.put(adatok)
+
+                            }   else{
+                                doc[selectortype] = document.querySelector(selector).value
+                                console.log(dbm)
+                                mrksdb.mrksupdate(doc, dbm)
+
+                            }
+
+                        })
+
+
+
+
+/*
                         db.put(adatok).catch(function (err) {
                             if (err.name === "conflict") {
                                 db.get(self.id).then(function (doc) {
@@ -522,6 +544,7 @@ class ModulDetails {
                                 })
                             }
                         })
+                        */
                     }
                 }, 1000)
             })
