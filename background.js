@@ -701,9 +701,8 @@ function mrksget(fileid, db2is, callback) {
             db2.get(fileid).then(function (doc) {
                 callback(doc, "db2")
             }).catch(function (err) {
-                if (err.message == "missing") {
                     callback("missing")
-                }
+
             })
         }
     })
@@ -722,15 +721,23 @@ function mrksupdate(doc, dbm) {
     }
 }
 
+function mrksremove(doc, dbm) {
+    if (dbm == "db") {
+        console.log(doc)
+        db.remove(doc)
+    } else if (dbm == "db2") {
+        db2.remove(doc)
+    }
+}
 /**használat "ha nincs benne a db-ben és, ha benne van" esetén
 
-mrksget("fg", true, function(doc,db){
+ mrksdb.mrksget("fg", true, function(doc,dbm){
     if(doc=="missing"){
         //db vagy db2?
         db.put(adatok)
 
     }   else{
-        mrksupdate(doc, db)
+        mrksdb.mrksupdate(doc, dbm)
 
     }
 

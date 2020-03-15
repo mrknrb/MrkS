@@ -554,14 +554,24 @@ overflow: hidden;
             });
 
             row.querySelectorAll("td")[0].addEventListener("click", function () {
-                let biztosan = confirm("Biztosan Torlod?");
-                if (biztosan) {
-                    db.get(element._id).then(function (doc) {
-                        //  console.log(e.id)
-                        return db.remove(doc);
-                    });
-                    row.remove();
-                }
+
+                mrksdb.mrksget(element._id, true, function(doc,dbm){
+                    if(doc=="missing"){
+                        alert("Fájl nem található")
+                        row.remove();
+                    }   else{
+                        let biztosan = confirm("Biztosan Torlod?");
+                        if (biztosan) {
+                            mrksdb.mrksremove(doc, dbm)
+                            row.remove();
+                        }
+
+
+                    }
+
+                })
+
+
             });
         }
     }

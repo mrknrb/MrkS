@@ -344,12 +344,12 @@ class ModulDetails {
         }
 
         let elkuldve = false
-        db.get(id2.toString()).then(function (doc) {
-            elkuldve = true
 
-            beillesztoseged(doc)
-        }).catch(function (error) {
-            if (elkuldve == false) {
+        mrksdb.mrksget(id2.toString(), true, function(doc,dbm){
+            if(doc!="missing"){
+            elkuldve = true
+            beillesztoseged(doc)}else{
+
                 beillesztoseged(undefined)
             }
         })
@@ -454,14 +454,25 @@ class ModulDetails {
 
                 adatok.datum = Date.now()
                 self.kategorianarancsszinezo()
-                db.put(adatok).catch(function (err) {
-                    if (err.name === "conflict") {
-                        db.get(self.id).then(function (doc) {
-                            doc[selectortype] = document.querySelector(selector).value
-                            return db.put(doc)
-                        })
+
+
+
+                mrksdb.mrksget(adatok._id, true, function(doc,dbm){
+                    console.log(doc)
+                    if(doc=="missing"){
+                        //db vagy db2?
+                        db.put(adatok)
+
+                    }   else{
+                        doc[selectortype] = document.querySelector(selector).value
+                        console.log(dbm)
+                        mrksdb.mrksupdate(doc, dbm)
+
                     }
+
                 })
+
+
             })
         }
 
@@ -535,16 +546,6 @@ class ModulDetails {
 
 
 
-/*
-                        db.put(adatok).catch(function (err) {
-                            if (err.name === "conflict") {
-                                db.get(self.id).then(function (doc) {
-                                    doc[selectortype] = document.querySelector(selector).value
-                                    return db.put(doc)
-                                })
-                            }
-                        })
-                        */
                     }
                 }, 1000)
             })
@@ -741,12 +742,23 @@ class ModulDetails {
             document.querySelector(s.buttontorles).addEventListener("click", function () {
 
 
-                db.get(self.id).then(function (doc) {
-                    let biztosan = confirm("Biztosan Torlod?");
-                    if (biztosan) {
-                        return db.remove(doc)
+
+                mrksdb.mrksget(self.id, true, function(doc,dbm){
+                    if(doc=="missing"){
+                        alert("Fájl nem található")
+                    }   else{
+                        let biztosan = confirm("Biztosan Torlod?");
+                        if (biztosan) {
+                            mrksdb.mrksremove(doc, dbm)
+                        }
+
+
                     }
+
                 })
+
+
+
                 setTimeout(() => {
                     chrome.tabs.query(
                         {

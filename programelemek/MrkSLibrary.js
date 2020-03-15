@@ -836,10 +836,6 @@ attman.betoltes(function (att) {
 
 
 
-let dbteszt = new PouchDB("dbteszt", {
-    auto_compaction: true
-})
-
 
 function docgeneratorteszt(darab) {
     let docarray=[]
@@ -895,7 +891,7 @@ console.log(result)
 
 
 
-
+//attman.mentes(data)
 
 
 
