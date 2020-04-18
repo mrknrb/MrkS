@@ -10,7 +10,7 @@ let detailsselectors = {
 let detailsbeallitasok = {
     automatavalto: false,
     divcontainerbebetoltes: true,
-    manualtipus: "browser"
+    manualtipus: "link"
 }
 let details = new ModulDetails(detailsselectors, detailsbeallitasok)
 elementhider("#detailsboxopen", "#detailsdiv")
@@ -27,27 +27,35 @@ if (window.frameElement.getAttribute("tabid")!=undefined) {
 
 }
 
-
+setTimeout(() => {
+    if(window.frameElement.getAttribute("browsercim")!=""&&document.querySelector("#urlcim").value==""){
+        document.querySelector("#urlcim").value = window.frameElement.getAttribute("browsercim")
+    }
+}, 100)
 document.querySelector("#iframe").src = fileid
 document.querySelector("#urlmezo2").value = fileid
 document.querySelector("#urlmezo2").addEventListener("change", function (e) {
     document.querySelector("#iframe").src = document.querySelector("#urlmezo2").value
     fileid = document.querySelector("#urlmezo2").value
     details.detailsfrissito(fileid)
-    console.log(document.querySelector("#urlmezo2").value)
+    tabvaltozasmentes()
 })
+let cim=""
 window.addEventListener("message", function (message) {
     console.log(message)
     if (message.data.uzenettipus == "oldalurl") {
         fileid= message.data.url
+        cim= message.data.cim
         document.querySelector("#urlmezo2").value=fileid
         details.detailsfrissito(fileid)
-        console.log( document.querySelector("#iframe").src)
+
+        tabvaltozasmentes()
     }
 
 
 })
-details.detailsmentesevent(function () {
+function tabvaltozasmentes(){
+
 
     getActualSession(function (session) {
         db7
@@ -65,8 +73,9 @@ details.detailsmentesevent(function () {
                         console.log(fileid)
                         console.log(program.fileid)
                         doc.programs[i].fileid = fileid
-
-
+                        doc.programs[i].forcetipus = "browser"
+                        doc.programs[i].cim = cim
+                        document.querySelector("#urlcim").value=cim
                         return db7.put(doc);
                     }
 
@@ -79,4 +88,10 @@ details.detailsmentesevent(function () {
             })
     })
 
+}
+
+
+
+details.detailsmentesevent(function () {
+    tabvaltozasmentes()
 })

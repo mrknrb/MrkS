@@ -231,17 +231,21 @@ if(window.location.host=="www.youtube.com"){
 
 
 }
+function oldalurlkuldes(){
 
-let message3={}
-message3.url=window.location.href
-message3.uzenettipus="oldalurl"
-window.parent.postMessage(message3, "*");
-
-if(window.location.host=="www.youtube.com"){
-  window.addEventListener('yt-navigate-finish', function () {
+  setTimeout(() => {
+    let message3={}
     message3.url=window.location.href
+    message3.cim=document.title
     message3.uzenettipus="oldalurl"
     window.parent.postMessage(message3, "*");
+
+  }, 400)
+}
+oldalurlkuldes()
+if(window.location.host=="www.youtube.com"){
+  window.addEventListener('yt-navigate-finish', function () {
+    oldalurlkuldes()
   });
 
 }

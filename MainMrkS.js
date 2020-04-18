@@ -44,7 +44,6 @@ let megnyitotttabek = {}
 function programstarter(adatok) {
     /**adatok:{fileid,tipus,programtabid}*/
 //OK-----------------------------------------------------------------------------------------
-
     let programtabid2 = adatok.programtabid
 
     if (adatok.programtabid == undefined) {
@@ -59,6 +58,9 @@ function programstarter(adatok) {
                 .then(function (doc) {
                     let adatok2 = {}
                     adatok2.tipus = tipus
+                    if(adatok.forcetipus){
+                        adatok2.forcetipus=adatok.forcetipus
+                    }
                     if (adatok.fileid) {
                         adatok2.fileid = adatok.fileid
                     } else {
@@ -71,6 +73,7 @@ function programstarter(adatok) {
                         doc.programs = []
                     }
                     doc.programs.push(adatok2)
+                    console.log(doc)
                     return db7.put(doc);
                 })
                 .catch(function (error) {
@@ -84,19 +87,39 @@ function programstarter(adatok) {
 
 //OK----------------------------------------------------------------------------------------
     //todo
+    let browsercim=""
     if (adatok.fileid != undefined) {
+
         db.get(adatok.fileid).then(function (doc) {
+            console.log(adatok)
+            if(adatok.forcetipus){
+                doc.tipus=adatok.forcetipus
+            }
             ProgramsData.forEach(function (program) {
                 if (program.tipus === doc.tipus) {
                     if (adatok.programtabid == undefined) {
-                        programmento(program.tipus)
+
+
+                        programmento(doc.tipus)
                     }
                     programbetolto(program, doc)
 
                 }
             })
 
+
         }).catch(function (error) {
+
+            if(adatok.forcetipus=="browser"){
+                ProgramsData.forEach(function (program) {
+                    if (program.tipus === adatok.forcetipus) {
+                        browsercim= adatok.cim
+                        programbetolto(program)
+                    }
+                })
+
+
+            }else{
             alert("Load Failed!2")
 
             getActualSession(function (session) {
@@ -106,19 +129,15 @@ function programstarter(adatok) {
                         doc.programs.forEach(function (program, index) {
                             if (adatok.fileid == program.fileid) {
                                 doc.programs.splice(index, 1);
-
-
                                 return db7.put(doc);
                             }
                         })
-
-
                     }).catch(function (error) {
                     console.log(error)
                 })
+            })}
 
 
-            })
         })
     } else if (adatok.tipus != undefined) {
         //a tipussal nyit egy új programot
@@ -169,18 +188,22 @@ function programstarter(adatok) {
 
 //OK-----------------------------------------------------------------------------------------
     function programbetolto(program, doc) {
-        let iframehtml = `<iframe src="${program.htmlpath}" tipus="${adatok.tipus}" sessionid="${sessionid}" tabid="${programtabid2}" fileid="${adatok.fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
+        let iframehtml = `<iframe src="${program.htmlpath}" tipus="${adatok.tipus}" sessionid="${sessionid}" tabid="${programtabid2}" fileid="${adatok.fileid}" frameBorder="0" browsercim="${browsercim}"style="width: 100vw;height: 97vh;"></iframe>`
 
         tabcount++
         let tabnumber = tabcount
         let tab = document.createElement("li")
         let cim = ""
+
         if (doc) {
             if (doc.cim) {
-                cim = doc.cim.truncnopont(9)
+                cim = doc.cim.truncnopont(8)
             }
+        }else{
+            cim= browsercim.truncnopont(8)
         }
 
+        console.log("cim",cim)
         tab.innerHTML = `<a class="tabbuttons" id="tabbutton${tabnumber}" href="#tab${tabnumber}" fileid="${adatok.fileid}" style="height:20px;width:80px;overflow: hidden">${program.logo} ${cim}</a><a id="tabbezarobutton${tabnumber}" programtabid="${programtabid2}"class="tabbezarobuttons" href="#tab${tabnumber}" style="height: 20px; width:20px; vertical-align: top;text-align: center;font-weight:900">×</a>`
 
         document.querySelector(".tab-links").appendChild(tab)
@@ -353,7 +376,7 @@ programOpenerInit()
 //OK---------------------------------------------------------------------------------------------------------
 window.addEventListener("message", function (message) {
     if (message.data.kerestipus == "ujprogram") {
-            programstarter({fileid: message.data.fileid})
+            programstarter({fileid: message.data.fileid,forcetipus:message.data.forcetipus})
     }
 
 })

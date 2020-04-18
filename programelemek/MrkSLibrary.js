@@ -585,7 +585,7 @@ let ProgramsData = [
     }
 ]
 
-function filebetolto(fileid, filetipus) {
+function filebetolto(fileid, filetipus,milyentab) {
 
     let talalat = false
     ProgramsData.forEach(function (program) {
@@ -617,11 +617,21 @@ function filebetolto(fileid, filetipus) {
 
     if (!talalat) {
         if (filetipus == "jegyzet") {
-        } else {
+        } else if(milyentab=="normaltab"){
             window.open(fileid, "_blank");
+        }else if(milyentab=="sidebartab"){
+
+            console.log(milyentab)
+            getActualSession(function (session) {
+                window.parent.postMessage({
+                    kerestipus: "ujprogram",
+                    forcetipus: "browser",
+                    fileid: fileid,
+                    sessionid: session._id
+                }, "*");
+            })
+
         }
-
-
     }
 
 }

@@ -547,10 +547,13 @@ overflow: hidden;
             row.addEventListener("click", function () {
                 self.click(element._id)
             });
+            row.querySelectorAll("td")[3].addEventListener("click", function () {
 
+                filebetolto(element._id, element.tipus,"sidebartab");
+            });
             row.querySelectorAll("td")[1].addEventListener("click", function () {
 
-                filebetolto(element._id, element.tipus);
+                filebetolto(element._id, element.tipus,"normaltab");
             });
 
             row.querySelectorAll("td")[0].addEventListener("click", function () {
