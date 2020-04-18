@@ -558,14 +558,14 @@ overflow: hidden;
 
             row.querySelectorAll("td")[0].addEventListener("click", function () {
 
-                mrksdb.mrksget(element._id, true, function(doc,dbm){
+                mrksdb.mrksget(element._id,  function(doc){
                     if(doc=="missing"){
                         alert("Fájl nem található")
                         row.remove();
                     }   else{
                         let biztosan = confirm("Biztosan Torlod?");
                         if (biztosan) {
-                            mrksdb.mrksremove(doc, dbm)
+                            mrksdb.mrksremove(doc)
                             row.remove();
                         }
 

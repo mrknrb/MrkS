@@ -345,7 +345,7 @@ class ModulDetails {
 
         let elkuldve = false
 
-        mrksdb.mrksget(id2.toString(), true, function(doc,dbm){
+        mrksdb.mrksget(id2.toString(), function(doc){
             if(doc!="missing"){
             elkuldve = true
             beillesztoseged(doc)}else{
@@ -463,18 +463,16 @@ class ModulDetails {
 
 
 
-                mrksdb.mrksget(adatok._id, true, function(doc,dbm){
+                mrksdb.mrksget(adatok._id,  function(doc){
                     console.log(doc)
 
                     if(doc=="missing"){
                         //db vagy db2?
-                        db.put(adatok)
-
+                        mrksdb.mrksput(adatok)
                         self.mentesevent(adatok._id)
                     }   else{
                         doc[selectortype] = document.querySelector(selector).value
-                        console.log(dbm)
-                        mrksdb.mrksupdate(doc, dbm)
+                        mrksdb.mrksput(doc)
 
                     }
                 })
@@ -535,19 +533,18 @@ class ModulDetails {
 
 
 
-                        mrksdb.mrksget(adatok._id, true, function(doc,dbm){
+                        mrksdb.mrksget(adatok._id,  function(doc){
                             console.log(doc)
 
 
                             if(doc=="missing"){
                                 //db vagy db2?
-                                db.put(adatok)
-
+                                mrksdb.mrksput(adatok)
                                 self.mentesevent(adatok._id)
                             }   else{
                                 doc[selectortype] = document.querySelector(selector).value
-                                console.log(dbm)
-                                mrksdb.mrksupdate(doc, dbm)
+
+                                mrksdb.mrksput(doc)
 
                             }
                         })
@@ -732,11 +729,10 @@ class ModulDetails {
                     jegyzetadatok.tipus = "jegyzet"
                     jegyzetadatok.datum = Date.now()
                     self.kategorianarancsszinezo()
-                    db.put(jegyzetadatok).then(function (doc) {
-                        self.detailsfrissito(jegyzetadatok._id)
-                    })
 
 
+                    mrksdb.mrksput(jegyzetadatok)
+                    self.detailsfrissito(jegyzetadatok._id)
                 })
 
 
@@ -752,13 +748,13 @@ class ModulDetails {
 
 
 
-                mrksdb.mrksget(self.id, true, function(doc,dbm){
+                mrksdb.mrksget(self.id,  function(doc){
                     if(doc=="missing"){
                         alert("Fájl nem található")
                     }   else{
                         let biztosan = confirm("Biztosan Torlod?");
                         if (biztosan) {
-                            mrksdb.mrksremove(doc, dbm)
+                            mrksdb.mrksremove(doc)
                         }
 
 

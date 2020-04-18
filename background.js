@@ -2,10 +2,6 @@ var db = new PouchDB("NodesNet", {
     revs_limit: 50,
     auto_compaction: true
 });
-var db2 = new PouchDB("NodesNet2", {
-    revs_limit: 50,
-    auto_compaction: true
-});
 
 var db7 = new PouchDB("SessionsNet", {
     revs_limit: 50,
@@ -28,7 +24,6 @@ db.sync(dbremote);
 db7.sync(db7remote);
 
 function start2() {
-    console.log("mukodik");
     db.sync(dbremote);
 
     db7.sync(db7remote);
@@ -258,7 +253,6 @@ if (eszkozdetektalo() != "android") {
                                             }
                                         })
 
-                                        console.log(tortentvaltozas)
                                         if (tortentvaltozas) {
                                             console.log(doc)
                                             return db7.put(doc);
@@ -609,135 +603,110 @@ if (eszkozdetektalo() != "android") {
 }
 
 let mrksdatabasedata = {
-    db: {
-        frissitesdatum: 0,
-        rows: []
-    },
-    db2: {
-        frissitesdatum: 0,
-        rows: []
-    },
+    frissitesdatum: 0,
+    rows: []
 }
 
 
 function mrksfrissitesdb(callback) {
-    db2
-        .allDocs({
-            include_docs: true,
-            attachments: true
-        })
-        .then(function (result) {
-            mrksdatabasedata.db.rows = result.rows
-            callback()
-        })
-}
-
-
-function mrksfrissitesdb2(callback) {
     db
         .allDocs({
             include_docs: true,
             attachments: true
         })
         .then(function (result) {
-            mrksdatabasedata.db.rows = result.rows
+            mrksdatabasedata.rows = result.rows
             callback()
         })
 }
+mrksfrissitesdb(function () {
 
-function mrksfrissitesteljes(callback) {
-    mrksfrissitesdb(function () {
-        mrksfrissitesdb2(function () {
-            callback()
-        })
-    })
-}
+})
 function start7() {
-    mrksfrissitesteljes(function () {
+    mrksfrissitesdb(function () {
 
     })
     setTimeout(start7, 10000);
 }
 
 // boot up the first call
-start7();
+//start7();
 
 //-------------------------------------------------------------------------------------------------------------
-function mrksalldocs(callback) {
-    let rows = mrksdatabasedata.db.rows
-    rows.concat(mrksdatabasedata.db2.rows);
-    callback(rows)
-}
 
 
 function mrksalldocsdb(callback) {
 
-    let rows = mrksdatabasedata.db.rows
+    let rows = mrksdatabasedata.rows
+    console.log()
     callback(rows)
 }
 
-
-function mrksalldocsdb2(callback) {
-
-    let rows = mrksdatabasedata.db2.rows
-    callback(rows)
-}
 
 //-------------------------------------------------------------------------------------------------------------
 
 
-function mrksget(fileid, db2is, callback) {
+function mrksget(fileid, callback) {
     db.get(fileid).then(function (doc) {
         callback(doc, "db")
     }).catch(function (err) {
-        if (err.message == "missing" && db2is == true) {
-            db2.get(fileid).then(function (doc) {
-                callback(doc, "db2")
-            }).catch(function (err) {
-                    callback("missing")
-
-            })
-        }
+        callback("missing")
     })
 }
 
 
-function mrksupdate(doc, dbm) {
-    if (dbm == "db") {
-        db.put(doc).catch(function (err) {
-            console.log(err);
-        });
-    } else if (dbm == "db2") {
-        db2.put(doc).catch(function (err) {
-            console.log(err);
-        });
-    }
+
+function mrksput(doc) {
+
+    db.put(doc).catch(function (err) {
+        console.log(err);
+    });
+    let megvan=false
+    mrksdatabasedata.rows.forEach(function (e,i) {
+        if(e.id==doc._id){
+            megvan=true
+            mrksdatabasedata.rows[i].id=doc._id
+            mrksdatabasedata.rows[i].doc=doc
+
+        }
+    })
+if(!megvan){
+    let doc2={}
+    doc2.id=doc._id
+    doc2.doc=doc
+    mrksdatabasedata.rows.push(doc2)
 }
 
-function mrksremove(doc, dbm) {
-    if (dbm == "db") {
-        console.log(doc)
-        db.remove(doc)
-    } else if (dbm == "db2") {
-        db2.remove(doc)
-    }
 }
+
+function mrksremove(doc) {
+
+    db.remove(doc)
+
+    mrksdatabasedata.rows.forEach(function (e,i) {
+        if(e.id==doc._id){
+
+            mrksdatabasedata.rows.splice(i, 1);
+        }
+    })
+
+}
+
 /**használat "ha nincs benne a db-ben és, ha benne van" esetén
 
- mrksdb.mrksget("fg", true, function(doc,dbm){
+ mrksdb.mrksget("fg", function(doc){
     if(doc=="missing"){
-        //db vagy db2?
         db.put(adatok)
 
     }   else{
-        mrksdb.mrksupdate(doc, dbm)
+        mrksdb.mrksupdate(doc)
 
     }
 
 })
 
 
-*/
+ */
 
 
 
