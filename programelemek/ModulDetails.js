@@ -409,6 +409,12 @@ class ModulDetails {
         }
     }
 
+    detailsmentesevent(callback) {
+
+        this.mentesevent = function (id) {
+            callback(id)
+        }
+    }
     inputeventmentoinit() {
 
         let self = this
@@ -459,17 +465,18 @@ class ModulDetails {
 
                 mrksdb.mrksget(adatok._id, true, function(doc,dbm){
                     console.log(doc)
+
                     if(doc=="missing"){
                         //db vagy db2?
                         db.put(adatok)
 
+                        self.mentesevent(adatok._id)
                     }   else{
                         doc[selectortype] = document.querySelector(selector).value
                         console.log(dbm)
                         mrksdb.mrksupdate(doc, dbm)
 
                     }
-
                 })
 
 
@@ -530,17 +537,19 @@ class ModulDetails {
 
                         mrksdb.mrksget(adatok._id, true, function(doc,dbm){
                             console.log(doc)
+
+
                             if(doc=="missing"){
                                 //db vagy db2?
                                 db.put(adatok)
 
+                                self.mentesevent(adatok._id)
                             }   else{
                                 doc[selectortype] = document.querySelector(selector).value
                                 console.log(dbm)
                                 mrksdb.mrksupdate(doc, dbm)
 
                             }
-
                         })
 
 

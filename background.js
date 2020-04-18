@@ -587,13 +587,6 @@ if (eszkozdetektalo() != "android") {
     });
 
 
-    let c = 2
-
-    function fff() {
-
-        return c
-    }
-
     /*
 
                       let datekul = Date.now() - tabshistoryarray[windowidszoveg].allasdate

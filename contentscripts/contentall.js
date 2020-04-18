@@ -228,5 +228,20 @@ if(document.querySelector(".modal-dialog-bg")){
 if(window.location.host=="www.youtube.com"){
 
   document.querySelector("#logo").innerHTML = '<a href="https://www.youtube.com/feed/subscriptions" style="font-size: 20px;color:black;font-weight:bold;text-decoration: none">YouTube</a>'
+
+
 }
 
+let message3={}
+message3.url=window.location.href
+message3.uzenettipus="oldalurl"
+window.parent.postMessage(message3, "*");
+
+if(window.location.host=="www.youtube.com"){
+  window.addEventListener('yt-navigate-finish', function () {
+    message3.url=window.location.href
+    message3.uzenettipus="oldalurl"
+    window.parent.postMessage(message3, "*");
+  });
+
+}

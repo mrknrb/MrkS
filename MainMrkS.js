@@ -169,7 +169,7 @@ function programstarter(adatok) {
 
 //OK-----------------------------------------------------------------------------------------
     function programbetolto(program, doc) {
-        let iframehtml = `<iframe src="${program.htmlpath}" tipus="${adatok.tipus}" sessionid="${sessionid}" fileid="${adatok.fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
+        let iframehtml = `<iframe src="${program.htmlpath}" tipus="${adatok.tipus}" sessionid="${sessionid}" tabid="${programtabid2}" fileid="${adatok.fileid}" frameBorder="0" style="width: 100vw;height: 97vh;"></iframe>`
 
         tabcount++
         let tabnumber = tabcount

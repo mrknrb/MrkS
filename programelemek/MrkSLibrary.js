@@ -887,16 +887,3 @@ console.log(result)
 }
 
 
-
-
-
-
-//attman.mentes(data)
-
-
-
-
-
-
-
-
