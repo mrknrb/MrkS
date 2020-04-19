@@ -1,4 +1,4 @@
-let detailshtml=`<div id="detailsbox" style="min-width: 385px; margin:0; padding:0;">
+let detailshtml=`<div id="detailsbox" style="min-width: 385px; margin:0; padding:0;min-width: 385px;width:100%;  min-width: 385px;overflow-x: hidden;overflow-y: auto;height: 132px">
     <table class="tg" id="felsotabla" style="width:100%">
     <tr style="height:20px">
     <td class="tg-0lax">
@@ -111,7 +111,7 @@ style="color:rgb(0, 0, 0);text-align:left;font-weight: bold;font-size: 15px;widt
     </tr>
     <tr>
     <td class="tg-s268" colspan="2"><textarea id="megjegyzesmezo"
-style="width:100%; box-sizing:border-box;-moz-box-sizing:border-box"></textarea>
+style="width:100%; box-sizing:border-box;-moz-box-sizing:border-box; height:120px;width:100%"></textarea>
     </td>
     </tr>
     </table>

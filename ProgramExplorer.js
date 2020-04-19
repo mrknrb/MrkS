@@ -67,8 +67,7 @@ document.querySelector("#keresoszo").addEventListener("keyup", function () {
 function stylebeallitasok() {
     let basicstyletables = "";
     if (eszkoz == "sidebar") {
-        tabstablemagassag = 330;
-        databasemagassag = 330;
+        /*
         document
             .querySelector("#detailsbox")
             .setAttribute(
@@ -79,7 +78,7 @@ function stylebeallitasok() {
         document
             .querySelector("#megjegyzesmezo")
             .setAttribute("style", "height:120px;width:100%");
-
+*/
         basicstyletables = `#datatable tbody th, #datatable tbody td, #tabstable tbody th, #tabstable tbody td{ padding: 0px 0px;}`;
     } else if (eszkoz == "tab") {
         document
@@ -98,8 +97,7 @@ function stylebeallitasok() {
 
         basicstyletables = `#datatable tbody th, #datatable tbody td, #tabstable tbody th, #tabstable tbody td{ padding: 0px 0px;}`;
     } else if (eszkoz == "android") {
-        tabstablemagassag = 330;
-        databasemagassag = 330;
+        /*
         document
             .querySelector("#detailsbox")
             .setAttribute(
@@ -110,6 +108,7 @@ function stylebeallitasok() {
         document
             .querySelector("#megjegyzesmezo")
             .setAttribute("style", "height:120px;width:100%");
+        */
         document
             .querySelector("#tabstablediv")
             .setAttribute("style", "display:none");
