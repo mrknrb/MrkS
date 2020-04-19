@@ -626,11 +626,11 @@ function start7() {
     mrksfrissitesdb(function () {
 
     })
-    setTimeout(start7, 10000);
+    setTimeout(start7, 120000);
 }
 
 // boot up the first call
-//start7();
+start7();
 
 //-------------------------------------------------------------------------------------------------------------
 

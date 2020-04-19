@@ -5,11 +5,9 @@
     <title>Title</title>
 </head>
 <body>
-<div id="detailsdiv" style="display: block ">
-</div>
-<link rel="stylesheet" href="programelemek/details.css">
 
 <button id="detailsboxopen" style="font-size: medium;font-weight: bold;">Details</button>
+
 <input type="text" id="urlmezo2" list="urljavaslatok" style="height: 20px;width:250px">
 <datalist id="urljavaslatok">
     <option value=""></option>
@@ -17,7 +15,11 @@
     <option value="https://www.youtube.com/feed/subscriptions">YouTube</option>
     <option value="https://open.spotify.com">Spotify</option>
 </datalist>
-<iframe id="iframe" src="" frameBorder="0" style="width: 100vw;height: 90vh"></iframe>
+<div id="detailsdiv" style="display: none ">
+</div>
+<link rel="stylesheet" href="programelemek/details.css">
+
+<iframe id="iframe" src="" frameBorder="0" style="width: 100vw;height: 97vh"></iframe>
 
 
 <link rel="stylesheet" href="modulok/datatables.min.css">

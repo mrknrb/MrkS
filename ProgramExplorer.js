@@ -13,8 +13,8 @@ let databasemagassag = 348;
 
 function stylebeallitasok1() {
     if (eszkoz == "sidebar") {
-        tabstablemagassag = 330;
-        databasemagassag = 330;
+        tabstablemagassag = 350;
+        databasemagassag = 400;
     } else if (eszkoz == "tab") {
         tabstablemagassag = 250;
         databasemagassag = 500;
