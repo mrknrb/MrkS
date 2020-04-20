@@ -3,18 +3,28 @@ chrome.runtime.sendMessage({greeting: "mrkteszt"}, function(response) {
     console.log(response.farewell);
   });
 */
-function addcss(css) {
-  var head = document.getElementsByTagName('head')[0];
-  var s = document.createElement('style');
-  s.setAttribute('type', 'text/css');
-  if (s.styleSheet) { // IE
-    s.styleSheet.cssText = css;
-  } else { // the world
-    s.appendChild(document.createTextNode(css));
-  }
-  head.appendChild(s);
+function inIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
 }
+
+function addcss(css) {
+    var head = document.getElementsByTagName('head')[0];
+    var s = document.createElement('style');
+    s.setAttribute('type', 'text/css');
+    if (s.styleSheet) { // IE
+        s.styleSheet.cssText = css;
+    } else { // the world
+        s.appendChild(document.createTextNode(css));
+    }
+    head.appendChild(s);
+}
+
 addcss("a:visited {  color: pink;  background-color: transparent;  text-decoration: none}")
+
 /*
  chrome.tabs.getCurrent(function (Tab, tab){
 console.log(Tab)
@@ -22,56 +32,58 @@ console.log(tab)
  })
  */
 function callClickEvent(element) {
-  var evt = document.createEvent("HTMLEvents");
-  evt.initEvent("click", true, true);
-  element.dispatchEvent(evt);
+    var evt = document.createEvent("HTMLEvents");
+    evt.initEvent("click", true, true);
+    element.dispatchEvent(evt);
 }
+
 if (window.location.host == "open.spotify.com") {
-  chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-      console.log(sender.tab ?
-        "from a content script:" + sender.tab.url :
-        "from the extension");
-      if (request == "pause") {
-        //$(".control-button--circled").click()
-        callClickEvent(document.querySelector('.control-button--circled'))
-      } else if (request == "next") {
-        callClickEvent(document.querySelector('.spoticon-skip-forward-16'))
+    chrome.runtime.onMessage.addListener(
+        function (request, sender, sendResponse) {
+            console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+            if (request == "pause") {
+                //$(".control-button--circled").click()
+                callClickEvent(document.querySelector('.control-button--circled'))
+            } else if (request == "next") {
+                callClickEvent(document.querySelector('.spoticon-skip-forward-16'))
 
-      }
+            }
 
 
-
+        });
+    setTimeout(() => {
+        document.querySelector('.Root__ads-container').setAttribute("style", "height:0px")
+        document.querySelector('.AdsContainer__inner').setAttribute("style", "margin-top: 100px")
+    }, 10000);
+    let a = 0
+    $("body").on('DOMSubtreeModified', ".playback-bar__progress-time:nth-child(3)", function () {
+        console.log("body:", "mukodik");
+        // body
+        if (document.querySelector('.playback-bar__progress-time:nth-child(3)').innerText == "0:30" || document.querySelector('.playback-bar__progress-time:nth-child(3)').innerText == "0:29") {
+            console.log("body:", "0:30");
+            if (a == 0) {
+                chrome.runtime.sendMessage({
+                    kerestipus: "spotifymute"
+                }, function (response) {
+                })
+            }
+            a = 1
+            console.log("body:", "0:30");
+            /* $('.volume-bar__icon').click()
+        }else if($('.spoticon-volume-off-16')!=null){
+          $('.volume-bar__icon').click()*/
+        } else {
+            if (a == 1) {
+                chrome.runtime.sendMessage({
+                    kerestipus: "spotifyunmute"
+                }, function (response) {
+                })
+            }
+            a = 0
+        }
     });
-  setTimeout(() => {
-    document.querySelector('.Root__ads-container').setAttribute("style", "height:0px")
-    document.querySelector('.AdsContainer__inner').setAttribute("style", "margin-top: 100px")
-  }, 10000);
-  let a = 0
-  $("body").on('DOMSubtreeModified', ".playback-bar__progress-time:nth-child(3)", function () {
-    console.log("body:", "mukodik");
-    // body
-    if (document.querySelector('.playback-bar__progress-time:nth-child(3)').innerText == "0:30" || document.querySelector('.playback-bar__progress-time:nth-child(3)').innerText == "0:29") {
-      console.log("body:", "0:30");
-      if (a == 0) {
-        chrome.runtime.sendMessage({
-          kerestipus: "spotifymute"
-        }, function (response) {})
-      }
-      a = 1
-      console.log("body:", "0:30");
-      /* $('.volume-bar__icon').click()
-  }else if($('.spoticon-volume-off-16')!=null){
-    $('.volume-bar__icon').click()*/
-    } else {
-      if (a == 1) {
-        chrome.runtime.sendMessage({
-          kerestipus: "spotifyunmute"
-        }, function (response) {})
-      }
-      a = 0
-    }
-  });
 }
 
 
@@ -81,45 +93,44 @@ let hanyadik = 2
 let egerjobbnyomva = false
 let egerjobbnyomvadate = Date.now()
 $('body').mousedown(function (event) {
-  switch (event.which) {
-    case 3:
-      gorgetesvolt = false
-      console.log('Right Mouse button pressed.');
-      egerjobbnyomva = true
-      egerjobbnyomvadate = Date.now()
-      break;
-    default:
-  }
+    switch (event.which) {
+        case 3:
+            gorgetesvolt = false
+            console.log('Right Mouse button pressed.');
+            egerjobbnyomva = true
+            egerjobbnyomvadate = Date.now()
+            break;
+        default:
+    }
 })
 $('body').mouseup(function (event) {
-  switch (event.which) {
-    case 3:
-      console.log('Right Mouse button pressed.');
-      if (bodystyle == undefined) {
-        document.querySelector('body').style.overflow = "auto"
-      } else {
-        document.querySelector('body').style.overflow = bodystyle
-      }
-      // document.querySelector('body').style.height = "100%"
+    switch (event.which) {
+        case 3:
+            console.log('Right Mouse button pressed.');
+            if (bodystyle == undefined) {
+                document.querySelector('body').style.overflow = "auto"
+            } else {
+                document.querySelector('body').style.overflow = bodystyle
+            }
+            // document.querySelector('body').style.height = "100%"
 
-      document.querySelector("#previoustabsdiv").style.display = "none"
-      egerjobbnyomva = false
-      if (gorgetesvolt == true) {
-        let tabid = document.querySelectorAll('#previoustabstabla tr')[hanyadik].id
-        chrome.runtime.sendMessage({
-          kerestipus: "previoustabshighlight",
-          adat: tabid
-        }, function (response) {})
+            document.querySelector("#previoustabsdiv").style.display = "none"
+            egerjobbnyomva = false
+            if (gorgetesvolt == true) {
+                let tabid = document.querySelectorAll('#previoustabstabla tr')[hanyadik].id
+                chrome.runtime.sendMessage({
+                    kerestipus: "previoustabshighlight",
+                    adat: tabid
+                }, function (response) {
+                })
 
-      }
+            }
 
-      gorgetesvolt = false
-      break;
-    default:
-  }
+            gorgetesvolt = false
+            break;
+        default:
+    }
 })
-
-
 
 
 var previoustabsdiv = document.createElement('div')
@@ -146,43 +157,44 @@ document.body.appendChild(previoustabsdiv)
 window.addEventListener('wheel', function (e) {
 
 
-  if (egerjobbnyomva == true&&egerjobbnyomvadate > Date.now()-2000) {
-    gorgetesvolt = true
-    if (document.querySelector("#previoustabsdiv").style.display == "none") {
-      hanyadik = 2
-      document.querySelector("#previoustabsdiv").style.display = "block"
-      document.querySelector('body').style.overflow = "hidden"
-      // document.querySelector('body').style.height = "100%"
-      $("#previoustabstabla tr").remove()
-      document.querySelector('#previoustabstabla').insertRow()
+    if (egerjobbnyomva == true && egerjobbnyomvadate > Date.now() - 2000) {
+        gorgetesvolt = true
+        if (document.querySelector("#previoustabsdiv").style.display == "none") {
+            hanyadik = 2
+            document.querySelector("#previoustabsdiv").style.display = "block"
+            document.querySelector('body').style.overflow = "hidden"
+            // document.querySelector('body').style.height = "100%"
+            $("#previoustabstabla tr").remove()
+            document.querySelector('#previoustabstabla').insertRow()
 
-      // console.log("e:", e);
-      chrome.runtime.sendMessage({
-        kerestipus: "previoustabstabla"
-      }, function (response) {})
-    } else {
-      if (e.deltaY < 0) {
-        console.log('scrolling up');
-        document.querySelectorAll('#previoustabstabla tr').forEach(function (e, i) {
+            // console.log("e:", e);
+            chrome.runtime.sendMessage({
+                kerestipus: "previoustabstabla"
+            }, function (response) {
+            })
+        } else {
+            if (e.deltaY < 0) {
+                console.log('scrolling up');
+                document.querySelectorAll('#previoustabstabla tr').forEach(function (e, i) {
 
-          e.style.backgroundColor = "#dadada"
-        })
-        hanyadik--
-        document.querySelectorAll('#previoustabstabla tr')[hanyadik].style.backgroundColor = "white"
-      }
-      if (e.deltaY > 0) {
-        console.log('scrolling down');
-        hanyadik++
-        console.log("hanyadik:", hanyadik);
-        document.querySelectorAll('#previoustabstabla tr').forEach(function (e, i) {
+                    e.style.backgroundColor = "#dadada"
+                })
+                hanyadik--
+                document.querySelectorAll('#previoustabstabla tr')[hanyadik].style.backgroundColor = "white"
+            }
+            if (e.deltaY > 0) {
+                console.log('scrolling down');
+                hanyadik++
+                console.log("hanyadik:", hanyadik);
+                document.querySelectorAll('#previoustabstabla tr').forEach(function (e, i) {
 
-          e.style.backgroundColor = "#dadada"
-        })
-        document.querySelectorAll('#previoustabstabla tr')[hanyadik].style.backgroundColor = "white"
+                    e.style.backgroundColor = "#dadada"
+                })
+                document.querySelectorAll('#previoustabstabla tr')[hanyadik].style.backgroundColor = "white"
 
-      }
+            }
+        }
     }
-  }
 
 });
 
@@ -191,61 +203,176 @@ window.addEventListener('wheel', function (e) {
 
 
 chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
+    function (request, sender, sendResponse) {
 
-    console.log("request:", request);
-    if (request.kerestipus == "tabshistoryrows") {
-
-
-      console.log("request:", request);
-      request.tabla.forEach(function (menttab, i) {
-        $('#previoustabstabla tr:last').after(`<tr hanyadik=${i+1} id="${menttab[0]}"><td> <img src="https://www.google.com/s2/favicons?domain=${menttab[2]}" name="${menttab[2]}" width="24" height="24" class="favicon"> </td><td>   <b>${menttab[1]}</b></td></tr>`)
-      })
-      document.querySelectorAll('#previoustabstabla tr')[hanyadik].style.backgroundColor = "white"
+        console.log("request:", request);
+        if (request.kerestipus == "tabshistoryrows") {
 
 
+            console.log("request:", request);
+            request.tabla.forEach(function (menttab, i) {
+                $('#previoustabstabla tr:last').after(`<tr hanyadik=${i + 1} id="${menttab[0]}"><td> <img src="https://www.google.com/s2/favicons?domain=${menttab[2]}" name="${menttab[2]}" width="24" height="24" class="favicon"> </td><td>   <b>${menttab[1]}</b></td></tr>`)
+            })
+            document.querySelectorAll('#previoustabstabla tr')[hanyadik].style.backgroundColor = "white"
 
+
+        }
+
+
+    });
+
+function start3() {
+    if (document.querySelector(".modal-dialog-bg")) {
+        if (document.querySelector(".modal-dialog-bg").style.display != "none") {
+
+            document.querySelector(".modal-dialog-bg").style.display = "none"
+
+            document.querySelector(".modal-dialog.docs-dialog").style.display = "none"
+        }
     }
-
-
-  });
-
-if(window.location.host=="docs.google.com"){
-  function start3() {
-if(document.querySelector(".modal-dialog-bg")){
-  if(document.querySelector(".modal-dialog-bg").style.display!="none"){
-
-    document.querySelector(".modal-dialog-bg").style.display="none"
-
-    document.querySelector(".modal-dialog.docs-dialog").style.display="none"
-  }
-}
     setTimeout(start3, 5000);
-  }
-  start3()
 }
 
-if(window.location.host=="www.youtube.com"){
+if (window.location.host == "docs.google.com") {
 
-  document.querySelector("#logo").innerHTML = '<a href="https://www.youtube.com/feed/subscriptions" style="font-size: 20px;color:black;font-weight:bold;text-decoration: none">YouTube</a>'
+    start3()
+}
 
+let youtube = false
+if (window.location.host == "www.youtube.com" || window.location.host == "m.youtube.com") {
+    youtube = true
+}
+
+
+//-------------------------------------------------Youtube subscriptions
+if (youtube) {
+    document.querySelector("#logo").innerHTML = '<a href="https://www.youtube.com/feed/subscriptions" style="font-size: 20px;color:black;font-weight:bold;text-decoration: none">YouTube</a>'
 
 }
-function oldalurlkuldes(){
 
-  setTimeout(() => {
-    let message3={}
-    message3.url=window.location.href
-    message3.cim=document.title
-    message3.uzenettipus="oldalurl"
-    window.parent.postMessage(message3, "*");
+function oldalurlkuldes() {
 
-  }, 400)
+    setTimeout(() => {
+        let message3 = {}
+        message3.url = window.location.href
+        message3.cim = document.title
+        message3.uzenettipus = "oldalurl"
+        window.parent.postMessage(message3, "*");
+
+    }, 400)
 }
+
 oldalurlkuldes()
-if(window.location.host=="www.youtube.com"){
-  window.addEventListener('yt-navigate-finish', function () {
-    oldalurlkuldes()
-  });
+if (window.location.host == "www.youtube.com") {
+    window.addEventListener('yt-navigate-finish', function () {
+        oldalurlkuldes()
+    });
 
+}
+let youtubeartistadatok = {}
+youtubeartistadatok.artist = {}
+youtubeartistadatok.albums = []
+youtubeartistadatok.music = []
+
+let elozoplaylistszam = 0
+let aktualisplaylistszam = 0
+//-----------------musicplayerscraper
+let href = window.location.href
+if (youtube && inIframe && href.slice(href.length - 6) == "musicc") {
+    console.log("siker")
+    setTimeout(() => {
+        console.log("siker2")
+        //$("#header .yt-simple-endpoint.style-scope.ytd-watch-card-rich-header-renderer").click()
+        $("#watch-card-subtitle").click()
+
+        setTimeout(() => {
+
+            youtubeartistadatok.artist.id = window.location.href
+            youtubeartistadatok.artist.csatornanev = document.querySelector("#channel-header-container #channel-name yt-formatted-string.style-scope.ytd-channel-name").innerText
+            youtubeartistadatok.artist.profilkep = document.querySelector("#channel-header-container #avatar img").src
+            youtubeartistadatok.artist.subscribercount = document.querySelector("#subscriber-count").innerText
+            let k = document.querySelector("[title='Albums & Singles']").parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement
+            let morebutton
+            if(k.querySelector("#right-arrow #button")){
+                morebutton=k.querySelector("#right-arrow #button")
+            }else{
+                morebutton=k.querySelector("[aria-role='button']")
+            }
+                function start2() {
+
+                    if (k.querySelectorAll("ytd-grid-playlist-renderer").length != elozoplaylistszam) {
+                        elozoplaylistszam = k.querySelectorAll("#view-more a").length
+                        morebutton.click()
+
+                        console.log("siker3")
+                        setTimeout(start2, 500);
+                    } else {
+                        console.log("siker4")
+                        console.log(aktualisplaylistszam)
+                        console.log(elozoplaylistszam)
+
+                        function lejatszasilistamegnyito() {
+                            if (aktualisplaylistszam != elozoplaylistszam) {
+                                k.querySelectorAll("#view-more a")[aktualisplaylistszam].click()
+
+                                setTimeout(() => {
+                                    youtubeartistadatok.albums[aktualisplaylistszam] = {}
+                                    youtubeartistadatok.albums[aktualisplaylistszam].id = window.location.href
+                                    youtubeartistadatok.albums[aktualisplaylistszam].cim = document.querySelector("#title a").innerText
+                                    youtubeartistadatok.albums[aktualisplaylistszam].stats = document.querySelector("#stats").innerText
+                                    youtubeartistadatok.albums[aktualisplaylistszam].boritokep =
+                                        document.querySelector("ytd-playlist-sidebar-renderer #playlist-thumbnails .style-scope.yt-img-shadow").src
+                                    youtubeartistadatok.albums[aktualisplaylistszam].eloadoid = youtubeartistadatok.artist.id
+                                    document.querySelectorAll("ytd-playlist-video-renderer.style-scope.ytd-playlist-video-list-renderer").forEach(function (e, i) {
+                                        // console.log(e.querySelector("#index").innerText)
+                                        let music = {}
+                                        music.id = e.querySelector("#content a").href
+                                        music.hanyadik = i + 1
+                                        if(e.querySelector("#overlays span")){
+                                            music.hossz = e.querySelector("#overlays span").innerText
+                                        }
+                                        music.cim = e.querySelector("span#video-title").innerText
+
+                                        music.reszletek= e.querySelector("span#video-title").getAttribute("aria-label")
+                                        music.eloadoid = youtubeartistadatok.artist.id
+                                        music.albumid = youtubeartistadatok.albums[aktualisplaylistszam].id
+
+                                        youtubeartistadatok.music.push(music)
+
+                                    })
+
+                                    aktualisplaylistszam++
+
+                                    lejatszasilistamegnyito()
+                                }, 2000)
+
+                            } else {
+                                console.log(youtubeartistadatok)
+
+                            }
+                        }
+
+                        lejatszasilistamegnyito()
+                    }
+
+
+                }
+
+// boot up the first call
+                start2();
+
+
+
+        }, 4000)
+
+    }, 2000)
+
+
+    //$(".app-load-more").click()
+    /*
+      $("[title='Albums & Singles']")
+      $("[title='Albums & Singles']").parentElement.parentElement.parentElement.parentElement.parentElement
+      $('a:contains("View full playlist")')//vmi ilyesmi
+
+      */
 }

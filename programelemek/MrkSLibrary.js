@@ -582,6 +582,13 @@ let ProgramsData = [
         htmlpath: "./ProgramBrowser.html",
         buttonid: "BrowserButton",
         startmentes: false
+    },
+    {
+        tipus: "musicplayer",
+        logo: "M",
+        htmlpath: "./ProgramMusicPlayer.html",
+        buttonid: "MusicPlayerButton",
+        startmentes: false
     }
 ]
 

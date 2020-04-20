@@ -1,4 +1,6 @@
 scrollbareltunteto()
+
+inputsuggestionoff()
 let db = new PouchDB("NodesNet", {
     auto_compaction: true
 })

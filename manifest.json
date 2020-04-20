@@ -23,11 +23,11 @@
       "programelemek/MrkSLibrary.js",
       "background.js"
     ],
-    "persistent": false
+    "persistent": true
   },
   "content_scripts": [
     {
-      "js": ["modulok/jquery-3.1.0.min.js", "contentscripts/contentall.js"],
+      "js": ["modulok/jquery-3.1.0.min.js", "contentscripts/contentall.js","contentscripts/contentallAndroidis.js"],
       "matches": ["<all_urls>"],
       "css": [],
       "all_frames": true

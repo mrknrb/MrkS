@@ -33,7 +33,6 @@ function start2() {
 
 // boot up the first call
 start2();
-
 if (eszkozdetektalo() != "android") {
 
     function tabszuro(url) {

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<style>
+body{
+    padding:0px;
+    margin:0px
+}
+    #wrapperdiv {
+        width: 100vw;
+        height:99vh;
+        border: 1px solid black;
+        overflow: hidden; /* add this to contain floated children */
+    }
+
+    #eloadokdiv {
+        width: 20vw;
+        height:100%;
+        float: left; /* add this */
+        border: 1px solid red;
+    }
+
+    #zenekdiv {
+        width: 20vw;
+        height:100%;
+        border: 1px solid green;
+        float: left; /* add this */
+    }
+
+    #youtubediv {
+        width: 58vw;
+        height:100%;
+        border: 1px solid green;
+        float: left; /* add this */
+    }
+</style>
+<div id="wrapperdiv">
+    <div id="eloadokdiv">
+
+        <div id="eloadoktablediv" style=" overflow: hidden;min-height: 90vh;">
+
+            <table id="eloadoktable" class="display compact">
+            </table>
+
+        </div>
+
+        <input type="text" id="ujeloadonev" style="height: 20px;width:250px">
+
+        <button id="ujeloadobutton" style="font-size: medium;font-weight: bold;">+</button>
+    </div>
+    <div id="zenekdiv">
+
+        <div id="zenektablediv" style=" overflow: hidden;min-height: 250px;">
+
+            <table id="zenektable" class="display compact">
+            </table>
+
+        </div>
+    </div>
+    <div id="youtubediv">
+        <iframe id="youtubeiframe" src="" frameBorder="0" allowfullscreen="true" webkitallowfullscreen="true"
+                mozallowfullscreen="true" style="width: 100%;height: 100%"></iframe>
+    </div>
+</div>
+
+<iframe id="youtubescraperiframe" style="height:1000px;width:1800px;display: block"></iframe>
+
+<link rel="stylesheet" href="modulok/datatables.min.css">
+<link rel="stylesheet" href="modulok/scroller.dataTables.min.css">
+<script src="modulok/jquery-3.1.0.min.js"></script>
+<link rel="stylesheet" href="modulok/jquery.contextMenu.min.css">
+<script src="modulok/jquery.contextMenu.min.js"></script>
+<script src="modulok/jquery.ui.position.js"></script>
+<script src="modulok/datatables.min.js"></script>
+<script src="modulok/DatatablesEllipsisPlugin.js"></script>
+<script src="modulok/DatatablesFixedheader.js"></script>
+<script src="modulok/dataTables.scroller.min.js"></script>
+<script src="modulok/pouchdb.js"></script>
+<script src="modulok/pouchdb.find.js"></script>
+<script src="programelemek/MrkSLibrary.js"></script>
+<script src="ProgramMusicPlayer.js"></script>
+</body>
+</html>
