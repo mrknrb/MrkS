@@ -419,7 +419,7 @@ if (window.location.host == "music.youtube.com") {
 
 
         }, 1000)
-        //window.history.back()
+       //window.history.back()
 
 
     }
@@ -477,9 +477,9 @@ if (window.location.host == "music.youtube.com") {
                 setTimeout(() => {
                     window.history.back()
                     setTimeout(() => {    albummegnyito()
-                    }, 1000)
+                    }, 7000)
 
-                }, 1000)
+                }, 7000)
 
             } else {
 
@@ -525,7 +525,7 @@ if(youtubeartistadatok.album.cim){
     message.youtubeartistadatok = youtubeartistadatok
     message.uzenettipus = "youtubeartistadatok"
     window.parent.postMessage(message, "*");
-    /*
+/*
     chrome.runtime.sendMessage(message, function(response) {
        // console.log(response.farewell);
 
@@ -533,3 +533,17 @@ if(youtubeartistadatok.album.cim){
 }
 
 }
+/*
+https://music.youtube.com/watch?playlist=OLAK5uy_mkaYYuuZGsnglzzOqZH7exHn9JzHuYIcQ
+
+    https://music.youtube.com/playlist?list=OLAK5uy_mkaYYuuZGsnglzzOqZH7exHn9JzHuYIcQ
+    */
+
+
+
+
+
+//------------------------------youtube music scraper script 1
+
+
+
