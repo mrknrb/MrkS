@@ -94,6 +94,8 @@ document.querySelector("#ujeloadobutton").addEventListener("click", function (e)
 
   // let eloadonev= document.querySelector("#ujeloadonev").value
     //document.querySelector("#youtubescraperiframe").setAttribute("eloadonev", eloadonev)
-    let keresoszo=document.querySelector("#ujeloadonev").value +" musicc"
-    document.querySelector("#youtubescraperiframe").src = `https://www.youtube.com/results?search_query=${keresoszo}`
+    let keresoszo=document.querySelector("#ujeloadonev").value
+    window.open(`https://music.youtube.com/search?q=${keresoszo}`, "_blank")
+
+  //  document.querySelector("#youtubescraperiframe").src = `https://music.youtube.com/search?q=dream+theater${keresoszo}`
 })

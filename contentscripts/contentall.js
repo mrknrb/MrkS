@@ -269,10 +269,38 @@ if (window.location.host == "www.youtube.com") {
     });
 
 }
+/*
 let youtubeartistadatok = {}
 youtubeartistadatok.artist = {}
 youtubeartistadatok.albums = []
 youtubeartistadatok.music = []
+
+
+youtubeartistadatok.artist.id = window.location.href
+youtubeartistadatok.artist.csatornanev = document.querySelector("#channel-header-container #channel-name yt-formatted-string.style-scope.ytd-channel-name").innerText
+youtubeartistadatok.artist.profilkep = document.querySelector("#channel-header-container #avatar img").src
+youtubeartistadatok.artist.subscribercount = document.querySelector("#subscriber-count").innerText
+
+youtubeartistadatok.albums[aktualisplaylistszam] = {}
+youtubeartistadatok.albums[aktualisplaylistszam].id = window.location.href
+youtubeartistadatok.albums[aktualisplaylistszam].cim = document.querySelector("#title a").innerText
+youtubeartistadatok.albums[aktualisplaylistszam].stats = document.querySelector("#stats").innerText
+youtubeartistadatok.albums[aktualisplaylistszam].boritokep =
+    document.querySelector("ytd-playlist-sidebar-renderer #playlist-thumbnails .style-scope.yt-img-shadow").src
+youtubeartistadatok.albums[aktualisplaylistszam].eloadoid = youtubeartistadatok.artist.id
+
+let music = {}
+music.id = e.querySelector("#content a").href
+music.hanyadik = i + 1
+if(e.querySelector("#overlays span")){
+    music.hossz = e.querySelector("#overlays span").innerText
+}
+music.cim = e.querySelector("span#video-title").innerText
+
+music.reszletek= e.querySelector("span#video-title").getAttribute("aria-label")
+music.eloadoid = youtubeartistadatok.artist.id
+music.albumid = youtubeartistadatok.albums[aktualisplaylistszam].id
+youtubeartistadatok.music.push(music)
 
 let elozoplaylistszam = 0
 let aktualisplaylistszam = 0
@@ -367,12 +395,141 @@ if (youtube && inIframe && href.slice(href.length - 6) == "musicc") {
 
     }, 2000)
 
+}
+*/
 
-    //$(".app-load-more").click()
+
+if (window.location.host == "music.youtube.com") {
+    let albumok
+    let albumokszama
+    let aktualisalbumszam = 0
+
+    let i = document.createElement("iframe")
+    i.style.height = "500px"
+    i.style.width = "800px"
+    i.src = ""
+    function albummegnyito() {
+        let albumok2 = document.querySelectorAll("ytmusic-section-list-renderer a.yt-simple-endpoint.style-scope.ytmusic-responsive-list-item-renderer")
+
+        albumok2[aktualisalbumszam].click()
+        setTimeout(() => {
+            let youtubeurl = window.location.href.replace("music.youtube", "youtube");
+
+            i.src = youtubeurl
+
+
+        }, 1000)
+        //window.history.back()
+
+
+    }
+    let youtubeartistadatok = {}
+    youtubeartistadatok.artist = {}
+    youtubeartistadatok.albums = []
+    youtubeartistadatok.music = []
+
+
+    let r = document.createElement("button")
+    r.style.fontSize = "16"
+    r.innerText = "Mentés"
+
+    document.querySelector("#left-content").appendChild(r)
+    r.addEventListener("click", function () {
+        document.querySelector("[title=Artist]").parentElement.parentElement.parentElement.querySelector("a").click()
+        setTimeout(() => {
+
+            document.querySelector("#left-content").appendChild(i)
+            document.querySelectorAll(".header a").forEach(function (e) {
+                if (e.innerText == "Albums") {
+                    e.click()
+                }
+            })
+
+
+            setTimeout(() => {
+                albumok = document.querySelectorAll("ytmusic-section-list-renderer a.yt-simple-endpoint.style-scope.ytmusic-responsive-list-item-renderer")
+                albumokszama = albumok.length
+
+                albummegnyito()
+
+            }, 1000)
+        }, 1000)
+    })
+
+
+    window.addEventListener("message", function (message) {
+        if (message.data.uzenettipus == "youtubeartistadatok"&&message.data.youtubeartistadatok.album.cim) {
+
+            console.log("contentjsuzenet", message)
+            youtubeartistadatok.albums.push(message.data.youtubeartistadatok.album)
+
+            youtubeartistadatok.music.push(message.data.youtubeartistadatok.music)
+            console.log("youtubeartistadatok", youtubeartistadatok)
+
+            aktualisalbumszam++
+            if (aktualisalbumszam <= albumokszama) {
+
+                console.log("aktualisalbumszam", aktualisalbumszam)
+                console.log("albumokszama", albumokszama)
+
+
+
+                setTimeout(() => {
+                    window.history.back()
+                    setTimeout(() => {    albummegnyito()
+                    }, 1000)
+
+                }, 1000)
+
+            } else {
+
+            }
+        }
+
+    },{passive: true})
+
+}
+if (window.location.host == "www.youtube.com" && window.location.pathname == "/playlist" && inIframe()) {
+    console.log("true")
+
+    let youtubeartistadatok = {}
+    youtubeartistadatok.music = []
+
+    youtubeartistadatok.album = {}
+    youtubeartistadatok.album.id = window.location.href
+    youtubeartistadatok.album.cim = document.querySelector("#title a").innerText
+    youtubeartistadatok.album.stats = document.querySelector("#stats").innerText
+    youtubeartistadatok.album.boritokep =
+        document.querySelector("ytd-playlist-sidebar-renderer #playlist-thumbnails .style-scope.yt-img-shadow").src
+    //youtubeartistadatok.album.eloadoid = youtubeartistadatok.artist.id
+    document.querySelectorAll("ytd-playlist-video-renderer.style-scope.ytd-playlist-video-list-renderer").forEach(function (e, i) {
+        // console.log(e.querySelector("#index").innerText)
+        let music = {}
+        music.id = e.querySelector("#content a").href
+        music.hanyadik = i + 1
+        if (e.querySelector("#overlays span")) {
+            music.hossz = e.querySelector("#overlays span").innerText
+        }
+        music.cim = e.querySelector("span#video-title").innerText
+
+        music.reszletek = e.querySelector("span#video-title").getAttribute("aria-label")
+        //music.eloadoid = youtubeartistadatok.artist.id
+        music.albumid = window.location.href
+
+        youtubeartistadatok.music.push(music)
+
+    })
+
+if(youtubeartistadatok.album.cim){
+    let message = {}
+    message.youtubeartistadatok = youtubeartistadatok
+    message.uzenettipus = "youtubeartistadatok"
+    window.parent.postMessage(message, "*");
     /*
-      $("[title='Albums & Singles']")
-      $("[title='Albums & Singles']").parentElement.parentElement.parentElement.parentElement.parentElement
-      $('a:contains("View full playlist")')//vmi ilyesmi
+    chrome.runtime.sendMessage(message, function(response) {
+       // console.log(response.farewell);
 
-      */
+    });*/
+}
+
 }
