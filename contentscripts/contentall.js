@@ -399,96 +399,6 @@ if (youtube && inIframe && href.slice(href.length - 6) == "musicc") {
 */
 
 
-if (window.location.host == "music.youtube.com") {
-    let albumok
-    let albumokszama
-    let aktualisalbumszam = 0
-
-    let i = document.createElement("iframe")
-    i.style.height = "500px"
-    i.style.width = "800px"
-    i.src = ""
-    function albummegnyito() {
-        let albumok2 = document.querySelectorAll("ytmusic-section-list-renderer a.yt-simple-endpoint.style-scope.ytmusic-responsive-list-item-renderer")
-
-        albumok2[aktualisalbumszam].click()
-        setTimeout(() => {
-            let youtubeurl = window.location.href.replace("music.youtube", "youtube");
-
-            i.src = youtubeurl
-
-
-        }, 1000)
-       //window.history.back()
-
-
-    }
-    let youtubeartistadatok = {}
-    youtubeartistadatok.artist = {}
-    youtubeartistadatok.albums = []
-    youtubeartistadatok.music = []
-
-
-    let r = document.createElement("button")
-    r.style.fontSize = "16"
-    r.innerText = "Mentés"
-
-    document.querySelector("#left-content").appendChild(r)
-    r.addEventListener("click", function () {
-        document.querySelector("[title=Artist]").parentElement.parentElement.parentElement.querySelector("a").click()
-        setTimeout(() => {
-
-            document.querySelector("#left-content").appendChild(i)
-            document.querySelectorAll(".header a").forEach(function (e) {
-                if (e.innerText == "Albums") {
-                    e.click()
-                }
-            })
-
-
-            setTimeout(() => {
-                albumok = document.querySelectorAll("ytmusic-section-list-renderer a.yt-simple-endpoint.style-scope.ytmusic-responsive-list-item-renderer")
-                albumokszama = albumok.length
-
-                albummegnyito()
-
-            }, 1000)
-        }, 1000)
-    })
-
-
-    window.addEventListener("message", function (message) {
-        if (message.data.uzenettipus == "youtubeartistadatok"&&message.data.youtubeartistadatok.album.cim) {
-
-            console.log("contentjsuzenet", message)
-            youtubeartistadatok.albums.push(message.data.youtubeartistadatok.album)
-
-            youtubeartistadatok.music.push(message.data.youtubeartistadatok.music)
-            console.log("youtubeartistadatok", youtubeartistadatok)
-
-            aktualisalbumszam++
-            if (aktualisalbumszam <= albumokszama) {
-
-                console.log("aktualisalbumszam", aktualisalbumszam)
-                console.log("albumokszama", albumokszama)
-
-
-
-                setTimeout(() => {
-                    window.history.back()
-                    setTimeout(() => {    albummegnyito()
-                    }, 7000)
-
-                }, 7000)
-
-            } else {
-
-            }
-        }
-
-    },{passive: true})
-
-}
 if (window.location.host == "www.youtube.com" && window.location.pathname == "/playlist" && inIframe()) {
     console.log("true")
 
@@ -520,30 +430,166 @@ if (window.location.host == "www.youtube.com" && window.location.pathname == "/p
 
     })
 
-if(youtubeartistadatok.album.cim){
-    let message = {}
-    message.youtubeartistadatok = youtubeartistadatok
-    message.uzenettipus = "youtubeartistadatok"
-    window.parent.postMessage(message, "*");
-/*
-    chrome.runtime.sendMessage(message, function(response) {
-       // console.log(response.farewell);
+    if (youtubeartistadatok.album.cim) {
+        let message = {}
+        message.youtubeartistadatok = youtubeartistadatok
+        message.uzenettipus = "youtubeartistadatok"
+       // window.parent.postMessage(message, "*");
 
-    });*/
-}
+            chrome.runtime.sendMessage(message, function(response) {
+               // console.log(response.farewell);
+
+            });
+        window.parent.postMessage("closethewindow", "*")
+    }
 
 }
 /*
 https://music.youtube.com/watch?playlist=OLAK5uy_mkaYYuuZGsnglzzOqZH7exHn9JzHuYIcQ
 
-    https://music.youtube.com/playlist?list=OLAK5uy_mkaYYuuZGsnglzzOqZH7exHn9JzHuYIcQ
+    https://youtube.com/playlist?list=OLAK5uy_mkaYYuuZGsnglzzOqZH7exHn9JzHuYIcQ
     */
-
-
-
 
 
 //------------------------------youtube music scraper script 1
 
 
+if (window.location.host == "music.youtube.com"&&window.location.pathname=="/search") {
+let message="youtubescript1mehet"
+    chrome.runtime.sendMessage(message, function(response) {
+        if(response=="mehet"){
+            setTimeout(() => {
+                artistletolto()
+            }, 1000)
 
+
+        }
+        console.log(response);
+
+    })
+
+function artistletolto(){
+
+    document.querySelector("[title=Artist]").parentElement.parentElement.parentElement.querySelector("a").click()
+    setTimeout(() => {
+
+        document.querySelector("#left-content").appendChild(i)
+        document.querySelectorAll(".header a").forEach(function (e) {
+            if (e.innerText == "Albums") {
+                e.click()
+            }
+        })
+
+
+        setTimeout(() => {
+          let  albumokarray=[]
+            albumok = document.querySelectorAll("ytmusic-section-list-renderer a.yt-simple-endpoint.style-scope.ytmusic-responsive-list-item-renderer")
+            albumok.forEach(function (e) {
+                albumokarray.push(e.href)
+            })
+let message2={}
+            message2.uzenettipus="albumok"
+            message2.data=albumokarray
+            chrome.runtime.sendMessage(message2, function(response) {
+
+            })
+            window.close();
+
+
+        }, 1000)
+    }, 1000)
+
+}
+    let albumok
+    let youtubeartistadatok = {}
+    youtubeartistadatok.artist = {}
+    youtubeartistadatok.albums = []
+    youtubeartistadatok.music = []
+
+}
+
+
+if (window.location.host == "music.youtube.com") {
+
+    chrome.runtime.sendMessage(window.location.href, function(response) {
+        if(response=="mehet"){
+            setTimeout(() => {
+
+
+                albummegnyito()
+
+            }, 1000)
+
+
+        }
+
+        console.log(response);
+    })
+
+    window.addEventListener("message", function (message) {
+        console.log(message)
+        if (message.data == "closethewindow") {
+            window.close()
+        }
+
+    })
+
+
+}
+
+
+
+
+
+function albummegnyito() {
+
+        let ymusiclink=document.querySelector("ytmusic-data-bound-top-level-menu-item a").href
+
+        let youtubeurl = ymusiclink.replace("https://music.youtube.com/watch?playlist=", "https://youtube.com/playlist?list=");
+
+        let i = document.createElement("iframe")
+        i.style.height = "500px"
+        i.style.width = "800px"
+
+   document.querySelector("#left-content").appendChild(i)
+
+        i.src = youtubeurl
+
+
+
+
+
+}
+
+/*
+ window.addEventListener("message", function (message) {
+        if (message.data.uzenettipus == "youtubeartistadatok" && message.data.youtubeartistadatok.album.cim) {
+
+            console.log("contentjsuzenet", message)
+            youtubeartistadatok.albums.push(message.data.youtubeartistadatok.album)
+
+            youtubeartistadatok.music.push(message.data.youtubeartistadatok.music)
+            console.log("youtubeartistadatok", youtubeartistadatok)
+
+            aktualisalbumszam++
+            if (aktualisalbumszam <= albumokszama) {
+
+                console.log("aktualisalbumszam", aktualisalbumszam)
+                console.log("albumokszama", albumokszama)
+
+
+                setTimeout(() => {
+                    window.history.back()
+                    setTimeout(() => {
+                        albummegnyito()
+                    }, 7000)
+
+                }, 7000)
+
+            } else {
+
+            }
+        }
+
+    }, {passive: true})
+*/
