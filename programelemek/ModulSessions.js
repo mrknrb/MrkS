@@ -103,14 +103,21 @@ class ModulSessions {
         })
     }
 
+    rowclickevent(callback) {
+
+        this.click = function (id,Tab) {
+            callback(id,Tab)
+        }
+    }
     rowadatbeilleszto(row, data, dataIndex) {
+        //console.log(row)
         let self=this
         if (data.active) {
             row.style.backgroundColor = "#a0bdd8"
             self.elozorowseged = row
         } else if (data.opened) {
             row.style.backgroundColor = "#d1c9d8"
-        } else {
+        } else if(row){
             row.style.backgroundColor = "#888785"
         }
         //gyorsabban vált a kijelölésnél
@@ -150,48 +157,27 @@ class ModulSessions {
 
         col[1].appendChild(cim3)
         col[2].appendChild(datum2)
-        if (data.opened && self.eszkoz == "android") {
+        if (data.opened) {
             col[0].addEventListener("click", function (e) {
-
-                getActualSession(function (session) {
-
-                    db7.get(session._id).then(function (doc) {
-                        doc.tabs.push({
-                            id: jegyzetguidGenerator(),
-                            tabid: data.tabid,
-                            url: data.url,
-                            cim: data.cim,
-                            datum: Date()
-                        });
-                        return db7.put(doc);
-                    })
-                })
+                chrome.tabs.get(data.tabid, function (Tab, tab) {
 
 
-            })
-        } else if (data.opened) {
-            col[0].addEventListener("click", function (e) {
-                getActualSession(function (session) {
-                    db7.get(session._id).then(function (doc) {
+                    self.click(data.url, Tab)
 
-                        doc.tabs.forEach(function (tab, i) {
-                            if (data.id == tab.id) {
-                                doc.tabs[i].tabid = -1
-                            }
-                        })
+                });
 
-
-                        return db7.put(doc);
-                    }).then(function (d) {
-                        chrome.tabs.remove(data.tabid,
-                            function () {
-                            }
-                        );
-                    })
-                })
             })
         }
-        if (data.opened) {
+        if (data.opened&&eszkoz=="android") {
+            col[1].addEventListener("click", function (e) {
+                chrome.tabs.get(data.tabid, function (Tab, tab) {
+
+
+                    self.click(data.url, Tab)
+
+                });
+            })
+        } else if (data.opened) {
             col[1].addEventListener("click", function (e) {
                 chrome.tabs.get(data.tabid, function (Tab, tab) {
                     chrome.tabs.highlight(

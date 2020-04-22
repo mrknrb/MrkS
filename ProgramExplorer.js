@@ -13,8 +13,13 @@ let databasemagassag = 348;
 
 function stylebeallitasok1() {
     if (eszkoz == "sidebar") {
+/**---------------------100%-os nagyításnál
         tabstablemagassag = 350;
         databasemagassag = 400;
+        */
+//80%
+        tabstablemagassag = 400;
+        databasemagassag = 600;
     } else if (eszkoz == "tab") {
         tabstablemagassag = 250;
         databasemagassag = 500;
@@ -42,6 +47,9 @@ let datatable = new ModulFiles("#datatable", databasemagassag,"#kategoriaszurodi
 
 datatable.rowclickevent(function (id) {
     details.detailsfrissito(id)
+})
+session.rowclickevent(function (id,Tab) {
+    details.detailsfrissito(id,Tab)
 })
 document.querySelector("#szuromentes").addEventListener("click", function (e) {
     datatable.sessionkategoriamento()
